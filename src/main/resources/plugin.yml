@@ -1,0 +1,82 @@
+name: MyDungeonTeleportPlugin
+version: '${project.version}'
+main: com.maks.mydungeonteleportplugin.MyDungeonTeleportPlugin
+api-version: '1.20'
+
+commands:
+  whodoq:
+    description: "Displays a list of all occupied quests and their difficulty levels."
+    usage: "/list_occupied_quests"
+    permission: mydungeonplugin.listquests
+    permission-message: "You do not have permission to use this command."
+
+  dung_tps:
+    description: "Reloads the dungeon teleport plugin configuration"
+    usage: "/dung_tps reload"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q1menu:
+    description: "Opens the Q1 dungeon menu"
+    usage: "/q1menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q2menu:
+    description: "Opens the Q2 dungeon menu"
+    usage: "/q2menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q3menu:
+    description: "Opens the Q3 dungeon menu"
+    usage: "/q3menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q4menu:
+    description: "Opens the Q4 dungeon menu"
+    usage: "/q4menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q5menu:
+    description: "Opens the Q5 dungeon menu"
+    usage: "/q5menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q6menu:
+    description: "Opens the Q6 dungeon menu"
+    usage: "/q6menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q7menu:
+    description: "Opens the Q7 dungeon menu"
+    usage: "/q7menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q8menu:
+    description: "Opens the Q8 dungeon menu"
+    usage: "/q8menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q9menu:
+    description: "Opens the Q9 dungeon menu"
+    usage: "/q9menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+  q10menu:
+    description: "Opens the Q10 dungeon menu"
+    usage: "/q10menu"
+    permission: mydungeonplugin.use
+    permission-message: "You do not have permission to use this command."
+
+permissions:
+  mydungeonplugin.use:
+    description: "Allows the use of all dungeon commands."
+    default: op

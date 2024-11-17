@@ -1,0 +1,35 @@
+dungeons:
+  q1:
+    infernal:
+      level: 50
+      fragments_required: 10
+      warp_command: "warp q1_m1_inf"
+      portal_coordinates:
+        x1: -854
+        y1: -60
+        z1: -324
+        x2: -865
+        y2: -48
+        z2: -324
+    hell:
+      level: 75
+      fragments_required: 25
+      warp_command: "warp q1_m1_hell"
+      portal_coordinates:
+        x1: -854
+        y1: -60
+        z1: -324
+        x2: -865
+        y2: -48
+        z2: -324
+    bloodshed:
+      level: 100
+      fragments_required: 50
+      warp_command: "warp q1_m1_blood"
+      portal_coordinates:
+        x1: -854
+        y1: -60
+        z1: -324
+        x2: -865
+        y2: -48
+        z2: -324

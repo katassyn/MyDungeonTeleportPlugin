@@ -102,13 +102,7 @@ In future updates, all dungeon settings will be configurable, including:
 
 - **Dynamic Configuration**:
   - Move hardcoded settings (e.g., portal coordinates, keys, levels) to `dungeon_config.yml`.
-- **Improved Concurrency Control**:
-  - Allow multiple players in separate instances of the same dungeon.
-- **Advanced Timer Management**:
-  - Add configurable time limits for quests.
-- **Dungeon Rewards**:
-  - Assign rewards for successful quest completion.
-
+    
 ---
 
 ## Commands

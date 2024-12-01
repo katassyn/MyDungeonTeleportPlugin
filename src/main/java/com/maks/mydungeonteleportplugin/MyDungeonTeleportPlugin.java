@@ -10,9 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class MyDungeonTeleportPlugin extends JavaPlugin {
+    // In MyDungeonTeleportPlugin class
+    private Map<String, UUID> occupiedQuests = new HashMap<>();
 
     private YamlConfiguration dungeonConfig;
     private final HashMap<UUID, String> selectedMap = new HashMap<>(); // Mapowanie graczy na wybrane mapy
@@ -165,6 +168,10 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
 
     public HashMap<String, UUID> getOccupiedQuests() {
         return questOccupied; // Zwracamy mapę zajętych questów
+    }
+    public void releaseQuestForPlayer(UUID playerId) {
+        // Remove any entries where the playerId matches
+        occupiedQuests.values().removeIf(id -> id.equals(playerId));
     }
 
 }

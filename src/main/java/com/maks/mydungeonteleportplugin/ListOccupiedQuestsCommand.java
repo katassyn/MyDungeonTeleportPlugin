@@ -25,7 +25,7 @@ public class ListOccupiedQuestsCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        HashMap<String, UUID> occupiedQuests = plugin.getOccupiedQuests(); // Pobieramy zajęte questy
+        HashMap<String, UUID> occupiedQuests = plugin.getOccupiedQuests();
 
         if (occupiedQuests.isEmpty()) {
             player.sendMessage(ChatColor.GREEN + "All quests are currently free!");
@@ -36,19 +36,18 @@ public class ListOccupiedQuestsCommand implements CommandExecutor {
 
         for (String questName : occupiedQuests.keySet()) {
             UUID playerUUID = occupiedQuests.get(questName);
-            String playerName = plugin.getServer().getOfflinePlayer(playerUUID).getName(); // Pobieramy nazwę gracza
+            String playerName = plugin.getServer().getOfflinePlayer(playerUUID).getName();
 
-            // Formatowanie wiadomości
+            // Format quest name
             String formattedQuestName = questName;
             int firstUnderscore = questName.indexOf('_');
             int secondUnderscore = questName.indexOf('_', firstUnderscore + 1);
 
             if (firstUnderscore != -1 && secondUnderscore != -1) {
-                // Wycinamy fragment pomiędzy pierwszym a drugim znakiem podkreślenia, łącznie z pierwszym podkreśleniem
                 formattedQuestName = questName.substring(0, firstUnderscore) + questName.substring(secondUnderscore);
             }
 
-// Wyświetlanie wiadomości z przekształconą nazwą questa
+            // Display message with transformed quest name
             player.sendMessage(ChatColor.RED + "Quest: " + ChatColor.AQUA + formattedQuestName + ChatColor.RED + " is occupied by " + ChatColor.GOLD + playerName);
         }
 

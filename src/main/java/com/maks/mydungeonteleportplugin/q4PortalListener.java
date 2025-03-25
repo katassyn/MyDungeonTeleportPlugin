@@ -4,21 +4,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-public class q4PortalListener implements Listener {
-
-    private final MyDungeonTeleportPlugin plugin;
-    private final HashMap<UUID, Long> lastMessageTime = new HashMap<>(); // Mapowanie gracza na czas wysłania wiadomości
-    private final HashMap<UUID, Integer> playerTimeoutTasks = new HashMap<>(); // Mapowanie gracza na ID zadania
+public class q4PortalListener extends AbstractPortalListener {
 
     public q4PortalListener(MyDungeonTeleportPlugin plugin) {
-        this.plugin = plugin;
+        super(plugin, "q4", -1026, -1015, -60, -48, -566, -566);
     }
 
     @EventHandler
@@ -26,23 +17,22 @@ public class q4PortalListener implements Listener {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
 
-        String selectedMap = plugin.getSelectedMap(player);
+        // Clean up last message time map periodically
+        if (Math.random() < 0.01) { // 1% chance each move event to clean up
+            cleanupLastMessageTimeMap();
+        }
 
-        // Koordynaty portalu dla q4
-        int x1 = -1026, x2 = -1015;
-        int y1 = -60, y2 = -48;
-        int z1 = -566, z2 = -566;
-
-        // Sprawdzenie, czy gracz jest w obszarze portalu
-        if (isInPortalArea(loc, x1, x2, y1, y2, z1, z2)) {
+        // Check if player is in portal area
+        if (DungeonUtils.isInPortalArea(loc, x1, x2, y1, y2, z1, z2)) {
+            String selectedMap = plugin.getSelectedMap(player);
             long currentTime = System.currentTimeMillis();
 
-            // Jeśli gracz nie wybrał mapy, wyświetl wiadomość co 5 sekund
+            // Check if player has selected a map
             if (selectedMap == null) {
                 if (lastMessageTime.containsKey(player.getUniqueId())) {
                     long lastTime = lastMessageTime.get(player.getUniqueId());
                     if (currentTime - lastTime < 5000) {
-                        return; // Oczekiwanie 5 sekund przed kolejną wiadomością
+                        return; // Don't spam messages, wait 5 seconds
                     }
                 }
 
@@ -51,12 +41,12 @@ public class q4PortalListener implements Listener {
                 return;
             }
 
-            // Sprawdzanie, czy quest jest zajęty, i wyświetlanie wiadomości co 5 sekund
+            // Check if quest is already occupied
             if (plugin.isQuestOccupied(selectedMap)) {
                 if (lastMessageTime.containsKey(player.getUniqueId())) {
                     long lastTime = lastMessageTime.get(player.getUniqueId());
                     if (currentTime - lastTime < 5000) {
-                        return; // Oczekiwanie 5 sekund przed kolejną wiadomością
+                        return; // Don't spam messages, wait 5 seconds
                     }
                 }
 
@@ -65,11 +55,9 @@ public class q4PortalListener implements Listener {
                 return;
             }
 
-            // Sprawdzanie poziomu gracza
+            // Check level requirements and teleport accordingly
             int playerLevel = player.getLevel();
             int requiredIPS = 0;
-
-            // Variable to store the task ID
             int taskId;
 
             if (selectedMap.equals("q4_m1_inf") && playerLevel >= 50) {
@@ -98,77 +86,10 @@ public class q4PortalListener implements Listener {
                 return;
             }
 
-            // Store the task ID
+            // Store task ID, occupy quest, and remove required IPS
             playerTimeoutTasks.put(player.getUniqueId(), taskId);
-
-            // Zajęcie questa przez gracza
             plugin.occupyQuest(selectedMap, player.getUniqueId());
-
-            // Pobieranie IPS (zamiennika białej wełny) dopiero po teleportacji
             plugin.removeWool(player, requiredIPS);
         }
-    }
-
-    private boolean isInPortalArea(Location loc, int x1, int x2, int y1, int y2, int z1, int z2) {
-        return loc.getBlockX() >= Math.min(x1, x2) && loc.getBlockX() <= Math.max(x1, x2)
-                && loc.getBlockY() >= Math.min(y1, y2) && loc.getBlockY() <= Math.max(y1, y2)
-                && loc.getBlockZ() >= Math.min(z1, z2) && loc.getBlockZ() <= Math.max(z1, z2);
-    }
-
-    // Method to schedule the timeout task
-    private int scheduleTimeoutTask(Player player) {
-        return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            if (player.isOnline()) {
-                player.setHealth(0); // Zabija gracza
-                player.sendMessage(ChatColor.RED + "Time's Up! You're Dead!");
-                // Release the quest
-                plugin.releaseQuestForPlayer(player.getUniqueId());
-                // Remove the task from the map
-                playerTimeoutTasks.remove(player.getUniqueId());
-            }
-        }, 36000L); // 30 minutes in ticks
-    }
-
-    // Event handler for player death
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity();
-        UUID playerId = player.getUniqueId();
-        Integer taskId = playerTimeoutTasks.remove(playerId);
-        if (taskId != null) {
-            plugin.getServer().getScheduler().cancelTask(taskId);
-        }
-        // Release the quest occupation
-        plugin.releaseQuestForPlayer(playerId);
-        // Clear the selected map
-        plugin.clearSelectedMap(player);
-    }
-
-    // Event handler for player logout
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
-        Integer taskId = playerTimeoutTasks.remove(playerId);
-        if (taskId != null) {
-            plugin.getServer().getScheduler().cancelTask(taskId);
-        }
-        // Release the quest occupation
-        plugin.releaseQuestForPlayer(playerId);
-        // Clear the selected map
-        plugin.clearSelectedMap(player);
-    }
-
-    // Method to handle quest completion
-    public void onQuestComplete(Player player) {
-        UUID playerId = player.getUniqueId();
-        Integer taskId = playerTimeoutTasks.remove(playerId);
-        if (taskId != null) {
-            plugin.getServer().getScheduler().cancelTask(taskId);
-        }
-        // Release the quest occupation
-        plugin.releaseQuestForPlayer(playerId);
-        // Clear the selected map
-        plugin.clearSelectedMap(player);
     }
 }

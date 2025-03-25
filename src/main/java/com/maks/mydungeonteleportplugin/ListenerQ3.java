@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class ListenerQ3 implements Listener {
 
@@ -21,9 +20,9 @@ public class ListenerQ3 implements Listener {
         if (event.getWhoClicked() instanceof Player) {
             Player player = (Player) event.getWhoClicked();
 
-            // Sprawdzamy, czy gracz wchodzi w interakcję z GUI o nazwie "Q3 Menu"
+            // Check if interacting with "Q3 Menu"
             if (event.getView().getTitle().equals(ChatColor.RED + "Q3 Menu")) {
-                event.setCancelled(true); // Anulujemy interakcję w GUI
+                event.setCancelled(true); // Cancel interaction in GUI
 
                 if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) {
                     return;
@@ -31,9 +30,9 @@ public class ListenerQ3 implements Listener {
 
                 Material clickedMaterial = event.getCurrentItem().getType();
 
-                // Blokada na interakcję z szybą
+                // Block interaction with the glass pane
                 if (clickedMaterial == Material.WHITE_STAINED_GLASS_PANE) {
-                    return; // Blokujemy kliknięcie
+                    return;
                 }
 
                 int requiredLevel = 0;
@@ -41,7 +40,7 @@ public class ListenerQ3 implements Listener {
                 String mapName = "";
                 int requiredIPS = 0;
 
-                // Wybór mapy na podstawie klikniętego bloku i sprawdzenie poziomu gracza
+                // Choose map based on clicked block and check player level
                 if (clickedMaterial == Material.WHITE_CONCRETE) {
                     requiredLevel = 50;
                     selectedMap = "q3_m1_inf";
@@ -59,33 +58,25 @@ public class ListenerQ3 implements Listener {
                     requiredIPS = 50;
                 }
 
-                // Sprawdzamy poziom gracza
+                // Check player level
                 if (player.getLevel() < requiredLevel) {
                     player.sendMessage(ChatColor.RED + "You need to be at least level " + requiredLevel + " to enter this location.");
                     return;
                 }
-                // Sprawdzamy, czy gracz ma wystarczającą ilość Fragment of Infernal Passage (IPS)
-                if (!hasEnoughNuggets(player, requiredIPS)) {
+
+                // Check if player has enough IPS
+                if (!DungeonUtils.hasEnoughNuggets(player, requiredIPS)) {
                     player.sendMessage(ChatColor.RED + "You need at least " + requiredIPS + " Fragments of Infernal Passage to enter this location.");
                     return;
                 }
-                // Zapisujemy wybraną mapę bez pobierania IPS
+
+                // Save selected map without taking IPS yet
                 plugin.setSelectedMap(player, selectedMap);
                 plugin.getLogger().info("Player " + player.getName() + " selected map: " + selectedMap);
-
                 player.sendMessage(ChatColor.GREEN + "Successfully selected " + mapName + ".");
 
-                player.closeInventory(); // Zamknięcie GUI po dokonaniu wyboru
+                player.closeInventory(); // Close GUI after selection
             }
         }
-    }
-    private boolean hasEnoughNuggets(Player player, int requiredNuggets) {
-        int nuggetCount = 0;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == Material.IRON_NUGGET) {
-                nuggetCount += item.getAmount();
-            }
-        }
-        return nuggetCount >= requiredNuggets;
     }
 }

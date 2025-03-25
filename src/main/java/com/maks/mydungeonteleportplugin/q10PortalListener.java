@@ -4,21 +4,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-public class q10PortalListener implements Listener {
-
-    private final MyDungeonTeleportPlugin plugin;
-    private final HashMap<UUID, Long> lastMessageTime = new HashMap<>();
-    private final HashMap<UUID, Integer> playerTimeoutTasks = new HashMap<>();
+public class q10PortalListener extends AbstractPortalListener {
 
     public q10PortalListener(MyDungeonTeleportPlugin plugin) {
-        this.plugin = plugin;
+        // Keeping the coordinates as is since the user said they're correct
+        super(plugin, "q10", -805, -805, -60, -48, -602, -613);
     }
 
     @EventHandler
@@ -26,21 +18,22 @@ public class q10PortalListener implements Listener {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
 
-        String selectedMap = plugin.getSelectedMap(player);
+        // Clean up last message time map periodically
+        if (Math.random() < 0.01) { // 1% chance each move event to clean up
+            cleanupLastMessageTimeMap();
+        }
 
-        // Koordynaty portalu dla q10
-        int x1 = -805, x2 = -805;
-        int y1 = -60, y2 = -48;
-        int z1 = -602, z2 = -613;
-
-        if (isInPortalArea(loc, x1, x2, y1, y2, z1, z2)) {
+        // Check if player is in portal area
+        if (DungeonUtils.isInPortalArea(loc, x1, x2, y1, y2, z1, z2)) {
+            String selectedMap = plugin.getSelectedMap(player);
             long currentTime = System.currentTimeMillis();
 
+            // Check if player has selected a map
             if (selectedMap == null) {
                 if (lastMessageTime.containsKey(player.getUniqueId())) {
                     long lastTime = lastMessageTime.get(player.getUniqueId());
                     if (currentTime - lastTime < 5000) {
-                        return;
+                        return; // Don't spam messages, wait 5 seconds
                     }
                 }
 
@@ -49,11 +42,12 @@ public class q10PortalListener implements Listener {
                 return;
             }
 
+            // Check if quest is already occupied
             if (plugin.isQuestOccupied(selectedMap)) {
                 if (lastMessageTime.containsKey(player.getUniqueId())) {
                     long lastTime = lastMessageTime.get(player.getUniqueId());
                     if (currentTime - lastTime < 5000) {
-                        return;
+                        return; // Don't spam messages, wait 5 seconds
                     }
                 }
 
@@ -62,6 +56,7 @@ public class q10PortalListener implements Listener {
                 return;
             }
 
+            // Check level requirements and teleport accordingly
             int playerLevel = player.getLevel();
             int requiredIPS = 0;
             int taskId;
@@ -92,60 +87,10 @@ public class q10PortalListener implements Listener {
                 return;
             }
 
+            // Store task ID, occupy quest, and remove required IPS
             playerTimeoutTasks.put(player.getUniqueId(), taskId);
             plugin.occupyQuest(selectedMap, player.getUniqueId());
             plugin.removeWool(player, requiredIPS);
         }
-    }
-
-    private boolean isInPortalArea(Location loc, int x1, int x2, int y1, int y2, int z1, int z2) {
-        return loc.getBlockX() >= Math.min(x1, x2) && loc.getBlockX() <= Math.max(x1, x2)
-                && loc.getBlockY() >= Math.min(y1, y2) && loc.getBlockY() <= Math.max(y1, y2)
-                && loc.getBlockZ() >= Math.min(z1, z2) && loc.getBlockZ() <= Math.max(z1, z2);
-    }
-
-    private int scheduleTimeoutTask(Player player) {
-        return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            if (player.isOnline()) {
-                player.setHealth(0);
-                player.sendMessage(ChatColor.RED + "Time's Up! You're Dead!");
-                plugin.releaseQuestForPlayer(player.getUniqueId());
-                playerTimeoutTasks.remove(player.getUniqueId());
-            }
-        }, 36000L);
-    }
-
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity();
-        UUID playerId = player.getUniqueId();
-        Integer taskId = playerTimeoutTasks.remove(playerId);
-        if (taskId != null) {
-            plugin.getServer().getScheduler().cancelTask(taskId);
-        }
-        plugin.releaseQuestForPlayer(playerId);
-        plugin.clearSelectedMap(player);
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
-        Integer taskId = playerTimeoutTasks.remove(playerId);
-        if (taskId != null) {
-            plugin.getServer().getScheduler().cancelTask(taskId);
-        }
-        plugin.releaseQuestForPlayer(playerId);
-        plugin.clearSelectedMap(player);
-    }
-
-    public void onQuestComplete(Player player) {
-        UUID playerId = player.getUniqueId();
-        Integer taskId = playerTimeoutTasks.remove(playerId);
-        if (taskId != null) {
-            plugin.getServer().getScheduler().cancelTask(taskId);
-        }
-        plugin.releaseQuestForPlayer(playerId);
-        plugin.clearSelectedMap(player);
     }
 }

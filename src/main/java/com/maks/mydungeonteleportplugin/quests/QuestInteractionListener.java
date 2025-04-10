@@ -49,103 +49,165 @@ public class QuestInteractionListener implements Listener {
         if (state == null) return;
 
         // Sprawdź czy to q2 quest
-        if (!state.getQuestId().startsWith("q2_")) return;
+        if (state.getQuestId().startsWith("q2_")) {
 
-        // Sprawdź czy jesteśmy w fazie interakcji z blokami
-        if (state.getCurrentObjective() != QuestState.QuestObjective.INTERACT_WITH_BLOCKS) return;
+            // Sprawdź czy jesteśmy w fazie interakcji z blokami
+            if (state.getCurrentObjective() != QuestState.QuestObjective.INTERACT_WITH_BLOCKS) return;
 
-        if (debuggingFlag == 1) {
-            player.sendMessage(ChatColor.GRAY + "DEBUG: Interaction with " + clickedBlock.getType() + " at " +
-                    clickedBlock.getX() + ", " + clickedBlock.getY() + ", " + clickedBlock.getZ());
-        }
-
-        // Pierwsza faza - zbieranie grzybów
-        if (!state.hasCollectedAllMushrooms()) {
-            Material blockType = clickedBlock.getType();
-
-            if (blockType != Material.RED_MUSHROOM && blockType != Material.BROWN_MUSHROOM) {
-                return; // Jeśli to nie grzyb, nie kontynuuj
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Interaction with " + clickedBlock.getType() + " at " +
+                        clickedBlock.getX() + ", " + clickedBlock.getY() + ", " + clickedBlock.getZ());
             }
 
-            // Generujemy unikalny ID dla grzyba na podstawie jego położenia
-            String mushroomId = blockType.name() + "_" + clickedBlock.getX() + "_" +
-                    clickedBlock.getY() + "_" + clickedBlock.getZ();
+            // Pierwsza faza - zbieranie grzybów
+            if (!state.hasCollectedAllMushrooms()) {
+                Material blockType = clickedBlock.getType();
 
-            // Pobierz mapę interakcji dla gracza lub stwórz nową
-            Map<String, Long> playerInteractions = lastMushroomInteractions
-                    .computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+                if (blockType != Material.RED_MUSHROOM && blockType != Material.BROWN_MUSHROOM) {
+                    return; // Jeśli to nie grzyb, nie kontynuuj
+                }
 
-            // Sprawdź czas ostatniej interakcji z tym grzybem
-            long currentTime = System.currentTimeMillis();
-            long lastInteractionTime = playerInteractions.getOrDefault(mushroomId, 0L);
+                // Generujemy unikalny ID dla grzyba na podstawie jego położenia
+                String mushroomId = blockType.name() + "_" + clickedBlock.getX() + "_" +
+                        clickedBlock.getY() + "_" + clickedBlock.getZ();
 
-            // Jeśli minęła mniej niż 1 sekunda od ostatniej interakcji, zignoruj
-            if (currentTime - lastInteractionTime < 1000) {
-                return;
-            }
+                // Pobierz mapę interakcji dla gracza lub stwórz nową
+                Map<String, Long> playerInteractions = lastMushroomInteractions
+                        .computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
 
-            // Zapisz czas tej interakcji
-            playerInteractions.put(mushroomId, currentTime);
+                // Sprawdź czas ostatniej interakcji z tym grzybem
+                long currentTime = System.currentTimeMillis();
+                long lastInteractionTime = playerInteractions.getOrDefault(mushroomId, 0L);
 
-            // Sprawdzamy czy grzyb został już zebrany
-            if (state.isMushroomCollected(mushroomId)) {
-                player.sendMessage(ChatColor.RED + "You've already collected this mushroom!");
-                return;
-            }
-
-            if (blockType == Material.RED_MUSHROOM) {
-                // Sprawdzamy czy gracz potrzebuje więcej czerwonych grzybów
-                if (state.getRedMushroomsCollected() >= state.getRequiredRedMushrooms()) {
-                    player.sendMessage(ChatColor.RED + "You don't need any more Red Mushrooms!");
+                // Jeśli minęła mniej niż 1 sekunda od ostatniej interakcji, zignoruj
+                if (currentTime - lastInteractionTime < 1000) {
                     return;
                 }
 
-                // Zbieramy grzyb
-                state.collectMushroom(mushroomId, true);
-                player.sendMessage(ChatColor.GREEN + "You've collected a Red Mushroom! (" +
-                        state.getRedMushroomsCollected() + "/" + state.getRequiredRedMushrooms() + ")");
-                updateMushroomProgress(player, state);
-            }
-            else if (blockType == Material.BROWN_MUSHROOM) {
-                // Sprawdzamy czy gracz potrzebuje więcej brązowych grzybów
-                if (state.getBrownMushroomsCollected() >= state.getRequiredBrownMushrooms()) {
-                    player.sendMessage(ChatColor.RED + "You don't need any more Brown Mushrooms!");
+                // Zapisz czas tej interakcji
+                playerInteractions.put(mushroomId, currentTime);
+
+                // Sprawdzamy czy grzyb został już zebrany
+                if (state.isMushroomCollected(mushroomId)) {
+                    player.sendMessage(ChatColor.RED + "You've already collected this mushroom!");
                     return;
                 }
 
-                // Zbieramy grzyb
-                state.collectMushroom(mushroomId, false);
-                player.sendMessage(ChatColor.GREEN + "You've collected a Brown Mushroom! (" +
-                        state.getBrownMushroomsCollected() + "/" + state.getRequiredBrownMushrooms() + ")");
-                updateMushroomProgress(player, state);
+                if (blockType == Material.RED_MUSHROOM) {
+                    // Sprawdzamy czy gracz potrzebuje więcej czerwonych grzybów
+                    if (state.getRedMushroomsCollected() >= state.getRequiredRedMushrooms()) {
+                        player.sendMessage(ChatColor.RED + "You don't need any more Red Mushrooms!");
+                        return;
+                    }
+
+                    // Zbieramy grzyb
+                    state.collectMushroom(mushroomId, true);
+                    player.sendMessage(ChatColor.GREEN + "You've collected a Red Mushroom! (" +
+                            state.getRedMushroomsCollected() + "/" + state.getRequiredRedMushrooms() + ")");
+                    updateMushroomProgress(player, state);
+
+                    // Zamknij inventory po interakcji
+                    player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+                } else if (blockType == Material.BROWN_MUSHROOM) {
+                    // Sprawdzamy czy gracz potrzebuje więcej brązowych grzybów
+                    if (state.getBrownMushroomsCollected() >= state.getRequiredBrownMushrooms()) {
+                        player.sendMessage(ChatColor.RED + "You don't need any more Brown Mushrooms!");
+                        return;
+                    }
+
+                    // Zbieramy grzyb
+                    state.collectMushroom(mushroomId, false);
+                    player.sendMessage(ChatColor.GREEN + "You've collected a Brown Mushroom! (" +
+                            state.getBrownMushroomsCollected() + "/" + state.getRequiredBrownMushrooms() + ")");
+                    updateMushroomProgress(player, state);
+
+                    // Zamknij inventory po interakcji
+                    player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+                }
+            }
+
+            // Druga faza - warzenie mikstury
+            else if (!state.hasBrewedPotion()) {
+                Material blockType = clickedBlock.getType();
+
+                if (blockType == Material.CAULDRON || blockType == Material.WATER_CAULDRON) {
+                    state.brewPotion();
+
+                    player.sendTitle(
+                            ChatColor.GREEN + "Antidote Brewed!",
+                            ChatColor.YELLOW + "You are now immune to the poison",
+                            10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've successfully brewed the antidote!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eYou are now immune to the poison areas.");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat Xerib the Hunchback.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    // Zamknij inventory po interakcji
+                    player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                    // Przejdź do kolejnego kroku
+                    state.advanceToNextObjective();
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: Antidote brewed, advancing to KILL_BOSS objective");
+                    }
+                }
             }
         }
+        else if (state.getQuestId().startsWith("q3_") &&
+                state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
 
-        // Druga faza - warzenie mikstury
-        else if (!state.hasBrewedPotion()) {
             Material blockType = clickedBlock.getType();
 
-            if (blockType == Material.CAULDRON || blockType == Material.WATER_CAULDRON) {
-                state.brewPotion();
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Interaction with " + blockType + " at " +
+                        clickedBlock.getX() + ", " + clickedBlock.getY() + ", " + clickedBlock.getZ());
+            }
+
+            QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
+            if (questData == null) return;
+
+            QuestData.InteractObjective objective = questData.getInteractObjective(state.getCurrentStage());
+            if (objective == null) return;
+
+            if (blockType == objective.getBlockType()) {
+                // Player interacted with the correct block
+                state.setInteractedWithGrindstone(true);
 
                 player.sendTitle(
-                        ChatColor.GREEN + "Antidote Brewed!",
-                        ChatColor.YELLOW + "You are now immune to the poison",
+                        ChatColor.GREEN + "Bones Grinded!",
+                        ChatColor.YELLOW + "The protective spell has been weakened",
                         10, 70, 20
                 );
 
                 player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
-                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've successfully brewed the antidote!");
-                player.sendMessage(ChatColor.YELLOW + "§l» §r§eYou are now immune to the poison areas.");
-                player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat Xerib the Hunchback.");
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've successfully grinded the undead bones!");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe protective spell has been weakened.");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat the Evil Miller now.");
                 player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
 
-                // Przejdź do kolejnego kroku
+                // Zamknij inventory po interakcji
+                player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                // Move to next objective
                 state.advanceToNextObjective();
 
                 if (debuggingFlag == 1) {
-                    player.sendMessage(ChatColor.GRAY + "DEBUG: Antidote brewed, advancing to KILL_BOSS objective");
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Grindstone interaction complete, advancing to KILL_BOSS objective");
                 }
+            }
+        }
+        // Dla wszystkich innych typów questów lub interakcji w przyszłości
+        else {
+            // Możemy tutaj dodać zamykanie inventory dla przyszłych interakcji
+            // Jeśli nastąpiła interakcja z blokiem, który otwiera GUI, zamknij je
+            if (clickedBlock.getType().isInteractable()) {
+                // Dodajemy małe opóźnienie, aby najpierw otworzyło się GUI, a potem je zamknęło
+                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                        player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN), 1L);
             }
         }
     }
@@ -261,7 +323,138 @@ public class QuestInteractionListener implements Listener {
             }
         }
     }
+    public void handlePossibleItemDrop(Player player, String mobId) {
+        QuestState state = questManager.getActiveQuest(player.getUniqueId());
+        if (state == null) return;
 
+        // Tylko dla Q3 questów
+        if (!state.getQuestId().startsWith("q3_")) return;
+
+        // Upewnij się, że jesteśmy w fazie zbierania przedmiotów
+        if (state.getCurrentObjective() != QuestState.QuestObjective.COLLECT_FROM_MOBS) return;
+
+        QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
+        if (questData == null) return;
+
+        Map<String, QuestData.CollectObjective> collectObjectives = questData.getCollectObjectives(state.getCurrentStage());
+        QuestData.CollectObjective objective = collectObjectives.get(mobId);
+
+        if (objective == null) return;
+
+        if (debuggingFlag == 1) {
+            player.sendMessage(ChatColor.GRAY + "DEBUG: Checking drop for mob: " + mobId +
+                    " in stage " + state.getCurrentStage());
+        }
+
+        // ETAP 1: Zbieranie kości nieumarlych
+        if (state.getCurrentStage() == 1) {
+            // Nie robi nic jeśli już zbrano wszystkie
+            if (state.hasCollectedAllItems()) return;
+
+            int dropChance = objective.getDropChance(); // 75% dla kości
+            int roll = ThreadLocalRandom.current().nextInt(100);
+
+            if (roll < dropChance) {
+                state.incrementItemsCollected();
+                int collected = state.getItemsCollected();
+                int required = state.getRequiredItems();
+
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou found " + objective.getDisplayName() +
+                        "! (" + collected + "/" + required + ")");
+
+                String progressBar = createProgressBar(collected, required);
+                player.sendMessage(ChatColor.YELLOW + "Progress: " + progressBar);
+
+                // Jeśli zebraliśmy wszystkie kości
+                if (collected >= required) {
+                    player.sendTitle(
+                            ChatColor.GREEN + "All " + objective.getDisplayName() + " Collected!",
+                            ChatColor.YELLOW + "Now find a grindstone to grind the bones",
+                            10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected all required " +
+                            objective.getDisplayName() + "!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow find a grindstone to grind them.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    state.advanceToNextObjective(); // Przejście do INTERACT_WITH_BLOCKS
+                }
+            }
+        }
+        // ETAP 2: Zbieranie fragmentu runy
+        else if (state.getCurrentStage() == 2) {
+            // Tylko dla moby slain_assassin
+            if (!mobId.contains("slain_assassin")) return;
+
+            if (state.getRuneFragmentsCollected() >= 1) return; // Już mamy fragment
+
+            // Pobierz liczbę zabitych mobów tego typu
+            int killCount = state.getKillCount(mobId);
+
+            // Progresywna szansa na drop
+            int dropChance;
+            if (killCount == 0) dropChance = 30;      // Pierwszy mob: 30%
+            else if (killCount == 1) dropChance = 60; // Drugi mob: 60%
+            else dropChance = 100;                    // Trzeci mob: 100%
+
+            // Zawsze zwiększaj licznik zabić
+            int newKillCount = state.incrementKillCount(mobId);
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Kill count for " + mobId + ": " + newKillCount +
+                        ", drop chance: " + dropChance + "%");
+            }
+
+            // Sprawdź, czy wypada fragment runy
+            int roll = ThreadLocalRandom.current().nextInt(100);
+            if (roll < dropChance) {
+                // Fragment znaleziony!
+                state.incrementRuneFragmentsCollected();
+
+                player.sendTitle(
+                        ChatColor.GREEN + "Emerald Rune Fragment Found!",
+                        ChatColor.YELLOW + "Now find The Bloody Arrow",
+                        10, 70, 20
+                );
+
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've found the Emerald Rune Fragment!");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow defeat The Bloody Arrow to get the second fragment.");
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                // Przejście do etapu walki z mini-bossem
+                state.advanceToNextObjective(); // Przejście do KILL_BOSS
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Rune fragment found! Advancing to KILL_BOSS objective");
+                }
+            } else {
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Rune fragment didn't drop (roll: " + roll +
+                            " vs chance: " + dropChance + "%)");
+                }
+            }
+        }
+    }
+    private String createProgressBar(int current, int max) {
+        StringBuilder bar = new StringBuilder();
+        int totalBars = 20;
+        int filledBars = Math.min(totalBars, (int)Math.ceil((double)current / max * totalBars));
+
+        bar.append(ChatColor.GREEN);
+        for (int i = 0; i < filledBars; i++) {
+            bar.append("■");
+        }
+
+        bar.append(ChatColor.GRAY);
+        for (int i = filledBars; i < totalBars; i++) {
+            bar.append("■");
+        }
+
+        return bar.toString();
+    }
     // Dodaj tę metodę publiczną
     public void clearPlayerData(UUID playerId) {
         lastMushroomInteractions.remove(playerId);
@@ -292,4 +485,5 @@ public class QuestInteractionListener implements Listener {
                     currentTime - entry.getValue() > 1800000); // 30 minut
         }
     }
+
 }

@@ -66,6 +66,23 @@ public class QuestManager {
             questState.setMushroomRequirements(redMushrooms, brownMushrooms);
             questState.advanceToNextObjective();
         }
+        // Inside startQuest method, after creating questState
+        else if (questId.startsWith("q3_")) {
+            questState.setLocationFound(true);
+
+            // Skip to collection phase
+            questState.advanceToNextObjective();
+
+            // Set required items based on quest data
+            if (questData != null && questData.hasCollectObjectives(1)) {
+                Map<String, QuestData.CollectObjective> objectives = questData.getCollectObjectives(1);
+                if (!objectives.isEmpty()) {
+                    // Just take the first objective's count
+                    QuestData.CollectObjective objective = objectives.values().iterator().next();
+                    questState.setRequiredItems(objective.getCount());
+                }
+            }
+        }
         // Mark quest as occupied
         plugin.occupyQuest(questId, playerId);
 
@@ -492,8 +509,31 @@ public class QuestManager {
         state.advanceToNextStage();
         int newStage = state.getCurrentStage();
 
-        // Skip the find location objective for stages after the first one
-        if (newStage > 1 && state.getCurrentObjective() == QuestState.QuestObjective.FIND_LOCATION) {
+        // Special handling for Q3 quest transitions
+        boolean isQ3Quest = state.getQuestId().startsWith("q3_");
+
+        // For Q3, Stage 2 should start with COLLECT_FROM_MOBS objective
+        if (isQ3Quest && newStage == 2) {
+            // Pokazujemy tylko informację o zbieraniu fragmentu runy
+            player.sendMessage(ChatColor.AQUA + "§l» §r§b" + questData.getStageMessage(2));
+
+            Map<String, QuestData.CollectObjective> collectObjectives = questData.getCollectObjectives(newStage);
+            if (!collectObjectives.isEmpty()) {
+                QuestData.CollectObjective objective = collectObjectives.values().iterator().next();
+                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+            }
+            // This will set the correct objective in the advanceToNextStage method
+        }
+        // For Q3, Stage 3 should start with KILL_BOSS objective
+        else if (isQ3Quest && newStage == 3) {
+            state.setLocationFound(true);
+            // Ensure we're at KILL_BOSS
+            while (state.getCurrentObjective() != QuestState.QuestObjective.KILL_BOSS) {
+                state.advanceToNextObjective();
+            }
+        }
+        // Normal handling for non-Q3 quests or other stages
+        else if (newStage > 1 && state.getCurrentObjective() == QuestState.QuestObjective.FIND_LOCATION) {
             // For non-first stages, we skip directly to the KILL_MOBS or KILL_BOSS phase
             state.setLocationFound(true);
 
@@ -524,18 +564,42 @@ public class QuestManager {
 
         QuestState.QuestObjective currentObjective = state.getCurrentObjective();
 
+        // Display correct objectives based on the current objective type
         if (currentObjective == QuestState.QuestObjective.KILL_BOSS) {
+            // Boss objective
             QuestData.BossObjective bossObj = questData.getBossObjectiveDetails(newStage);
             if (bossObj != null) {
                 player.sendMessage(ChatColor.AQUA + "§l» §r§b" + bossObj.getObjectiveText());
             }
         } else if (currentObjective == QuestState.QuestObjective.KILL_MOBS) {
+            // Kill mobs objectives
             Map<String, QuestData.KillObjective> killObjectives = questData.getKillObjectiveDetails(newStage);
 
             if (!killObjectives.isEmpty()) {
                 for (QuestData.KillObjective objective : killObjectives.values()) {
                     player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
                 }
+            }
+        } else if (currentObjective == QuestState.QuestObjective.COLLECT_FROM_MOBS) {
+            // Collection objectives
+            Map<String, QuestData.CollectObjective> collectObjectives = questData.getCollectObjectives(newStage);
+
+            if (!collectObjectives.isEmpty()) {
+                // Display collection message from stage data
+                String stageMsg = questData.getStageMessage(newStage);
+                if (stageMsg != null && !stageMsg.isEmpty()) {
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + stageMsg);
+                }
+
+                // Get just one example - to avoid duplicates
+                QuestData.CollectObjective objective = collectObjectives.values().iterator().next();
+                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+            }
+        } else if (currentObjective == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
+            // Interaction objectives
+            QuestData.InteractObjective interactObj = questData.getInteractObjective(newStage);
+            if (interactObj != null) {
+                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + interactObj.getObjectiveText());
             }
         }
 
@@ -571,8 +635,18 @@ public class QuestManager {
                 player.sendMessage(ChatColor.AQUA + "  • §r§6" + state.getRequiredBrownMushrooms() + " Brown Mushrooms");
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bAnd brew an antidote using a cauldron");
                 player.sendMessage(ChatColor.RED + "§l» §r§cBeware of poison areas!");
-            } else {
-                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + questData.getLocationMessage());
+            }else if (state.getQuestId().startsWith("q3_")) {
+                if (questData != null) {
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + questData.getStageMessage(1));
+
+                    // Pokaż tylko jeden przykład celu kolekcji, żeby uniknąć duplikacji
+                    Map<String, QuestData.CollectObjective> objectives = questData.getCollectObjectives(1);
+                    if (!objectives.isEmpty()) {
+                        // Weź tylko pierwszy cel kolekcji
+                        QuestData.CollectObjective objective = objectives.values().iterator().next();
+                        player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
+                    }
+                }
             }
         }
 

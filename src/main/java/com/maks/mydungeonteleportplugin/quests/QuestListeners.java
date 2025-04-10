@@ -9,7 +9,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.entity.LivingEntity;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class QuestListeners implements Listener {
@@ -17,6 +20,8 @@ public class QuestListeners implements Listener {
     private final QuestManager questManager;
     private final QuestInteractionListener interactionListener;
     // Debug flag
+    private final Map<UUID, Long> lastWarningTime = new HashMap<>();
+
     private int debuggingFlag = 1; // Set to 0 when everything is working
 
     public QuestListeners(MyDungeonTeleportPlugin plugin, QuestManager questManager,
@@ -25,7 +30,82 @@ public class QuestListeners implements Listener {
         this.questManager = questManager;
         this.interactionListener = interactionListener;
     }
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) return;
+        if (!(event.getEntity() instanceof LivingEntity)) return;
 
+        Player player = (Player) event.getDamager();
+        UUID entityUUID = event.getEntity().getUniqueId();
+
+        // Pobierz aktywny quest gracza
+        QuestState state = questManager.getActiveQuest(player.getUniqueId());
+        if (state == null) return;
+
+        // Sprawdź tylko dla questów Q3
+        if (!state.getQuestId().startsWith("q3_")) return;
+
+        // Sprawdź czy jesteśmy w pierwszym etapie
+        if (state.getCurrentStage() == 1) {
+            QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
+            if (questData == null) return;
+
+            // Pobierz nazwę bossa z questu
+            String bossId = questData.getBossObjective(1);
+            if (bossId == null) return;
+
+            // Sprawdź, czy entity ma odpowiedni display name (uproszczone sprawdzenie)
+            LivingEntity target = (LivingEntity) event.getEntity();
+            String entityName = target.getCustomName();
+
+            // Sprawdź czy nazwa zawiera kluczowy fragment z ID bossa
+            // (to uproszczone podejście, możliwe do zmiany zależnie od struktury nazw MythicMobs)
+            if (entityName != null && matchesBossName(entityName, bossId) && state.isMiniBossInvulnerable()) {
+                // Anuluj obrażenia i pokaż wiadomość
+                event.setCancelled(true);
+
+                long now = System.currentTimeMillis();
+                if (!lastWarningTime.containsKey(player.getUniqueId()) ||
+                        now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
+
+                    player.sendMessage(ChatColor.RED + "§l» §r§cThe Evil Miller is protected by a spell! You need to collect and grind undead bones first!");
+                    lastWarningTime.put(player.getUniqueId(), now);
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to mini-boss cancelled - still protected");
+                    }
+                }
+            }
+        }
+    }
+
+    // Pomocnicza metoda do porównywania nazwy bossa
+    private boolean matchesBossName(String entityName, String bossId) {
+        // Przekształć ID bossa na bardziej czytelną formę (podobnie jak w formatMobName)
+        String bossName = formatBossNameFromId(bossId);
+        return entityName.contains(bossName);
+    }
+
+    private String formatBossNameFromId(String bossId) {
+        // Podobna logika do formatMobName, ale uproszczona
+        String[] parts = bossId.split("_");
+        StringBuilder name = new StringBuilder();
+
+        for (String part : parts) {
+            if (part.equals("inf") || part.equals("hell") || part.equals("blood")) {
+                continue;
+            }
+
+            if (name.length() > 0) {
+                name.append(" ");
+            }
+
+            name.append(Character.toUpperCase(part.charAt(0)));
+            name.append(part.substring(1));
+        }
+
+        return name.toString();
+    }
 
     /**
      * Handle player movement for location/portal objectives
@@ -88,6 +168,10 @@ public class QuestListeners implements Listener {
             killer.sendMessage(ChatColor.GRAY + "DEBUG: Mob killed: " + mobId);
         }
 
+        // Handle item collection for Q3 quest
+        interactionListener.handlePossibleItemDrop(killer, mobId);
+
+        // Handle regular mob kill objectives
         questManager.handleMobKill(killer, mobId);
     }
 
@@ -123,4 +207,5 @@ public class QuestListeners implements Listener {
             interactionListener.clearPlayerData(playerId);
         }
     }
+
 }

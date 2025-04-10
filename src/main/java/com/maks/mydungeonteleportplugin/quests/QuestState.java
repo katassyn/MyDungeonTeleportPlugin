@@ -13,7 +13,8 @@ public class QuestState {
         INTERACT_WITH_BLOCKS,
         KILL_MOBS,
         KILL_BOSS,
-        FIND_PORTAL
+        FIND_PORTAL,
+        COLLECT_FROM_MOBS
     }
 
     private final UUID playerId;
@@ -34,6 +35,12 @@ public class QuestState {
     private final Map<String, Boolean> collectedMushrooms = new HashMap<>(); // Śledzenie konkretnych grzybów po ID
     private int requiredRedMushrooms = 0;
     private int requiredBrownMushrooms = 0;
+    private int itemsCollected = 0;
+    private int requiredItems = 0;
+    private boolean hasInteractedWithGrindstone = false;
+    private boolean miniBossInvulnerable = true;
+    private int runeFragmentsCollected = 0;
+
     public QuestState(UUID playerId, String questId) {
         this.playerId = playerId;
         this.questId = questId;
@@ -64,11 +71,22 @@ public class QuestState {
     // Setters
     public void setTimeoutTaskId(int timeoutTaskId) { this.timeoutTaskId = timeoutTaskId; }
 
-    // Stage management
     public void advanceToNextStage() {
         currentStage++;
         resetObjectives();
-        currentObjective = QuestObjective.FIND_LOCATION;
+
+        // Dla q3, etap 2 powinien zaczynać się od zbierania fragmentów runy
+        if (questId.startsWith("q3_") && currentStage == 2) {
+            currentObjective = QuestObjective.COLLECT_FROM_MOBS;
+        }
+        // Dla q3, etap 3 powinien zaczynać się od razu od walki z bossem
+        else if (questId.startsWith("q3_") && currentStage == 3) {
+            currentObjective = QuestObjective.KILL_BOSS;
+            setLocationFound(true); // Pomijamy etap znajdowania lokacji
+        }
+        else {
+            currentObjective = QuestObjective.FIND_LOCATION;
+        }
     }
 
     public void advanceToNextObjective() {
@@ -76,12 +94,26 @@ public class QuestState {
             case FIND_LOCATION:
                 if (questId.startsWith("q2_")) {
                     currentObjective = QuestObjective.INTERACT_WITH_BLOCKS;
+                } else if (questId.startsWith("q3_")) {
+                    currentObjective = QuestObjective.COLLECT_FROM_MOBS;
                 } else {
                     currentObjective = QuestObjective.KILL_MOBS;
                 }
                 break;
+            case COLLECT_FROM_MOBS:
+                if (questId.startsWith("q3_") && getCurrentStage() == 1) {
+                    currentObjective = QuestObjective.INTERACT_WITH_BLOCKS;
+                } else if (questId.startsWith("q3_") && getCurrentStage() == 2) {
+                    currentObjective = QuestObjective.KILL_BOSS;
+                }
+                break;
             case INTERACT_WITH_BLOCKS:
-                currentObjective = QuestObjective.KILL_BOSS;
+                if (questId.startsWith("q3_")) {
+                    currentObjective = QuestObjective.KILL_BOSS;
+                    setMiniBossInvulnerable(false);
+                } else {
+                    currentObjective = QuestObjective.KILL_BOSS;
+                }
                 break;
             case KILL_MOBS:
                 currentObjective = QuestObjective.KILL_BOSS;
@@ -108,6 +140,11 @@ public class QuestState {
         collectedMushrooms.clear();
         hasBrewedPotion = false;
         hasPoisonImmunity = false;
+        itemsCollected = 0;
+        requiredItems = 0;
+        hasInteractedWithGrindstone = false;
+        miniBossInvulnerable = true;
+        runeFragmentsCollected = 0;
     }
 
     // Kill tracking
@@ -227,7 +264,50 @@ public class QuestState {
         }
         return hasBrewedPotion();
     }
+    // Getters and setters
+    public int getItemsCollected() {
+        return itemsCollected;
+    }
 
+    public void incrementItemsCollected() {
+        this.itemsCollected++;
+    }
+
+    public void setRequiredItems(int requiredItems) {
+        this.requiredItems = requiredItems;
+    }
+
+    public int getRequiredItems() {
+        return requiredItems;
+    }
+
+    public boolean hasCollectedAllItems() {
+        return itemsCollected >= requiredItems;
+    }
+
+    public boolean hasInteractedWithGrindstone() {
+        return hasInteractedWithGrindstone;
+    }
+
+    public void setInteractedWithGrindstone(boolean interacted) {
+        this.hasInteractedWithGrindstone = interacted;
+    }
+
+    public boolean isMiniBossInvulnerable() {
+        return miniBossInvulnerable;
+    }
+
+    public void setMiniBossInvulnerable(boolean invulnerable) {
+        this.miniBossInvulnerable = invulnerable;
+    }
+
+    public int getRuneFragmentsCollected() {
+        return runeFragmentsCollected;
+    }
+
+    public void incrementRuneFragmentsCollected() {
+        this.runeFragmentsCollected++;
+    }
     // Check if current objective is complete
     public boolean isCurrentObjectiveComplete(QuestData.DungeonQuest questData) {
         switch (currentObjective) {

@@ -1,5 +1,6 @@
 package com.maks.mydungeonteleportplugin;
 
+import com.maks.mydungeonteleportplugin.quests.QuestInteractionListener;
 import com.maks.mydungeonteleportplugin.quests.QuestListeners;
 import com.maks.mydungeonteleportplugin.quests.QuestManager;
 import org.bukkit.Material;
@@ -23,15 +24,18 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Initialize quest manager
         questManager = new QuestManager(this);
 
         // Register commands
         getCommand("whodoq").setExecutor(new ListOccupiedQuestsCommand(this));
 
-        // Register quest listener
-        QuestListeners questListeners = new QuestListeners(this, questManager);
+        // Utworzenie listenerów
+        QuestInteractionListener interactionListener = new QuestInteractionListener(this, questManager);
+        QuestListeners questListeners = new QuestListeners(this, questManager, interactionListener);
+
+        // Rejestracja listenerów
         getServer().getPluginManager().registerEvents(questListeners, this);
+        getServer().getPluginManager().registerEvents(interactionListener, this);
 
         // Register menu and portal listeners for each quest
         registerQuestHandlers();

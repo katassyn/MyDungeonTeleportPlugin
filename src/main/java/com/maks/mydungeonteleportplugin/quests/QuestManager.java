@@ -629,13 +629,16 @@ public class QuestManager {
         // Display first objective
         QuestState state = activeQuests.get(player.getUniqueId());
         if (state != null) {
-            if (state.getQuestId().startsWith("q2_")) {
+            if (state.getQuestId().startsWith("q1_")) {
+                // For Q1 quests, show the location objective
+                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + questData.getLocationMessage());
+            } else if (state.getQuestId().startsWith("q2_")) {
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bYou need to collect:");
                 player.sendMessage(ChatColor.AQUA + "  • §r§c" + state.getRequiredRedMushrooms() + " Red Mushrooms");
                 player.sendMessage(ChatColor.AQUA + "  • §r§6" + state.getRequiredBrownMushrooms() + " Brown Mushrooms");
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bAnd brew an antidote using a cauldron");
                 player.sendMessage(ChatColor.RED + "§l» §r§cBeware of poison areas!");
-            }else if (state.getQuestId().startsWith("q3_")) {
+            } else if (state.getQuestId().startsWith("q3_")) {
                 if (questData != null) {
                     player.sendMessage(ChatColor.AQUA + "§l» §r§b" + questData.getStageMessage(1));
 
@@ -654,8 +657,7 @@ public class QuestManager {
         player.sendMessage(ChatColor.AQUA + "  • §r§b" + questData.getExpReward() + "% Experience");
         player.sendMessage(ChatColor.LIGHT_PURPLE + "  • §r§d" + questData.getFormattedRewardName());
         player.sendMessage(ChatColor.GOLD + "§l✦ ═══════════════════════════ ✦");
-    }
-    /**
+    }    /**
      * Format mob ID into readable name
      */
     private String formatMobName(String mobId) {

@@ -1,39 +1,42 @@
 package com.maks.mydungeonteleportplugin;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.inventory.ItemStack;
+import com.maks.mydungeonteleportplugin.quests.QuestListeners;
+import com.maks.mydungeonteleportplugin.quests.QuestManager;
 import org.bukkit.Material;
-import java.io.File;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class MyDungeonTeleportPlugin extends JavaPlugin {
-    // Use a single map for quest occupation
+    // Quest occupation mapping
     private final HashMap<String, UUID> questOccupied = new HashMap<>();
+
+    // Selected map for each player
     private final HashMap<UUID, String> selectedMap = new HashMap<>();
-    private YamlConfiguration dungeonConfig;
+
+    // Quest manager
+    private QuestManager questManager;
 
     @Override
     public void onEnable() {
-        // Load configuration
-        saveResource("dungeon_config.yml", false);
-        loadConfig();
+        // Initialize quest manager
+        questManager = new QuestManager(this);
 
         // Register commands
         getCommand("whodoq").setExecutor(new ListOccupiedQuestsCommand(this));
 
-        // Register global listeners
-        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
+        // Register quest listener
+        QuestListeners questListeners = new QuestListeners(this, questManager);
+        getServer().getPluginManager().registerEvents(questListeners, this);
 
-        // Register quest-specific listeners and commands
+        // Register menu and portal listeners for each quest
         registerQuestHandlers();
 
-        getLogger().info("MyDungeonTeleportPlugin enabled!");
+        getLogger().info("MyDungeonTeleportPlugin enabled with new quest system!");
     }
 
     private void registerQuestHandlers() {
@@ -95,50 +98,27 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
         getLogger().info("MyDungeonTeleportPlugin disabled! All occupied quests have been cleared.");
     }
 
-    // Loading configuration
-    public void loadConfig() {
-        File configFile = new File(getDataFolder(), "dungeon_config.yml");
-        if (!configFile.exists()) {
-            saveResource("dungeon_config.yml", false);
-        }
-        dungeonConfig = YamlConfiguration.loadConfiguration(configFile);
-        getLogger().info("Dungeon configuration loaded.");
+    // Get the quest manager
+    public QuestManager getQuestManager() {
+        return questManager;
     }
 
-    // Get dungeon configuration
-    public YamlConfiguration getDungeonConfig() {
-        return dungeonConfig;
-    }
+    // Quest selection methods
 
-    // Command for reloading configuration
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("dung_tps")) {
-            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                loadConfig();
-                sender.sendMessage("Dungeon configuration reloaded!");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Set selected map for player
     public void setSelectedMap(Player player, String map) {
         selectedMap.put(player.getUniqueId(), map);
     }
 
-    // Get selected map for player
     public String getSelectedMap(Player player) {
         return selectedMap.get(player.getUniqueId());
     }
 
-    // Clear selected map
     public void clearSelectedMap(Player player) {
         selectedMap.remove(player.getUniqueId());
     }
 
-    // Remove IPS (wool) from player inventory
+    // IPS (wool) handling
+
     public void removeWool(Player player, int amountToRemove) {
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && item.getType() == Material.IRON_NUGGET) {
@@ -157,38 +137,33 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
         }
     }
 
-    // Check if quest is occupied
+    // Quest occupation methods
+
     public boolean isQuestOccupied(String questName) {
         return questOccupied.containsKey(questName);
     }
 
-    // Occupy a quest
     public void occupyQuest(String questName, UUID playerUUID) {
         questOccupied.put(questName, playerUUID);
     }
 
-    // Release a quest
     public void releaseQuest(String questName) {
         questOccupied.remove(questName);
     }
 
-    // Get quest occupant
     public UUID getQuestOccupant(String questName) {
         return questOccupied.get(questName);
     }
 
-    // Get all occupied quests
     public HashMap<String, UUID> getOccupiedQuests() {
         return questOccupied;
     }
 
-    // Release all quests for a player
     public void releaseQuestForPlayer(UUID playerId) {
         // Find all quests occupied by the player and remove them
         questOccupied.entrySet().removeIf(entry -> entry.getValue().equals(playerId));
     }
 
-    // Find which quest a player is occupying
     public String getPlayerQuest(UUID playerId) {
         for (Map.Entry<String, UUID> entry : questOccupied.entrySet()) {
             if (entry.getValue().equals(playerId)) {

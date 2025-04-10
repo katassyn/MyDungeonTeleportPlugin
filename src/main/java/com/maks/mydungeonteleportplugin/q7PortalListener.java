@@ -1,95 +1,145 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.maks.mydungeonteleportplugin;
 
+import com.maks.mydungeonteleportplugin.quests.QuestManager;
+import java.util.HashMap;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class q7PortalListener extends AbstractPortalListener {
+public class q7PortalListener implements Listener {
+    private final MyDungeonTeleportPlugin plugin;
+    private final HashMap<UUID, Long> lastMessageTime = new HashMap();
+    private final QuestManager questManager;
+    private int debuggingFlag = 1;
+    private final int x1 = -778;
+    private final int x2 = -778;
+    private final int y1 = -60;
+    private final int y2 = -48;
+    private final int z1 = -375;
+    private final int z2 = -364;
 
     public q7PortalListener(MyDungeonTeleportPlugin plugin) {
-        super(plugin, "q7", -778, -778, -60, -48, -375, -364);
+        this.plugin = plugin;
+        this.questManager = plugin.getQuestManager();
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
-
-        // Clean up last message time map periodically
-        if (Math.random() < 0.01) { // 1% chance each move event to clean up
-            cleanupLastMessageTimeMap();
+        if (Math.random() < 0.01) {
+            this.cleanupLastMessageTimeMap();
         }
 
-        // Check if player is in portal area
-        if (DungeonUtils.isInPortalArea(loc, x1, x2, y1, y2, z1, z2)) {
-            String selectedMap = plugin.getSelectedMap(player);
-            long currentTime = System.currentTimeMillis();
+        String selectedMap = this.plugin.getSelectedMap(player);
+        if (DungeonUtils.isInPortalArea(loc, -778, -778, -60, -48, -375, -364)) {
+            if (this.debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Player in q7 portal area. Selected map: " + selectedMap);
+            }
 
-            // Check if player has selected a map
+            long currentTime = System.currentTimeMillis();
             if (selectedMap == null) {
-                if (lastMessageTime.containsKey(player.getUniqueId())) {
-                    long lastTime = lastMessageTime.get(player.getUniqueId());
-                    if (currentTime - lastTime < 5000) {
-                        return; // Don't spam messages, wait 5 seconds
+                if (this.lastMessageTime.containsKey(player.getUniqueId())) {
+                    long lastTime = (Long)this.lastMessageTime.get(player.getUniqueId());
+                    if (currentTime - lastTime < 5000L) {
+                        return;
                     }
                 }
 
-                lastMessageTime.put(player.getUniqueId(), currentTime);
+                this.lastMessageTime.put(player.getUniqueId(), currentTime);
                 player.sendMessage(ChatColor.RED + "You need to select a location before entering the portal!");
                 return;
             }
 
-            // Check if quest is already occupied
-            if (plugin.isQuestOccupied(selectedMap)) {
-                if (lastMessageTime.containsKey(player.getUniqueId())) {
-                    long lastTime = lastMessageTime.get(player.getUniqueId());
-                    if (currentTime - lastTime < 5000) {
-                        return; // Don't spam messages, wait 5 seconds
+            if (this.plugin.isQuestOccupied(selectedMap)) {
+                if (this.lastMessageTime.containsKey(player.getUniqueId())) {
+                    long lastTime = (Long)this.lastMessageTime.get(player.getUniqueId());
+                    if (currentTime - lastTime < 5000L) {
+                        return;
                     }
                 }
 
-                lastMessageTime.put(player.getUniqueId(), currentTime);
+                this.lastMessageTime.put(player.getUniqueId(), currentTime);
                 player.sendMessage(ChatColor.RED + "This quest is already occupied by another player!");
                 return;
             }
 
-            // Check level requirements and teleport accordingly
             int playerLevel = player.getLevel();
             int requiredIPS = 0;
-            int taskId;
-
+            boolean questStarted = false;
             if (selectedMap.equals("q7_m1_inf") && playerLevel >= 50) {
                 requiredIPS = 10;
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "warp q7_m1_inf " + player.getName());
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "mm s resettimers g:q7_inf");
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "quests start " + player.getName() + " 111 -overrideRequirements");
-                taskId = scheduleTimeoutTask(player);
-                player.sendTitle(ChatColor.GOLD + "Q7 Quest Started", ChatColor.YELLOW + "You have 30 minutes to clear it. Good luck!", 10, 70, 20);
+                questStarted = this.questManager.startQuest(player, "q7_inf");
+                if (!questStarted) {
+                    return;
+                }
+
+                this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "warp q7_m1_inf " + player.getName());
+                this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "mm s resettimers g:q7_inf");
+                if (this.debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q7 Infernal quest");
+                }
             } else if (selectedMap.equals("q7_m1_hell") && playerLevel >= 65) {
                 requiredIPS = 25;
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "warp q7_m1_hell " + player.getName());
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "mm s resettimers g:q7_hell");
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "quests start " + player.getName() + " 112 -overrideRequirements");
-                taskId = scheduleTimeoutTask(player);
-                player.sendTitle(ChatColor.GOLD + "Q7 Quest Started", ChatColor.YELLOW + "You have 30 minutes to clear it. Good luck!", 10, 70, 20);
-            } else if (selectedMap.equals("q7_m1_blood") && playerLevel >= 80) {
-                requiredIPS = 50;
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "warp q7_m1_blood " + player.getName());
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "mm s resettimers g:q7_blood");
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "quests start " + player.getName() + " 113 -overrideRequirements");
-                taskId = scheduleTimeoutTask(player);
-                player.sendTitle(ChatColor.GOLD + "Q7 Quest Started", ChatColor.YELLOW + "You have 30 minutes to clear it. Good luck!", 10, 70, 20);
+                questStarted = this.questManager.startQuest(player, "q7_hell");
+                if (!questStarted) {
+                    return;
+                }
+
+                this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "warp q7_m1_hell " + player.getName());
+                this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "mm s resettimers g:q7_hell");
+                if (this.debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q7 Hell quest");
+                }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have the required level for this location!");
-                return;
+                if (!selectedMap.equals("q7_m1_blood") || playerLevel < 80) {
+                    player.sendMessage(ChatColor.RED + "You do not have the required level for this location!");
+                    return;
+                }
+
+                requiredIPS = 50;
+                questStarted = this.questManager.startQuest(player, "q7_blood");
+                if (!questStarted) {
+                    return;
+                }
+
+                this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "warp q7_m1_blood " + player.getName());
+                this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "mm s resettimers g:q7_blood");
+                if (this.debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q7 Bloodshed quest");
+                }
             }
 
-            // Store task ID, occupy quest, and remove required IPS
-            playerTimeoutTasks.put(player.getUniqueId(), taskId);
-            plugin.occupyQuest(selectedMap, player.getUniqueId());
-            plugin.removeWool(player, requiredIPS);
+            this.plugin.removeWool(player, requiredIPS);
         }
+
+    }
+
+    protected void cleanupLastMessageTimeMap() {
+        long currentTime = System.currentTimeMillis();
+        this.lastMessageTime.entrySet().removeIf((entry) -> currentTime - (Long)entry.getValue() > 300000L);
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        this.questManager.cancelQuest(player.getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        this.questManager.cancelQuest(player.getUniqueId());
     }
 }

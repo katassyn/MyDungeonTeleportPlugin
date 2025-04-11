@@ -83,6 +83,11 @@ public class QuestManager {
                 }
             }
         }
+        else if (questId.startsWith("q4_")) {
+            questState.setLocationFound(true);
+            // Skip to kill mobs phase
+            questState.advanceToNextObjective();
+        }
         // Mark quest as occupied
         plugin.occupyQuest(questId, playerId);
 
@@ -648,6 +653,19 @@ public class QuestManager {
                         // Weź tylko pierwszy cel kolekcji
                         QuestData.CollectObjective objective = objectives.values().iterator().next();
                         player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
+                    }
+                }
+            } else if (state.getQuestId().startsWith("q4_")) {
+                // Display only kill objectives for Q4 (no boss objective yet)
+                if (questData != null) {
+                    Map<String, QuestData.KillObjective> killObjectives = questData.getKillObjectiveDetails(1);
+
+                    if (!killObjectives.isEmpty()) {
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§bYou need to defeat:");
+
+                        for (QuestData.KillObjective objective : killObjectives.values()) {
+                            player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
+                        }
                     }
                 }
             }

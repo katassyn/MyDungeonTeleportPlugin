@@ -13,6 +13,7 @@ public class QuestData {
         initializeQ1();
         initializeQ2();
         initializeQ3();
+        initializeQ4();
     }
 
     private static void initializeQ1() {
@@ -245,7 +246,73 @@ public class QuestData {
 
         questData.put("q3_blood", q3Blood);
     }
-    public static DungeonQuest getQuestData(String questId) {
+    private static void initializeQ4() {
+        // Q4 Infernal
+        DungeonQuest q4Inf = new DungeonQuest("q4_inf", "Q4 Infernal", 50, 0.5, "Qinf", 10);
+
+        // Stage 1 - Start directly with kill objectives
+        q4Inf.addKillObjective(1, "sanguine_clan_raging_snooper_inf", 5, "Sanguine Clan Snooper");
+        q4Inf.addKillObjective(1, "sanguine_clan_raging_hunter_inf", 5, "Sanguine Clan Hunter");
+        q4Inf.setBossObjective(1, "parallel_world_ancient_stag_inf", "Mini-Boss: Ancient Stag");
+        q4Inf.addPortalObjective(1, "world", -3143, -61, -732, -3142, -59, -722);
+        q4Inf.setStageEndCommand(1, "warp q4_m2_inf");
+
+        // Stage 2
+        q4Inf.addKillObjective(2, "eternal_root_creature_inf", 5, "Eternal Root Creature");
+        q4Inf.addKillObjective(2, "eternal_hunter_inf", 5, "Eternal Hunter");
+        q4Inf.setBossObjective(2, "ulgar_the_master_butcher_phase3_inf", "Mini-Boss: Ulgar the Master Butcher");
+        q4Inf.addPortalObjective(2, "world", -3426, -61, -819, -3427, -59, -820);
+        q4Inf.setStageEndCommand(2, "warp q4_m3_inf");
+
+        // Stage 3
+        q4Inf.setBossObjective(3, "bearach_champion_of_wilds_inf", "Final Boss: Bearach, Champion of Wilds");
+
+        questData.put("q4_inf", q4Inf);
+
+        // Q4 Hell
+        DungeonQuest q4Hell = new DungeonQuest("q4_hell", "Q4 Hell", 65, 1.0, "QHell", 25);
+
+        // Stage 1 - Start directly with kill objectives
+        q4Hell.addKillObjective(1, "sanguine_clan_raging_snooper_hell", 5, "Sanguine Clan Snooper");
+        q4Hell.addKillObjective(1, "sanguine_clan_raging_hunter_hell", 5, "Sanguine Clan Hunter");
+        q4Hell.setBossObjective(1, "parallel_world_ancient_stag_hell", "Mini-Boss: Ancient Stag");
+        q4Hell.addPortalObjective(1, "world", -2721, -61, -730, -2720, -59, -729);
+        q4Hell.setStageEndCommand(1, "warp q4_m2_hell");
+
+        // Stage 2
+        q4Hell.addKillObjective(2, "eternal_root_creature_hell", 5, "Eternal Root Creature");
+        q4Hell.addKillObjective(2, "eternal_hunter_hell", 5, "Eternal Hunter");
+        q4Hell.setBossObjective(2, "ulgar_the_master_butcher_phase3_hell", "Mini-Boss: Ulgar the Master Butcher");
+        q4Hell.addPortalObjective(2, "world", -3004, -61, -826, -3005, -59, -827);
+        q4Hell.setStageEndCommand(2, "warp q4_m3_hell");
+
+        // Stage 3
+        q4Hell.setBossObjective(3, "bearach_champion_of_wilds_hell", "Final Boss: Bearach, Champion of Wilds");
+
+        questData.put("q4_hell", q4Hell);
+
+        // Q4 Blood
+        DungeonQuest q4Blood = new DungeonQuest("q4_blood", "Q4 Bloodshed", 80, 1.5, "QBlood", 50);
+
+        // Stage 1 - Start directly with kill objectives
+        q4Blood.addKillObjective(1, "sanguine_clan_raging_snooper_blood", 5, "Sanguine Clan Snooper");
+        q4Blood.addKillObjective(1, "sanguine_clan_raging_hunter_blood", 5, "Sanguine Clan Hunter");
+        q4Blood.setBossObjective(1, "parallel_world_ancient_stag_blood", "Mini-Boss: Ancient Stag");
+        q4Blood.addPortalObjective(1, "world", -2324, -61, -731, -2323, -59, -730);
+        q4Blood.setStageEndCommand(1, "warp q4_m2_blood");
+
+        // Stage 2
+        q4Blood.addKillObjective(2, "eternal_root_creature_blood", 5, "Eternal Root Creature");
+        q4Blood.addKillObjective(2, "eternal_hunter_blood", 5, "Eternal Hunter");
+        q4Blood.setBossObjective(2, "ulgar_the_master_butcher_phase3_blood", "Mini-Boss: Ulgar the Master Butcher");
+        q4Blood.addPortalObjective(2, "world", -2607, -61, -827, -2608, -59, -828);
+        q4Blood.setStageEndCommand(2, "warp q4_m3_blood");
+
+        // Stage 3
+        q4Blood.setBossObjective(3, "bearach_champion_of_wilds_blood", "Final Boss: Bearach, Champion of Wilds");
+
+        questData.put("q4_blood", q4Blood);
+    }    public static DungeonQuest getQuestData(String questId) {
         return questData.get(questId);
     }
 

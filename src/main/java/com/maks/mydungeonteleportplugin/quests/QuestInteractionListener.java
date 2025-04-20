@@ -327,10 +327,10 @@ public class QuestInteractionListener implements Listener {
         QuestState state = questManager.getActiveQuest(player.getUniqueId());
         if (state == null) return;
 
-        // Tylko dla Q3 questów
-        if (!state.getQuestId().startsWith("q3_")) return;
+        // Only for Q3 and Q6 quests
+        if (!state.getQuestId().startsWith("q3_") && !state.getQuestId().startsWith("q6_")) return;
 
-        // Upewnij się, że jesteśmy w fazie zbierania przedmiotów
+        // Ensure we're in collection phase
         if (state.getCurrentObjective() != QuestState.QuestObjective.COLLECT_FROM_MOBS) return;
 
         QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
@@ -346,12 +346,12 @@ public class QuestInteractionListener implements Listener {
                     " in stage " + state.getCurrentStage());
         }
 
-        // ETAP 1: Zbieranie kości nieumarlych
-        if (state.getCurrentStage() == 1) {
-            // Nie robi nic jeśli już zbrano wszystkie
+        // Q3 quest - Stage 1: Collect undead bones
+        if (state.getQuestId().startsWith("q3_") && state.getCurrentStage() == 1) {
+            // Don't do anything if already collected all
             if (state.hasCollectedAllItems()) return;
 
-            int dropChance = objective.getDropChance(); // 75% dla kości
+            int dropChance = objective.getDropChance(); // 75% for bones
             int roll = ThreadLocalRandom.current().nextInt(100);
 
             if (roll < dropChance) {
@@ -365,7 +365,7 @@ public class QuestInteractionListener implements Listener {
                 String progressBar = createProgressBar(collected, required);
                 player.sendMessage(ChatColor.YELLOW + "Progress: " + progressBar);
 
-                // Jeśli zebraliśmy wszystkie kości
+                // If collected all bones
                 if (collected >= required) {
                     player.sendTitle(
                             ChatColor.GREEN + "All " + objective.getDisplayName() + " Collected!",
@@ -379,27 +379,27 @@ public class QuestInteractionListener implements Listener {
                     player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow find a grindstone to grind them.");
                     player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
 
-                    state.advanceToNextObjective(); // Przejście do INTERACT_WITH_BLOCKS
+                    state.advanceToNextObjective(); // Move to INTERACT_WITH_BLOCKS
                 }
             }
         }
-        // ETAP 2: Zbieranie fragmentu runy
-        else if (state.getCurrentStage() == 2) {
-            // Tylko dla moby slain_assassin
+        // Q3 quest - Stage 2: Collect emerald rune fragment
+        else if (state.getQuestId().startsWith("q3_") && state.getCurrentStage() == 2) {
+            // Only for slain_assassin mobs
             if (!mobId.contains("slain_assassin")) return;
 
-            if (state.getRuneFragmentsCollected() >= 1) return; // Już mamy fragment
+            if (state.getRuneFragmentsCollected() >= 1) return; // Already have the fragment
 
-            // Pobierz liczbę zabitych mobów tego typu
+            // Get kill count for this mob type
             int killCount = state.getKillCount(mobId);
 
-            // Progresywna szansa na drop
+            // Progressive drop chance
             int dropChance;
-            if (killCount == 0) dropChance = 30;      // Pierwszy mob: 30%
-            else if (killCount == 1) dropChance = 60; // Drugi mob: 60%
-            else dropChance = 100;                    // Trzeci mob: 100%
+            if (killCount == 0) dropChance = 30;      // First mob: 30%
+            else if (killCount == 1) dropChance = 60; // Second mob: 60%
+            else dropChance = 100;                    // Third mob: 100%
 
-            // Zawsze zwiększaj licznik zabić
+            // Always increment kill counter
             int newKillCount = state.incrementKillCount(mobId);
 
             if (debuggingFlag == 1) {
@@ -407,10 +407,10 @@ public class QuestInteractionListener implements Listener {
                         ", drop chance: " + dropChance + "%");
             }
 
-            // Sprawdź, czy wypada fragment runy
+            // Check for rune fragment drop
             int roll = ThreadLocalRandom.current().nextInt(100);
             if (roll < dropChance) {
-                // Fragment znaleziony!
+                // Fragment found!
                 state.incrementRuneFragmentsCollected();
 
                 player.sendTitle(
@@ -424,8 +424,8 @@ public class QuestInteractionListener implements Listener {
                 player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow defeat The Bloody Arrow to get the second fragment.");
                 player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
 
-                // Przejście do etapu walki z mini-bossem
-                state.advanceToNextObjective(); // Przejście do KILL_BOSS
+                // Move to boss phase
+                state.advanceToNextObjective();
 
                 if (debuggingFlag == 1) {
                     player.sendMessage(ChatColor.GRAY + "DEBUG: Rune fragment found! Advancing to KILL_BOSS objective");
@@ -437,8 +437,114 @@ public class QuestInteractionListener implements Listener {
                 }
             }
         }
-    }
-    private String createProgressBar(int current, int max) {
+        // Q6 quest - Stage 2: Collect dagger parts
+        else if (state.getQuestId().startsWith("q6_") && state.getCurrentStage() == 2) {
+            String partType = "";
+
+            if (mobId.contains("elite_skeleton_archer")) {
+                partType = "dagger_part_1";
+            } else if (mobId.contains("elite_skeleton_warrior")) {
+                partType = "dagger_part_2";
+            } else if (mobId.contains("death_archer")) {
+                partType = "dagger_part_3";
+            } else {
+                return; // Not a relevant mob
+            }
+
+            // Skip if already have this part
+            if (state.hasDaggerPart(partType)) {
+                return;
+            }
+
+            // Get kill count for this mob type
+            int killCount = state.incrementKillCount(mobId);
+
+            // Determine drop chance based on mob type
+            int dropChance = objective.getDropChance(); // Default 30%
+
+            // For death_archer, use progressive drop rate
+            if (partType.equals("dagger_part_3") && objective.isProgressive()) {
+                if (killCount == 1) dropChance = 30;      // First kill: 30%
+                else if (killCount == 2) dropChance = 60; // Second kill: 60%
+                else dropChance = 100;                    // Third kill: 100%
+            }
+            // For other parts, guarantee after X kills
+            else if (objective.getGuaranteedAfterKills() > 0 && killCount >= objective.getGuaranteedAfterKills()) {
+                dropChance = 100; // Guaranteed drop
+            }
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Kill count for " + mobId + ": " + killCount +
+                        ", drop chance: " + dropChance + "%");
+            }
+
+            // Check for dagger part drop
+            int roll = ThreadLocalRandom.current().nextInt(100);
+            if (roll < dropChance) {
+                // Dagger part found!
+                state.collectDaggerPart(partType);
+
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've found the " + objective.getDisplayName() + "!");
+
+                // Check if all parts are collected
+// When all dagger parts are collected
+// Check if all parts are collected
+// When all dagger parts are collected
+                if (state.hasCollectedAllDaggerParts()) {
+                    player.sendTitle(
+                            ChatColor.GREEN + "All Dagger Parts Found!",
+                            ChatColor.YELLOW + "Now find and defeat Murot High Priest",
+                            10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected all parts of the Sacrificial Dagger!");
+
+                    // Get boss objective details
+                    QuestData.BossObjective bossObj = questData.getBossObjectiveDetails(state.getCurrentStage());
+                    if (bossObj != null) {
+                        player.sendMessage(ChatColor.LIGHT_PURPLE + "§l» §r§d" + bossObj.getObjectiveText());
+                    }
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    // Advance to boss phase
+                    state.advanceToNextObjective();
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: All dagger parts collected, advancing to KILL_BOSS objective");
+                    }
+
+                    // Check if boss is already killed (can happen if parts are collected after killing boss)
+                    if (mobId.contains("murot_high_priest")) {
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Boss already killed, forcing portal phase");
+                        }
+                        state.setBossKilled(true);
+                        state.advanceToNextObjective(); // Move to FIND_PORTAL
+                        questManager.handleStageComplete(player);
+                    }
+
+                    // Return early to avoid duplicate messages
+                    return;
+                } else {
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eContinue searching for the remaining dagger parts.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                }
+
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Dagger part found: " + partType);
+                }
+            } else {
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Dagger part didn't drop (roll: " + roll +
+                            " vs chance: " + dropChance + "%)");
+                }
+            }
+        }
+    }    private String createProgressBar(int current, int max) {
         StringBuilder bar = new StringBuilder();
         int totalBars = 20;
         int filledBars = Math.min(totalBars, (int)Math.ceil((double)current / max * totalBars));

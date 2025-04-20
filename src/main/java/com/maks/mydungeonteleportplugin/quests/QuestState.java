@@ -40,6 +40,8 @@ public class QuestState {
     private boolean hasInteractedWithGrindstone = false;
     private boolean miniBossInvulnerable = true;
     private int runeFragmentsCollected = 0;
+    private final Map<String, Boolean> daggerPartsCollected = new HashMap<>();
+    private final Map<String, Integer> guaranteedKillsCount = new HashMap<>();
 
     public QuestState(UUID playerId, String questId) {
         this.playerId = playerId;
@@ -67,7 +69,21 @@ public class QuestState {
     public boolean isWaitingForTeleport() { return waitingForTeleport; }
     public long getTeleportStartTime() { return teleportStartTime; }
     public int getTimeoutTaskId() { return timeoutTaskId; }
+    public boolean hasDaggerPart(String partType) {
+        return daggerPartsCollected.getOrDefault(partType, false);
+    }
 
+    public void collectDaggerPart(String partType) {
+        daggerPartsCollected.put(partType, true);
+    }
+
+    public boolean hasCollectedAllDaggerParts() {
+        return daggerPartsCollected.size() >= 3;
+    }
+
+    public void clearDaggerParts() {
+        daggerPartsCollected.clear();
+    }
     // Setters
     public void setTimeoutTaskId(int timeoutTaskId) { this.timeoutTaskId = timeoutTaskId; }
 
@@ -145,6 +161,8 @@ public class QuestState {
         hasInteractedWithGrindstone = false;
         miniBossInvulnerable = true;
         runeFragmentsCollected = 0;
+        daggerPartsCollected.clear();
+        guaranteedKillsCount.clear();
     }
 
     // Kill tracking
@@ -307,6 +325,9 @@ public class QuestState {
 
     public void incrementRuneFragmentsCollected() {
         this.runeFragmentsCollected++;
+    }
+    public void setCurrentObjective(QuestObjective objective) {
+        this.currentObjective = objective;
     }
     // Check if current objective is complete
     public boolean isCurrentObjectiveComplete(QuestData.DungeonQuest questData) {

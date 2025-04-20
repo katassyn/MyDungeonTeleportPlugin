@@ -82,8 +82,19 @@ public class QuestManager {
                     questState.setRequiredItems(objective.getCount());
                 }
             }
-        }
-        else if (questId.startsWith("q4_")) {
+        } else if (questId.startsWith("q4_")) {
+            questState.setLocationFound(true);
+            // Skip to kill mobs phase
+            questState.advanceToNextObjective();
+        }else if (questId.startsWith("q5_")) {
+            questState.setLocationFound(true);
+            // Skip to kill mobs phase
+            questState.advanceToNextObjective();
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q5 quest, skipping to kill phase");
+            }
+        }else if (questId.startsWith("q6_")) {
             questState.setLocationFound(true);
             // Skip to kill mobs phase
             questState.advanceToNextObjective();
@@ -353,9 +364,26 @@ public class QuestManager {
 
         if (mobId.equals(bossId)) {
             // Check if we're in the kill boss phase
-            if (state.getCurrentObjective() != QuestState.QuestObjective.KILL_BOSS) {
+            if (state.getCurrentObjective() != QuestState.QuestObjective.KILL_BOSS &&
+                    !(state.getQuestId().startsWith("q6_") && state.getCurrentStage() == 2 &&
+                            mobId.contains("murot_high_priest"))) {
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Boss killed but not in boss phase. Current objective: " + state.getCurrentObjective());
+                }
                 return; // Not in boss phase yet
             }
+
+            // Special case for Q6 stage 2 - force objective update if needed
+            if (state.getQuestId().startsWith("q6_") && state.getCurrentStage() == 2 &&
+                    state.getCurrentObjective() == QuestState.QuestObjective.COLLECT_FROM_MOBS) {
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Q6 stage 2 boss killed while in collect phase, forcing objective update");
+                }
+                state.setCurrentObjective(QuestState.QuestObjective.KILL_BOSS);
+            }
+
 
             // Skip if already killed
             if (state.isBossKilled()) {
@@ -536,6 +564,22 @@ public class QuestManager {
             while (state.getCurrentObjective() != QuestState.QuestObjective.KILL_BOSS) {
                 state.advanceToNextObjective();
             }
+        }// For Q6, Stage 2 should start with COLLECT_FROM_MOBS objective
+        else if (state.getQuestId().startsWith("q6_") && newStage == 2) {
+            // Ensure we're at the correct objective
+            state.setCurrentObjective(QuestState.QuestObjective.COLLECT_FROM_MOBS);
+
+            player.sendMessage(ChatColor.AQUA + "§l» §r§b" + questData.getStageMessage(2));
+
+            Map<String, QuestData.CollectObjective> collectObjectives = questData.getCollectObjectives(newStage);
+            if (!collectObjectives.isEmpty()) {
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bYou need to collect:");
+
+                // Show collection objectives
+                for (QuestData.CollectObjective objective : collectObjectives.values()) {
+                    player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
+                }
+            }
         }
         // Normal handling for non-Q3 quests or other stages
         else if (newStage > 1 && state.getCurrentObjective() == QuestState.QuestObjective.FIND_LOCATION) {
@@ -596,9 +640,23 @@ public class QuestManager {
                     player.sendMessage(ChatColor.AQUA + "§l» §r§b" + stageMsg);
                 }
 
-                // Get just one example - to avoid duplicates
-                QuestData.CollectObjective objective = collectObjectives.values().iterator().next();
-                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+                // Special handling for Q6 Stage 2 to show all dagger parts
+                if (state.getQuestId().startsWith("q6_") && newStage == 2) {
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect all three parts of the Sacrificial Dagger:");
+                    for (Map.Entry<String, QuestData.CollectObjective> entry : collectObjectives.entrySet()) {
+                        QuestData.CollectObjective objective = entry.getValue();
+                        player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getDisplayName() +
+                                " (Drop chance: " + objective.getDropChance() + "%)");
+                    }
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: Showing all dagger parts in objectives list");
+                    }
+                } else {
+                    // Original behavior for other quests
+                    QuestData.CollectObjective objective = collectObjectives.values().iterator().next();
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+                }
             }
         } else if (currentObjective == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
             // Interaction objectives
@@ -615,7 +673,6 @@ public class QuestManager {
                     " with objective: " + currentObjective);
         }
     }
-
     /**
      * Show quest start message with improved formatting
      */
@@ -655,8 +712,21 @@ public class QuestManager {
                         player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
                     }
                 }
-            } else if (state.getQuestId().startsWith("q4_")) {
-                // Display only kill objectives for Q4 (no boss objective yet)
+            } else if (state.getQuestId().startsWith("q4_") || state.getQuestId().startsWith("q5_")) {
+                // Display only kill objectives for Q4 and Q5 (no boss objective yet)
+                if (questData != null) {
+                    Map<String, QuestData.KillObjective> killObjectives = questData.getKillObjectiveDetails(1);
+
+                    if (!killObjectives.isEmpty()) {
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§bYou need to defeat:");
+
+                        for (QuestData.KillObjective objective : killObjectives.values()) {
+                            player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
+                        }
+                    }
+                }
+            }else if (state.getQuestId().startsWith("q6_")) {
+                // Display kill objectives for Q6
                 if (questData != null) {
                     Map<String, QuestData.KillObjective> killObjectives = questData.getKillObjectiveDetails(1);
 

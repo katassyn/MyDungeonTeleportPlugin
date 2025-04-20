@@ -1,6 +1,7 @@
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q1GUIMenuCommand.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q2GUIMenuCommand.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q9PortalListener.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\AbstractPortalListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListenerQ8.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q4GUIMenuCommand.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListenerQ5.java
@@ -14,13 +15,18 @@ C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydun
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListenerQ2.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q10PortalListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\PlayerDeathListener.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\quests\QuestInteractionListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListenerQ4.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q10GUIMenuCommand.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListenerQ1.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\quests\QuestManager.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q1PortalListener.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\DungeonUtils.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q8GUIMenuCommand.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\MyDungeonTeleportPlugin.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q9GUIMenuCommand.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\quests\QuestData.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\quests\QuestListeners.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q4PortalListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q7GUIMenuCommand.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q3PortalListener.java
@@ -29,5 +35,6 @@ C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydun
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q8PortalListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q6PortalListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListOccupiedQuestsCommand.java
+C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\quests\QuestState.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\q7PortalListener.java
 C:\Users\makss\IdeaProjects\MyDungeonTeleportPlugin\src\main\java\com\maks\mydungeonteleportplugin\ListenerQ7.java

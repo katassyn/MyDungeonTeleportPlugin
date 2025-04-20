@@ -166,9 +166,37 @@ public class QuestListeners implements Listener {
 
         if (debuggingFlag == 1) {
             killer.sendMessage(ChatColor.GRAY + "DEBUG: Mob killed: " + mobId);
+
+            // Special debug for Q6 mini-boss
+            if (mobId.contains("murot_high_priest")) {
+                killer.sendMessage(ChatColor.GRAY + "DEBUG: Q6 mini-boss killed: " + mobId);
+
+                // Get quest state and check if we're in the right phase
+                QuestState state = questManager.getActiveQuest(killer.getUniqueId());
+                if (state != null && state.getQuestId().startsWith("q6_") && state.getCurrentStage() == 2) {
+                    killer.sendMessage(ChatColor.GRAY + "DEBUG: Current objective: " + state.getCurrentObjective());
+
+                    // Force transition to portal phase if needed
+                    if (state.getCurrentObjective() == QuestState.QuestObjective.KILL_BOSS) {
+                        state.setBossKilled(true);
+                        state.advanceToNextObjective();
+                        killer.sendMessage(ChatColor.GRAY + "DEBUG: Forced transition to: " + state.getCurrentObjective());
+
+                        // Show portal instructions
+                        QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
+                        if (questData != null) {
+                            QuestData.LocationInfo portalInfo = questData.getPortalObjective(2);
+                            if (portalInfo != null) {
+                                killer.sendMessage(ChatColor.GRAY + "DEBUG: Portal location: " +
+                                        portalInfo.getX1() + "," + portalInfo.getY1() + "," + portalInfo.getZ1());
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        // Handle item collection for Q3 quest
+        // Handle item collection for Q3/Q6 quest
         interactionListener.handlePossibleItemDrop(killer, mobId);
 
         // Handle regular mob kill objectives

@@ -14,6 +14,8 @@ public class QuestData {
         initializeQ2();
         initializeQ3();
         initializeQ4();
+        initializeQ5();
+        initializeQ6();
     }
 
     private static void initializeQ1() {
@@ -312,7 +314,151 @@ public class QuestData {
         q4Blood.setBossObjective(3, "bearach_champion_of_wilds_blood", "Final Boss: Bearach, Champion of Wilds");
 
         questData.put("q4_blood", q4Blood);
-    }    public static DungeonQuest getQuestData(String questId) {
+    }
+    private static void initializeQ5() {
+        // Q5 Infernal
+        DungeonQuest q5Inf = new DungeonQuest("q5_inf", "Q5 Infernal", 50, 0.5, "Qinf", 10);
+        q5Inf.setLocationMessage("Find the cursed area and investigate");
+
+        // Stage 1
+        q5Inf.addLocationObjective(1, "world", -3490, -61, -100, -3480, -58, -90); // Approximate starting area
+        q5Inf.addKillObjective(1, "furious_andermagic_inf", 1, "Furious Andermagic");
+        q5Inf.setBossObjective(1, "parallel_world_old_jabbax_shaman_inf", "Mini-Boss: Old Jabbax Shaman");
+        q5Inf.addPortalObjective(1, "world", -3491, -61, -73, -3492, -59, -72);
+        q5Inf.setStageEndCommand(1, "warp q5_m2_inf");
+
+        // Stage 2
+        q5Inf.setBossObjective(2, "wandering_experiment_inf", "Mini-Boss: Wandering Experiment");
+        q5Inf.addPortalObjective(2, "world", -3511, -61, 208, -3512, -59, 209);
+        q5Inf.setStageEndCommand(2, "warp q5_m3_inf");
+
+        // Stage 3
+        q5Inf.setBossObjective(3, "khalys_leader_of_cultists_inf", "Final Boss: Khalys, Leader of Cultists");
+
+        questData.put("q5_inf", q5Inf);
+
+        // Q5 Hell
+        DungeonQuest q5Hell = new DungeonQuest("q5_hell", "Q5 Hell", 65, 1.0, "QHell", 25);
+        q5Hell.setLocationMessage("Find the cursed area and investigate");
+
+        // Stage 1
+        q5Hell.addLocationObjective(1, "world", -3485, -61, 850, -3475, -58, 860); // Approximate starting area
+        q5Hell.addKillObjective(1, "furious_andermagic_hell", 1, "Furious Andermagic");
+        q5Hell.setBossObjective(1, "parallel_world_old_jabbax_shaman_hell", "Mini-Boss: Old Jabbax Shaman");
+        q5Hell.addPortalObjective(1, "world", -3487, -61, 874, -3488, -59, 875);
+        q5Hell.setStageEndCommand(1, "warp q5_m2_hell");
+
+        // Stage 2
+        q5Hell.setBossObjective(2, "wandering_experiment_hell", "Mini-Boss: Wandering Experiment");
+        q5Hell.addPortalObjective(2, "world", -3507, -61, 1155, -3508, -59, 1156);
+        q5Hell.setStageEndCommand(2, "warp q5_m3_hell");
+
+        // Stage 3
+        q5Hell.setBossObjective(3, "khalys_leader_of_cultists_hell", "Final Boss: Khalys, Leader of Cultists");
+
+        questData.put("q5_hell", q5Hell);
+
+        // Q5 Blood
+        DungeonQuest q5Blood = new DungeonQuest("q5_blood", "Q5 Bloodshed", 80, 1.5, "QBlood", 50);
+        q5Blood.setLocationMessage("Find the cursed area and investigate");
+
+        // Stage 1
+        q5Blood.addLocationObjective(1, "world", -3460, -61, 1780, -3450, -58, 1790); // Approximate starting area
+        q5Blood.addKillObjective(1, "furious_andermagic_blood", 1, "Furious Andermagic");
+        q5Blood.setBossObjective(1, "parallel_world_old_jabbax_shaman_blood", "Mini-Boss: Old Jabbax Shaman");
+        q5Blood.addPortalObjective(1, "world", -3462, -61, 1791, -3463, -59, 1792);
+        q5Blood.setStageEndCommand(1, "warp q5_m2_blood");
+
+        // Stage 2
+        q5Blood.setBossObjective(2, "wandering_experiment_blood", "Mini-Boss: Wandering Experiment");
+        q5Blood.addPortalObjective(2, "world", -3482, -61, 2072, -3483, -59, 2073);
+        q5Blood.setStageEndCommand(2, "warp q5_m3_blood");
+
+        // Stage 3
+        q5Blood.setBossObjective(3, "khalys_leader_of_cultists_blood", "Final Boss: Khalys, Leader of Cultists");
+
+        questData.put("q5_blood", q5Blood);
+    }
+    private static void initializeQ6() {
+        // Q6 Infernal
+        DungeonQuest q6Inf = new DungeonQuest("q6_inf", "Q6 Infernal", 50, 0.5, "Qinf", 10);
+        q6Inf.setLocationMessage("Find the fallen warriors' stronghold");
+
+        // Stage 1 - Kill mobs
+        q6Inf.addKillObjective(1, "fallen_warrior_inf", 10, "Fallen Warriors");
+        q6Inf.addKillObjective(1, "fallen_archer_inf", 10, "Fallen Archers");
+        q6Inf.addKillObjective(1, "death_knight_inf", 3, "Death Knights");
+        q6Inf.setBossObjective(1, "mortis_death_knight_inf", "Mini-Boss: Mortis Death Knight");
+        q6Inf.addPortalObjective(1, "world", -4490, -61, -857, -4491, -59, -858);
+        q6Inf.setStageEndCommand(1, "warp q6_m2_inf");
+
+        // Stage 2 - Collect dagger parts
+        q6Inf.setStageMessage(2, "Find the pieces of the Sacrificial Dagger");
+        q6Inf.addCollectObjective(2, "elite_skeleton_archer_inf", 1, 30, "First Part of Sacrificial Dagger", false, 20);
+        q6Inf.addCollectObjective(2, "elite_skeleton_warrior_inf", 1, 30, "Second Part of Sacrificial Dagger", false, 20);
+        q6Inf.addCollectObjective(2, "death_archer_inf", 1, 30, "Third Part of Sacrificial Dagger", true);
+        q6Inf.setBossObjective(2, "murot_high_priest_inf", "Mini-Boss: Murot High Priest");
+        q6Inf.addPortalObjective(2, "world", -4598, -61, -1169, -4599, -59, -1170);
+        q6Inf.setStageEndCommand(2, "warp q6_m3_inf");
+
+        // Stage 3 - Kill final boss
+        q6Inf.setBossObjective(3, "mortis_phase3_inf", "Final Boss: Mortis, Unchained God of Death");
+
+        questData.put("q6_inf", q6Inf);
+
+        // Q6 Hell
+        DungeonQuest q6Hell = new DungeonQuest("q6_hell", "Q6 Hell", 65, 1.0, "QHell", 25);
+        q6Hell.setLocationMessage("Find the fallen warriors' stronghold");
+
+        // Stage 1 - Kill mobs
+        q6Hell.addKillObjective(1, "fallen_warrior_hell", 10, "Fallen Warriors");
+        q6Hell.addKillObjective(1, "fallen_archer_hell", 10, "Fallen Archers");
+        q6Hell.addKillObjective(1, "death_knight_hell", 3, "Death Knights");
+        q6Hell.setBossObjective(1, "mortis_death_knight_hell", "Mini-Boss: Mortis Death Knight");
+        q6Hell.addPortalObjective(1, "world", -4783, -61, -1866, -4784, -59, -1867);
+        q6Hell.setStageEndCommand(1, "warp q6_m2_hell");
+
+        // Stage 2 - Collect dagger parts
+        q6Hell.setStageMessage(2, "Find the pieces of the Sacrificial Dagger");
+        q6Hell.addCollectObjective(2, "elite_skeleton_archer_hell", 1, 30, "First Part of Sacrificial Dagger", false, 20);
+        q6Hell.addCollectObjective(2, "elite_skeleton_warrior_hell", 1, 30, "Second Part of Sacrificial Dagger", false, 20);
+        q6Hell.addCollectObjective(2, "death_archer_hell", 1, 30, "Third Part of Sacrificial Dagger", true);
+        q6Hell.setBossObjective(2, "murot_high_priest_hell", "Mini-Boss: Murot High Priest");
+        q6Hell.addPortalObjective(2, "world", -4891, -61, -2178, -4892, -59, -2179);
+        q6Hell.setStageEndCommand(2, "warp q6_m3_hell");
+
+        // Stage 3 - Kill final boss
+        q6Hell.setBossObjective(3, "mortis_phase3_hell", "Final Boss: Mortis, Unchained God of Death");
+
+        questData.put("q6_hell", q6Hell);
+
+        // Q6 Blood
+        DungeonQuest q6Blood = new DungeonQuest("q6_blood", "Q6 Bloodshed", 80, 1.5, "QBlood", 50);
+        q6Blood.setLocationMessage("Find the fallen warriors' stronghold");
+
+        // Stage 1 - Kill mobs
+        q6Blood.addKillObjective(1, "fallen_warrior_blood", 10, "Fallen Warriors");
+        q6Blood.addKillObjective(1, "fallen_archer_blood", 10, "Fallen Archers");
+        q6Blood.addKillObjective(1, "death_knight_blood", 3, "Death Knights");
+        q6Blood.setBossObjective(1, "mortis_death_knight_blood", "Mini-Boss: Mortis Death Knight");
+        q6Blood.addPortalObjective(1, "world", -5076, -61, -2875, -5077, -59, -2876);
+        q6Blood.setStageEndCommand(1, "warp q6_m2_blood");
+
+        // Stage 2 - Collect dagger parts
+        q6Blood.setStageMessage(2, "Find the pieces of the Sacrificial Dagger");
+        q6Blood.addCollectObjective(2, "elite_skeleton_archer_blood", 1, 30, "First Part of Sacrificial Dagger", false, 20);
+        q6Blood.addCollectObjective(2, "elite_skeleton_warrior_blood", 1, 30, "Second Part of Sacrificial Dagger", false, 20);
+        q6Blood.addCollectObjective(2, "death_archer_blood", 1, 30, "Third Part of Sacrificial Dagger", true);
+        q6Blood.setBossObjective(2, "murot_high_priest_blood", "Mini-Boss: Murot High Priest");
+        q6Blood.addPortalObjective(2, "world", -5184, -61, -3187, -5185, -59, -3188);
+        q6Blood.setStageEndCommand(2, "warp q6_m3_blood");
+
+        // Stage 3 - Kill final boss
+        q6Blood.setBossObjective(3, "mortis_phase3_blood", "Final Boss: Mortis, Unchained God of Death");
+
+        questData.put("q6_blood", q6Blood);
+    }
+    public static DungeonQuest getQuestData(String questId) {
         return questData.get(questId);
     }
 
@@ -354,6 +500,10 @@ public class QuestData {
 
         public void addCollectObjective(int stage, String mobId, int count, int dropChance, String displayName, boolean progressive) {
             collectObjectives.get(stage).put(mobId, new CollectObjective(mobId, count, dropChance, displayName, progressive));
+        }
+
+        public void addCollectObjective(int stage, String mobId, int count, int dropChance, String displayName, boolean progressive, int guaranteedAfterKills) {
+            collectObjectives.get(stage).put(mobId, new CollectObjective(mobId, count, dropChance, displayName, progressive, guaranteedAfterKills));
         }
 
         public void addInteractObjective(int stage, Material blockType, String displayName) {
@@ -563,13 +713,17 @@ public class QuestData {
         private final int dropChance; // percentage (0-100)
         private final String displayName;
         private final boolean progressive;
-
+        private final int guaranteedAfterKills; // After how many kills it's guaranteed
         public CollectObjective(String mobId, int count, int dropChance, String displayName, boolean progressive) {
+            this(mobId, count, dropChance, displayName, progressive, 0);
+        }
+        public CollectObjective(String mobId, int count, int dropChance, String displayName, boolean progressive, int guaranteedAfterKills) {
             this.mobId = mobId;
             this.count = count;
             this.dropChance = dropChance;
             this.displayName = displayName;
             this.progressive = progressive;
+            this.guaranteedAfterKills = guaranteedAfterKills;
         }
 
         public String getMobId() { return mobId; }
@@ -577,6 +731,7 @@ public class QuestData {
         public int getDropChance() { return dropChance; }
         public String getDisplayName() { return displayName; }
         public boolean isProgressive() { return progressive; }
+        public int getGuaranteedAfterKills() { return guaranteedAfterKills; }
 
         public String getObjectiveText() {
             return "Collect " + count + " " + displayName + " (Drop chance: " + dropChance + "%)";

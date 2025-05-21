@@ -43,6 +43,16 @@ public class QuestState {
     private final Map<String, Boolean> daggerPartsCollected = new HashMap<>();
     private final Map<String, Integer> guaranteedKillsCount = new HashMap<>();
 
+    // Q7 quest state
+    private int catapultBallsCollected = 0;
+    private final java.util.Set<String> usedLevers = new java.util.HashSet<>();
+    private boolean altar1Activated = false;
+    private boolean altar2Activated = false;
+    private boolean inQ7SpecialTransition = false;
+
+    // Debug flag
+    private int debuggingFlag = 0; // Set to 0 when everything is working
+
     public QuestState(UUID playerId, String questId) {
         this.playerId = playerId;
         this.questId = questId;
@@ -121,6 +131,17 @@ public class QuestState {
                     currentObjective = QuestObjective.INTERACT_WITH_BLOCKS;
                 } else if (questId.startsWith("q3_") && getCurrentStage() == 2) {
                     currentObjective = QuestObjective.KILL_BOSS;
+                } else if (questId.startsWith("q7_") && getCurrentStage() == 1) {
+                    // Add this case for Q7
+                    currentObjective = QuestObjective.INTERACT_WITH_BLOCKS;
+
+                    if (debuggingFlag == 1) {
+                        // Get player for debug messages
+                        org.bukkit.entity.Player player = org.bukkit.Bukkit.getPlayer(playerId);
+                        if (player != null) {
+                            player.sendMessage(org.bukkit.ChatColor.GRAY + "DEBUG: Advancing from COLLECT_FROM_MOBS to INTERACT_WITH_BLOCKS for Q7");
+                        }
+                    }
                 }
                 break;
             case INTERACT_WITH_BLOCKS:
@@ -163,6 +184,12 @@ public class QuestState {
         runeFragmentsCollected = 0;
         daggerPartsCollected.clear();
         guaranteedKillsCount.clear();
+
+        // Reset Q7 quest state
+        catapultBallsCollected = 0;
+        usedLevers.clear();
+        altar1Activated = false;
+        altar2Activated = false;
     }
 
     // Kill tracking
@@ -325,6 +352,51 @@ public class QuestState {
 
     public void incrementRuneFragmentsCollected() {
         this.runeFragmentsCollected++;
+    }
+
+    // Q7 quest methods
+    public int getCatapultBallsCollected() {
+        return catapultBallsCollected;
+    }
+
+    public void incrementCatapultBalls() {
+        catapultBallsCollected++;
+    }
+
+    public boolean hasUsedLever(String leverId) {
+        return usedLevers.contains(leverId);
+    }
+
+    public void useLever(String leverId) {
+        usedLevers.add(leverId);
+    }
+
+    public int getLeverCount() {
+        return usedLevers.size();
+    }
+
+    public boolean isAltar1Activated() {
+        return altar1Activated;
+    }
+
+    public boolean isAltar2Activated() {
+        return altar2Activated;
+    }
+
+    public void setAltar1Activated(boolean activated) {
+        this.altar1Activated = activated;
+    }
+
+    public void setAltar2Activated(boolean activated) {
+        this.altar2Activated = activated;
+    }
+
+    public void setInQ7SpecialTransition(boolean value) {
+        inQ7SpecialTransition = value;
+    }
+
+    public boolean isInQ7SpecialTransition() {
+        return inQ7SpecialTransition;
     }
     public void setCurrentObjective(QuestObjective objective) {
         this.currentObjective = objective;

@@ -18,7 +18,7 @@ public class QuestManager {
     private final Map<UUID, BukkitTask> questTimers = new HashMap<>();
 
     // Debug flag
-    private int debuggingFlag = 1; // Set to 0 when everything is working
+    private int debuggingFlag = 0; // Set to 0 when everything is working
 
     public QuestManager(MyDungeonTeleportPlugin plugin) {
         this.plugin = plugin;
@@ -98,6 +98,43 @@ public class QuestManager {
             questState.setLocationFound(true);
             // Skip to kill mobs phase
             questState.advanceToNextObjective();
+        } else if (questId.startsWith("q7_")) {
+            questState.setLocationFound(true);
+
+            // If we're starting directly on m2 (after warp), set up for altar phase
+            if (player.getWorld().getName().contains("m2")) {
+                // Advance to stage 2
+                questState.advanceToNextStage();
+                // Set objective to find location (altar)
+                questState.setCurrentObjective(QuestState.QuestObjective.FIND_LOCATION);
+
+                // Add this explicit notification
+                player.sendTitle(
+                    ChatColor.YELLOW + "First Objective:",
+                    ChatColor.AQUA + "Find the first altar and activate it",
+                    10, 70, 20
+                );
+
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eQ7 Quest Stage 2 Started!");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eObjectives:");
+                player.sendMessage(ChatColor.YELLOW + "  • §r§eFind the first altar and kill surrounding mobs");
+                player.sendMessage(ChatColor.YELLOW + "  • §r§eThen find the second altar and kill surrounding mobs");
+                player.sendMessage(ChatColor.YELLOW + "  • §r§eDefeat the fortress commander that appears");
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q7 quest on m2, prepared for altar phases");
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Find Altar 1 to begin");
+                }
+            } else {
+                // Normal m1 start
+                questState.setCurrentObjective(QuestState.QuestObjective.COLLECT_FROM_MOBS);
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q7 quest, skipping to collection phase");
+                }
+            }
         }
         // Mark quest as occupied
         plugin.occupyQuest(questId, playerId);
@@ -113,8 +150,13 @@ public class QuestManager {
 
         questTimers.put(playerId, timeoutTask);
 
-        // Show quest start message
-        showQuestStartMessage(player, questData);
+        // Skip showing quest start message for q7_m2 as we've already shown objectives
+        if (!(questId.startsWith("q7_") && player.getWorld().getName().contains("m2"))) {
+            // Show quest start message for other quests
+            showQuestStartMessage(player, questData);
+        } else if (debuggingFlag == 1) {
+            player.sendMessage(ChatColor.GRAY + "DEBUG: Skipping showQuestStartMessage for q7_m2 as objectives already shown");
+        }
 
         if (debuggingFlag == 1) {
             player.sendMessage(ChatColor.GRAY + "DEBUG: Quest " + questId + " started. First objective: Find the quest location.");
@@ -240,6 +282,13 @@ public class QuestManager {
 
         // Only process if current objective is FIND_LOCATION
         if (state.getCurrentObjective() != QuestState.QuestObjective.FIND_LOCATION) return;
+
+        // Dodaj specjalną obsługę dla ołtarza 2 w q7 stage 2
+        if (state.getQuestId().startsWith("q7_") && state.getCurrentStage() == 2 && 
+                state.isAltar1Activated() && player.hasMetadata("altar2_activated")) {
+            // Jeśli to ołtarz 2, nie pokazuj "Location Found!"
+            return;
+        }
 
         state.setLocationFound(true);
 
@@ -452,6 +501,14 @@ public class QuestManager {
         state.setPortalFound(true);
         state.setWaitingForTeleport(true);
 
+        // Add this special check for Q7 stage 1 transition
+        if (state.getQuestId().startsWith("q7_") && state.getCurrentStage() == 1) {
+            state.setInQ7SpecialTransition(true);
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Setting Q7 special transition flag");
+            }
+        }
+
         // Display portal found message
         player.sendTitle(
                 ChatColor.GREEN + "Portal Found!",
@@ -512,12 +569,7 @@ public class QuestManager {
             player.sendMessage(ChatColor.GRAY + "DEBUG: Stage " + currentStage + " is complete");
         }
 
-        // Display completion message
-        player.sendTitle(
-                ChatColor.GOLD + "Stage " + currentStage + " Complete!",
-                ChatColor.GREEN + "Moving to the next area",
-                10, 70, 20
-        );
+        // Title message removed as requested
 
         // Execute teleport command if available
         String teleportCommand = questData.getStageEndCommand(currentStage);
@@ -525,12 +577,37 @@ public class QuestManager {
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
                     teleportCommand + " " + player.getName());
 
-            player.sendMessage(ChatColor.GREEN + "§l» §r§aTeleporting to the next area...");
+            // Message removed as requested
 
             if (debuggingFlag == 1) {
                 player.sendMessage(ChatColor.GRAY + "DEBUG: Warping to " + teleportCommand);
             }
+
+            // Special handling for Q7 transition
+            if (state.isInQ7SpecialTransition()) {
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Removing all summons after teleport");
+                }
+
+                // Schedule delayed messages for Q7 Stage 2
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (!player.isOnline()) return;
+
+                    // Message removed as requested
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aQ7 Quest Stage 2 Started!");
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§bObjectives:");
+                    player.sendMessage(ChatColor.YELLOW + "  • §r§eFind the first altar and kill surrounding mobs");
+                    player.sendMessage(ChatColor.YELLOW + "  • §r§eThen find the second altar and kill surrounding mobs");
+                    player.sendMessage(ChatColor.YELLOW + "  • §r§eDefeat the fortress commander that appears");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                }, 40L); // 2 seconds delay
+            }
         }
+
+        // The reset timers code has been moved to QuestListeners.java
+        // to ensure mini-boss only spawns after altar 2 mobs are killed
 
         if (isLastStage) {
             // If this was the final stage, complete the quest
@@ -581,6 +658,7 @@ public class QuestManager {
                 }
             }
         }
+        // For Q7, Stage 2 should start with FIND_LOCATION objective for altars
         // Normal handling for non-Q3 quests or other stages
         else if (newStage > 1 && state.getCurrentObjective() == QuestState.QuestObjective.FIND_LOCATION) {
             // For non-first stages, we skip directly to the KILL_MOBS or KILL_BOSS phase
@@ -597,76 +675,96 @@ public class QuestManager {
             }
         }
 
-        // Display new stage info
-        player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
-        player.sendMessage(ChatColor.GREEN + "§l» §r§aStage " + currentStage + " complete!");
-        player.sendMessage(ChatColor.YELLOW + "§l» §r§eStarting Stage " + newStage);
+        // Skip all remaining messages if we're in Q7 special transition
+        if (state.isInQ7SpecialTransition()) {
+            // Reset the flag so future transitions are handled normally
+            state.setInQ7SpecialTransition(false);
 
-        player.sendTitle(
-                ChatColor.GOLD + "Stage " + newStage + " Started",
-                ChatColor.YELLOW + "Complete the objectives to proceed",
-                10, 70, 20
-        );
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Skipping generic stage messages for Q7 transition");
+            }
 
-        // Show objectives for new stage
-        player.sendMessage(ChatColor.AQUA + "§l» §r§bObjectives:");
+            return; // Exit the method early to skip all regular stage info messages
+        }
+
+        // Display new stage info - only reached if NOT in Q7 special transition
+        // Add a flag to suppress generic messages for Q7 stage 2
+        boolean skipGenericMessages = state.getQuestId().startsWith("q7_") && currentStage == 1;
+
+        if (!skipGenericMessages) {
+            player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+            player.sendMessage(ChatColor.GREEN + "§l» §r§aStage " + currentStage + " complete!");
+            player.sendMessage(ChatColor.YELLOW + "§l» §r§eStarting Stage " + newStage);
+
+            player.sendTitle(
+                    ChatColor.GOLD + "Stage " + newStage + " Started",
+                    ChatColor.YELLOW + "Complete the objectives to proceed",
+                    10, 70, 20
+            );
+
+            // Show objectives for new stage
+            player.sendMessage(ChatColor.AQUA + "§l» §r§bObjectives:");
+        }
 
         QuestState.QuestObjective currentObjective = state.getCurrentObjective();
 
-        // Display correct objectives based on the current objective type
-        if (currentObjective == QuestState.QuestObjective.KILL_BOSS) {
-            // Boss objective
-            QuestData.BossObjective bossObj = questData.getBossObjectiveDetails(newStage);
-            if (bossObj != null) {
-                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + bossObj.getObjectiveText());
-            }
-        } else if (currentObjective == QuestState.QuestObjective.KILL_MOBS) {
-            // Kill mobs objectives
-            Map<String, QuestData.KillObjective> killObjectives = questData.getKillObjectiveDetails(newStage);
-
-            if (!killObjectives.isEmpty()) {
-                for (QuestData.KillObjective objective : killObjectives.values()) {
-                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+        // Wrap the objectives display part in the same conditional check
+        if (!skipGenericMessages) {
+            // Display correct objectives based on the current objective type
+            if (currentObjective == QuestState.QuestObjective.KILL_BOSS) {
+                // Boss objective
+                QuestData.BossObjective bossObj = questData.getBossObjectiveDetails(newStage);
+                if (bossObj != null) {
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + bossObj.getObjectiveText());
                 }
-            }
-        } else if (currentObjective == QuestState.QuestObjective.COLLECT_FROM_MOBS) {
-            // Collection objectives
-            Map<String, QuestData.CollectObjective> collectObjectives = questData.getCollectObjectives(newStage);
+            } else if (currentObjective == QuestState.QuestObjective.KILL_MOBS) {
+                // Kill mobs objectives
+                Map<String, QuestData.KillObjective> killObjectives = questData.getKillObjectiveDetails(newStage);
 
-            if (!collectObjectives.isEmpty()) {
-                // Display collection message from stage data
-                String stageMsg = questData.getStageMessage(newStage);
-                if (stageMsg != null && !stageMsg.isEmpty()) {
-                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + stageMsg);
+                if (!killObjectives.isEmpty()) {
+                    for (QuestData.KillObjective objective : killObjectives.values()) {
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+                    }
                 }
+            } else if (currentObjective == QuestState.QuestObjective.COLLECT_FROM_MOBS) {
+                // Collection objectives
+                Map<String, QuestData.CollectObjective> collectObjectives = questData.getCollectObjectives(newStage);
 
-                // Special handling for Q6 Stage 2 to show all dagger parts
-                if (state.getQuestId().startsWith("q6_") && newStage == 2) {
-                    player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect all three parts of the Sacrificial Dagger:");
-                    for (Map.Entry<String, QuestData.CollectObjective> entry : collectObjectives.entrySet()) {
-                        QuestData.CollectObjective objective = entry.getValue();
-                        player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getDisplayName() +
-                                " (Drop chance: " + objective.getDropChance() + "%)");
+                if (!collectObjectives.isEmpty()) {
+                    // Display collection message from stage data
+                    String stageMsg = questData.getStageMessage(newStage);
+                    if (stageMsg != null && !stageMsg.isEmpty()) {
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§b" + stageMsg);
                     }
 
-                    if (debuggingFlag == 1) {
-                        player.sendMessage(ChatColor.GRAY + "DEBUG: Showing all dagger parts in objectives list");
+                    // Special handling for Q6 Stage 2 to show all dagger parts
+                    if (state.getQuestId().startsWith("q6_") && newStage == 2) {
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect all three parts of the Sacrificial Dagger:");
+                        for (Map.Entry<String, QuestData.CollectObjective> entry : collectObjectives.entrySet()) {
+                            QuestData.CollectObjective objective = entry.getValue();
+                            player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getDisplayName() +
+                                    " (Drop chance: " + objective.getDropChance() + "%)");
+                        }
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Showing all dagger parts in objectives list");
+                        }
+                    } else {
+                        // Original behavior for other quests
+                        QuestData.CollectObjective objective = collectObjectives.values().iterator().next();
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
                     }
-                } else {
-                    // Original behavior for other quests
-                    QuestData.CollectObjective objective = collectObjectives.values().iterator().next();
-                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + objective.getObjectiveText());
+                }
+            } else if (currentObjective == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
+                // Interaction objectives
+                QuestData.InteractObjective interactObj = questData.getInteractObjective(newStage);
+                if (interactObj != null) {
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§b" + interactObj.getObjectiveText());
                 }
             }
-        } else if (currentObjective == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
-            // Interaction objectives
-            QuestData.InteractObjective interactObj = questData.getInteractObjective(newStage);
-            if (interactObj != null) {
-                player.sendMessage(ChatColor.AQUA + "§l» §r§b" + interactObj.getObjectiveText());
-            }
+
+            player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
         }
-
-        player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
 
         if (debuggingFlag == 1) {
             player.sendMessage(ChatColor.GRAY + "DEBUG: Advanced to stage " + newStage +
@@ -736,6 +834,29 @@ public class QuestManager {
                         for (QuestData.KillObjective objective : killObjectives.values()) {
                             player.sendMessage(ChatColor.AQUA + "  • §r§b" + objective.getObjectiveText());
                         }
+                    }
+                }
+            } else if (state.getQuestId().startsWith("q7_")) {
+                // Check if we're on stage 1 or stage 2
+                if (state.getCurrentStage() == 1) {
+                    // Display collection objective for Q7 stage 1
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect 2 Catapult Balls from Combat Mechanoids");
+                    player.sendMessage(ChatColor.AQUA + "§l» §r§bThen find and fire two different catapults");
+                } else if (state.getCurrentStage() == 2) {
+                    // Check if we're starting directly on m2 (after warp)
+                    // If so, skip showing objectives here as they're already shown in startQuest
+                    if (!player.getWorld().getName().contains("m2")) {
+                        // Display altar objectives for Q7 stage 2
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§bFind the first altar and kill surrounding mobs");
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§bThen find the second altar and kill surrounding mobs");
+                        player.sendMessage(ChatColor.AQUA + "§l» §r§bDefeat the fortress commander that appears");
+
+                        // For q7 stage 2, emphasize the first objective
+                        player.sendTitle(
+                            ChatColor.YELLOW + "First Objective:",
+                            ChatColor.AQUA + "Find the first altar and activate it",
+                            10, 70, 20
+                        );
                     }
                 }
             }

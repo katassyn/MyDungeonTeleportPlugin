@@ -27,7 +27,7 @@ public class QuestInteractionListener implements Listener {
     private final Map<UUID, Map<String, Long>> lastMushroomInteractions = new HashMap<>();
 
     // Debug flag
-    private int debuggingFlag = 1;
+    private int debuggingFlag = 0; // Debug disabled
 
     public QuestInteractionListener(MyDungeonTeleportPlugin plugin, QuestManager questManager) {
         this.plugin = plugin;
@@ -47,6 +47,72 @@ public class QuestInteractionListener implements Listener {
 
         QuestState state = questManager.getActiveQuest(player.getUniqueId());
         if (state == null) return;
+
+        // Add these debug lines for Q7 quests
+        if (state.getQuestId().startsWith("q7_")) {
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Q7 interaction with " + clickedBlock.getType() + 
+                        " at " + clickedBlock.getX() + "," + clickedBlock.getY() + "," + clickedBlock.getZ());
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Current objective: " + state.getCurrentObjective());
+            }
+        }
+
+        // Check if this is a q7 quest and handle lever interactions
+        if (state.getQuestId().startsWith("q7_") && 
+            state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
+
+            Material blockType = clickedBlock.getType();
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Interaction with " + blockType + " at " +
+                        clickedBlock.getX() + ", " + clickedBlock.getY() + ", " + clickedBlock.getZ());
+            }
+
+            if (blockType == Material.LEVER) {
+                // Generate unique ID for this lever
+                String leverId = "lever_" + clickedBlock.getX() + "_" + 
+                                 clickedBlock.getY() + "_" + clickedBlock.getZ();
+
+                // Check if this lever was already used
+                if (state.hasUsedLever(leverId)) {
+                    player.sendMessage(ChatColor.RED + "You've already fired this catapult! Find another one.");
+                    return;
+                }
+
+                // Mark this lever as used
+                state.useLever(leverId);
+                int leverCount = state.getLeverCount();
+
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've fired a catapult! (" + leverCount + "/2)");
+
+                // Play sound effect
+                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+
+                // If both catapults fired, advance to next objective
+                if (leverCount >= 2) {
+                    player.sendTitle(
+                        ChatColor.GREEN + "Catapults Fired!",
+                        ChatColor.YELLOW + "The fortress gate is weakened. Find and defeat the gate guard.",
+                        10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aBoth catapults successfully fired!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe fortress gate is now weakened.");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat the Iron Creeper Gate Guard.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    // Move to boss phase
+                    state.advanceToNextObjective();
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: Both catapults fired, advancing to KILL_BOSS objective");
+                    }
+                }
+
+                return; // Handled lever interaction
+            }
+        }
 
         // Sprawdź czy to q2 quest
         if (state.getQuestId().startsWith("q2_")) {
@@ -327,8 +393,8 @@ public class QuestInteractionListener implements Listener {
         QuestState state = questManager.getActiveQuest(player.getUniqueId());
         if (state == null) return;
 
-        // Only for Q3 and Q6 quests
-        if (!state.getQuestId().startsWith("q3_") && !state.getQuestId().startsWith("q6_")) return;
+        // Only for Q3, Q6, and Q7 quests
+        if (!state.getQuestId().startsWith("q3_") && !state.getQuestId().startsWith("q6_") && !state.getQuestId().startsWith("q7_")) return;
 
         // Ensure we're in collection phase
         if (state.getCurrentObjective() != QuestState.QuestObjective.COLLECT_FROM_MOBS) return;
@@ -541,6 +607,53 @@ public class QuestInteractionListener implements Listener {
                 if (debuggingFlag == 1) {
                     player.sendMessage(ChatColor.GRAY + "DEBUG: Dagger part didn't drop (roll: " + roll +
                             " vs chance: " + dropChance + "%)");
+                }
+            }
+        }
+        // Q7 quest - Stage 1: Collect catapult balls
+        else if (state.getQuestId().startsWith("q7_") && state.getCurrentStage() == 1) {
+            // Only check for mechanoid mobs
+            if (!mobId.contains("b1000_combat_mechanoid")) return;
+
+            // Check if already collected max balls
+            if (state.getCatapultBallsCollected() >= 2) return;
+
+            int dropChance = objective.getDropChance(); // 50% for catapult balls
+            int roll = ThreadLocalRandom.current().nextInt(100);
+
+            if (roll < dropChance) {
+                // Ball collected!
+                state.incrementCatapultBalls();
+                int collected = state.getCatapultBallsCollected();
+
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou found a " + objective.getDisplayName() +
+                        "! (" + collected + "/2)");
+
+                // If collected all balls, advance to lever phase
+                if (collected >= 2) {
+                    player.sendTitle(
+                        ChatColor.GREEN + "Catapult Balls Collected!",
+                        ChatColor.YELLOW + "Now find and activate two catapults",
+                        10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected all catapult balls!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow find and fire TWO different catapults.");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§e(Right-click on two different levers)");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: All catapult balls collected (" + collected + "/2)");
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: Current objective before advancing: " + state.getCurrentObjective());
+                    }
+
+                    // Move to lever phase
+                    state.advanceToNextObjective();
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: Objective after advancing: " + state.getCurrentObjective());
+                    }
                 }
             }
         }

@@ -16,6 +16,7 @@ public class QuestData {
         initializeQ4();
         initializeQ5();
         initializeQ6();
+        initializeQ7();
     }
 
     private static void initializeQ1() {
@@ -458,6 +459,107 @@ public class QuestData {
 
         questData.put("q6_blood", q6Blood);
     }
+
+    private static void initializeQ7() {
+        // Q7 Infernal
+        DungeonQuest q7Inf = new DungeonQuest("q7_inf", "Q7 Infernal", 50, 0.5, "Qinf", 10);
+        q7Inf.setLocationMessage("Find the ancient fortress and collect catapult ammunition");
+
+        // Stage 1 - Collect catapult balls
+        q7Inf.addCollectObjective(1, "b1000_combat_mechanoid_inf", 2, 50, "Catapult Ball", false);
+        q7Inf.setStageMessage(1, "Collect 2 Catapult Balls from Combat Mechanoids to prepare the attack");
+
+        // Stage 1 - Interact with levers (catapults)
+        q7Inf.addInteractObjective(1, Material.LEVER, "Fire the catapults (use TWO different levers)");
+
+        // Stage 1 - Kill mini-boss
+        q7Inf.setBossObjective(1, "iron_creeper_gate_guard_inf", "Mini-Boss: Iron Creeper Gate Guard");
+        q7Inf.addPortalObjective(1, "world", -3765, -54, -2262, -3766, -52, -2263);
+        q7Inf.setStageEndCommand(1, "warp q7_m2_inf");
+
+        // Stage 2 - Altar 1 area and mob killing
+        q7Inf.addLocationObjective(2, "world", -3679, -61, -920, -3679, -61, -920, 10); // 10 block radius
+        q7Inf.setStageMessage(2, "Find the first altar to summon enemies");
+
+        // Stage 2 - Altar 2 area
+        q7Inf.addLocationObjective(2, "world", -3759, -61, -881, -3759, -61, -881, 10); // 10 block radius
+
+        // Stage 2 - Mini-boss and portal
+        q7Inf.setBossObjective(2, "commander_embersword_inf", "Mini-Boss: Commander Embersword");
+        q7Inf.addPortalObjective(2, "world", -3751, -61, -864, -3752, -59, -863);
+        q7Inf.setStageEndCommand(2, "warp q7_m3_inf");
+
+        // Stage 3 - Kill final boss
+        q7Inf.setBossObjective(3, "herald_of_anderworld_inf", "Final Boss: Herald of Anderworld");
+
+        questData.put("q7_inf", q7Inf);
+
+        // Q7 Hell
+        DungeonQuest q7Hell = new DungeonQuest("q7_hell", "Q7 Hell", 65, 1.0, "QHell", 25);
+        q7Hell.setLocationMessage("Find the ancient fortress and collect catapult ammunition");
+
+        // Stage 1 - Collect catapult balls
+        q7Hell.addCollectObjective(1, "b1000_combat_mechanoid_hell", 2, 50, "Catapult Ball", false);
+        q7Hell.setStageMessage(1, "Collect 2 Catapult Balls from Combat Mechanoids to prepare the attack");
+
+        // Stage 1 - Interact with levers (catapults)
+        q7Hell.addInteractObjective(1, Material.LEVER, "Fire the catapults (use TWO different levers)");
+
+        // Stage 1 - Kill mini-boss
+        q7Hell.setBossObjective(1, "iron_creeper_gate_guard_hell", "Mini-Boss: Iron Creeper Gate Guard");
+        q7Hell.addPortalObjective(1, "world", -3743, -54, -1494, -3744, -52, -1495);
+        q7Hell.setStageEndCommand(1, "warp q7_m2_hell");
+
+        // Stage 2 - Altar 1 area and mob killing
+        q7Hell.addLocationObjective(2, "world", -3702, -61, -1693, -3702, -61, -1693, 10); // 10 block radius
+        q7Hell.setStageMessage(2, "Find the first altar to summon enemies");
+
+        // Stage 2 - Altar 2 area
+        q7Hell.addLocationObjective(2, "world", -3782, -61, -1652, -3782, -61, -1652, 10); // 10 block radius
+
+        // Stage 2 - Mini-boss and portal
+        q7Hell.setBossObjective(2, "commander_embersword_hell", "Mini-Boss: Commander Embersword");
+        q7Hell.addPortalObjective(2, "world", -3774, -61, -1635, -3775, -59, -1634);
+        q7Hell.setStageEndCommand(2, "warp q7_m3_hell");
+
+        // Stage 3 - Kill final boss
+        q7Hell.setBossObjective(3, "herald_of_anderworld_hell", "Final Boss: Herald of Anderworld");
+
+        questData.put("q7_hell", q7Hell);
+
+        // Q7 Blood
+        DungeonQuest q7Blood = new DungeonQuest("q7_blood", "Q7 Bloodshed", 80, 1.5, "QBlood", 50);
+        q7Blood.setLocationMessage("Find the ancient fortress and collect catapult ammunition");
+
+        // Stage 1 - Collect catapult balls
+        q7Blood.addCollectObjective(1, "b1000_combat_mechanoid_blood", 2, 50, "Catapult Ball", false);
+        q7Blood.setStageMessage(1, "Collect 2 Catapult Balls from Combat Mechanoids to prepare the attack");
+
+        // Stage 1 - Interact with levers (catapults)
+        q7Blood.addInteractObjective(1, Material.LEVER, "Fire the catapults (use TWO different levers)");
+
+        // Stage 1 - Kill mini-boss
+        q7Blood.setBossObjective(1, "iron_creeper_gate_guard_blood", "Mini-Boss: Iron Creeper Gate Guard");
+        q7Blood.addPortalObjective(1, "world", -3720, -54, -723, -3721, -52, -724);
+        q7Blood.setStageEndCommand(1, "warp q7_m2_blood");
+
+        // Stage 2 - Altar 1 area and mob killing
+        q7Blood.addLocationObjective(2, "world", -3724, -61, -2462, -3724, -61, -2462, 10); // 10 block radius
+        q7Blood.setStageMessage(2, "Find the first altar to summon enemies");
+
+        // Stage 2 - Altar 2 area
+        q7Blood.addLocationObjective(2, "world", -3804, -61, -2418, -3804, -61, -2418, 10); // 10 block radius
+
+        // Stage 2 - Mini-boss and portal
+        q7Blood.setBossObjective(2, "commander_embersword_blood", "Mini-Boss: Commander Embersword");
+        q7Blood.addPortalObjective(2, "world", -3796, -61, -2403, -3797, -59, -2402);
+        q7Blood.setStageEndCommand(2, "warp q7_m3_blood");
+
+        // Stage 3 - Kill final boss
+        q7Blood.setBossObjective(3, "herald_of_anderworld_blood", "Final Boss: Herald of Anderworld");
+
+        questData.put("q7_blood", q7Blood);
+    }
     public static DungeonQuest getQuestData(String questId) {
         return questData.get(questId);
     }
@@ -551,6 +653,10 @@ public class QuestData {
 
         public void addLocationObjective(int stage, String world, int x1, int y1, int z1, int x2, int y2, int z2) {
             initialLocationObjectives.put(stage, new LocationInfo(world, x1, y1, z1, x2, y2, z2));
+        }
+
+        public void addLocationObjective(int stage, String world, int x1, int y1, int z1, int x2, int y2, int z2, int radius) {
+            initialLocationObjectives.put(stage, new LocationInfo(world, x1, y1, z1, x2, y2, z2, radius));
         }
 
         public void addPortalObjective(int stage, String world, int x1, int y1, int z1, int x2, int y2, int z2) {
@@ -670,6 +776,7 @@ public class QuestData {
     public static class LocationInfo {
         private final String world;
         private final int x1, y1, z1, x2, y2, z2;
+        private int radius = 0;
 
         public LocationInfo(String world, int x1, int y1, int z1, int x2, int y2, int z2) {
             this.world = world;
@@ -681,6 +788,18 @@ public class QuestData {
             this.z2 = z2;
         }
 
+        // Constructor for radius-based locations
+        public LocationInfo(String world, int x1, int y1, int z1, int x2, int y2, int z2, int radius) {
+            this.world = world;
+            this.x1 = x1;
+            this.y1 = y1;
+            this.z1 = z1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.z2 = z2;
+            this.radius = radius;
+        }
+
         public String getWorld() { return world; }
         public int getX1() { return x1; }
         public int getY1() { return y1; }
@@ -688,12 +807,27 @@ public class QuestData {
         public int getX2() { return x2; }
         public int getY2() { return y2; }
         public int getZ2() { return z2; }
+        public int getRadius() { return radius; }
 
         public boolean isInside(Location loc) {
             if (!loc.getWorld().getName().equals(world)) {
                 return false;
             }
 
+            // If radius is specified, check if within radius
+            if (radius > 0) {
+                int centerX = (x1 + x2) / 2;
+                int centerY = (y1 + y2) / 2;
+                int centerZ = (z1 + z2) / 2;
+
+                double distanceSquared = Math.pow(loc.getBlockX() - centerX, 2) +
+                                         Math.pow(loc.getBlockY() - centerY, 2) +
+                                         Math.pow(loc.getBlockZ() - centerZ, 2);
+
+                return distanceSquared <= Math.pow(radius, 2);
+            }
+
+            // Otherwise check if within bounds
             int minX = Math.min(x1, x2);
             int maxX = Math.max(x1, x2);
             int minY = Math.min(y1, y2);

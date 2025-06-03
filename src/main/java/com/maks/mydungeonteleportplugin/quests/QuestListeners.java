@@ -752,7 +752,7 @@ public class QuestListeners implements Listener {
             }
         }
 
-        // Handle item collection for Q3/Q6 quest
+        // Handle item collection for Q3, Q6, Q7, and Q8 quests
         interactionListener.handlePossibleItemDrop(killer, mobId);
 
         // Special handling for Q7 quest mobs - only count kills if the corresponding altar is activated

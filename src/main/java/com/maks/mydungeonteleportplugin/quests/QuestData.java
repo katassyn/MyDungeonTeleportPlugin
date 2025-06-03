@@ -17,6 +17,7 @@ public class QuestData {
         initializeQ5();
         initializeQ6();
         initializeQ7();
+        initializeQ8();
     }
 
     private static void initializeQ1() {
@@ -560,6 +561,87 @@ public class QuestData {
 
         questData.put("q7_blood", q7Blood);
     }
+
+    private static void initializeQ8() {
+        // Q8 Infernal
+        DungeonQuest q8Inf = new DungeonQuest("q8_inf", "Q8 Infernal", 50, 0.5, "Qinf", 10);
+        q8Inf.setLocationMessage("Find the electrified area and collect electrical shards");
+
+        // Stage 1 - Collect electrical shards
+        q8Inf.addCollectObjective(1, "electrified_ferocity_inf", 5, 75, "Electrical Shard");
+        q8Inf.setStageMessage(1, "Defeat electrified creatures to collect 5 Electrical Shards!");
+
+        // Stage 1 - Interact with chiseled deepslate
+        q8Inf.addInteractObjective(1, Material.CHISELED_DEEPSLATE, "Channel the electrical energy into chiseled deepslate");
+
+        // Stage 1 - Kill mini-boss
+        q8Inf.setBossObjective(1, "shocking_forocity_inf", "Mini-Boss: Shocking Forocity");
+        q8Inf.addPortalObjective(1, "world", -3758, -61, -315, -3757, -59, -316);
+        q8Inf.setStageEndCommand(1, "warp q8_m2_inf");
+
+        // Stage 2 - Kill mini-boss
+        q8Inf.setBossObjective(2, "pale_enforcer_inf", "Mini-Boss: Pale Enforcer");
+        q8Inf.addPortalObjective(2, "world", -3730, -61, -45, -3729, -59, -46);
+        q8Inf.setStageEndCommand(2, "warp q8_m3_inf");
+
+        // Stage 3 - Kill final boss
+        q8Inf.setBossObjective(3, "sigrismarr_priest_of_fjalnir_inf", "Final Boss: Sigrismarr, Priest of Fjalnir");
+
+        questData.put("q8_inf", q8Inf);
+
+        // Q8 Hell
+        DungeonQuest q8Hell = new DungeonQuest("q8_hell", "Q8 Hell", 65, 1.0, "QHell", 25);
+        q8Hell.setLocationMessage("Find the electrified area and collect electrical shards");
+
+        // Stage 1 - Collect electrical shards
+        q8Hell.addCollectObjective(1, "electrified_ferocity_hell", 5, 75, "Electrical Shard");
+        q8Hell.setStageMessage(1, "Defeat electrified creatures to collect 5 Electrical Shards!");
+
+        // Stage 1 - Interact with chiseled deepslate
+        q8Hell.addInteractObjective(1, Material.CHISELED_DEEPSLATE, "Channel the electrical energy into chiseled deepslate");
+
+        // Stage 1 - Kill mini-boss
+        q8Hell.setBossObjective(1, "shocking_forocity_hell", "Mini-Boss: Shocking Forocity");
+        q8Hell.addPortalObjective(1, "world", -3756, -61, 1455, -3755, -59, 1454);
+        q8Hell.setStageEndCommand(1, "warp q8_m2_hell");
+
+        // Stage 2 - Kill mini-boss
+        q8Hell.setBossObjective(2, "pale_enforcer_hell", "Mini-Boss: Pale Enforcer");
+        q8Hell.addPortalObjective(2, "world", -3728, -61, 1725, -3727, -59, 1724);
+        q8Hell.setStageEndCommand(2, "warp q8_m3_hell");
+
+        // Stage 3 - Kill final boss
+        q8Hell.setBossObjective(3, "sigrismarr_priest_of_fjalnir_hell", "Final Boss: Sigrismarr, Priest of Fjalnir");
+
+        questData.put("q8_hell", q8Hell);
+
+        // Q8 Bloodshed
+        DungeonQuest q8Blood = new DungeonQuest("q8_blood", "Q8 Bloodshed", 80, 1.5, "QBlood", 50);
+        q8Blood.setLocationMessage("Find the electrified area and collect electrical shards");
+
+        // Stage 1 - Collect electrical shards
+        q8Blood.addCollectObjective(1, "electrified_ferocity_blood", 5, 75, "Electrical Shard");
+        q8Blood.setStageMessage(1, "Defeat electrified creatures to collect 5 Electrical Shards!");
+
+        // Stage 1 - Interact with chiseled deepslate
+        q8Blood.addInteractObjective(1, Material.CHISELED_DEEPSLATE, "Channel the electrical energy into chiseled deepslate");
+
+        // Stage 1 - Kill mini-boss
+        q8Blood.setBossObjective(1, "shocking_forocity_blood", "Mini-Boss: Shocking Forocity");
+        q8Blood.addPortalObjective(1, "world", -3757, -61, 570, -3756, -59, 569);
+        q8Blood.setStageEndCommand(1, "warp q8_m2_blood");
+
+        // Stage 2 - Kill mini-boss
+        q8Blood.setBossObjective(2, "pale_enforcer_blood", "Mini-Boss: Pale Enforcer");
+        q8Blood.addPortalObjective(2, "world", -3729, -61, 840, -3728, -59, 839);
+        q8Blood.setStageEndCommand(2, "warp q8_m3_blood");
+
+        // Stage 3 - Kill final boss
+        q8Blood.setBossObjective(3, "sigrismarr_priest_of_fjalnir_blood", "Final Boss: Sigrismarr, Priest of Fjalnir");
+
+        questData.put("q8_blood", q8Blood);
+    }
+
     public static DungeonQuest getQuestData(String questId) {
         return questData.get(questId);
     }

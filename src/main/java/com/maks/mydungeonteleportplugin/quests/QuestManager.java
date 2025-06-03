@@ -135,6 +135,18 @@ public class QuestManager {
                     player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q7 quest, skipping to collection phase");
                 }
             }
+        } else if (questId.startsWith("q8_")) {
+            questState.setLocationFound(true);
+
+            // Skip to collection phase - need to set objective explicitly
+            questState.setCurrentObjective(QuestState.QuestObjective.COLLECT_FROM_MOBS);
+
+            // Set required items (5 electrical shards)
+            questState.setRequiredItems(5);
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q8 quest, skipping to collection phase");
+            }
         }
         // Mark quest as occupied
         plugin.occupyQuest(questId, playerId);
@@ -859,6 +871,10 @@ public class QuestManager {
                         );
                     }
                 }
+            } else if (state.getQuestId().startsWith("q8_")) {
+                // Display collection objective for Q8
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect 5 Electrical Shards from electrified creatures");
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bThen channel the energy into chiseled deepslate");
             }
         }
 

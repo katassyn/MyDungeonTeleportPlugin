@@ -114,6 +114,47 @@ public class QuestInteractionListener implements Listener {
             }
         }
 
+        else if (state.getQuestId().startsWith("q8_") &&
+                state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
+
+            Material blockType = clickedBlock.getType();
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Interaction with " + blockType + " at " +
+                        clickedBlock.getX() + ", " + clickedBlock.getY() + ", " + clickedBlock.getZ());
+            }
+
+            if (blockType == Material.CHISELED_DEEPSLATE) {
+                // Player interacted with chiseled deepslate
+                state.setInteractedWithGrindstone(true); // Reusing this flag for Q8
+
+                player.sendTitle(
+                        ChatColor.YELLOW + "Energy Channeled!",
+                        ChatColor.GREEN + "The electrical power has been absorbed",
+                        10, 70, 20
+                );
+
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've successfully channeled the electrical energy!");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe power surges through the deepslate.");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat Shocking Forocity now.");
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                // Play lightning sound effect
+                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
+
+                // Zamknij inventory po interakcji
+                player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                // Move to next objective
+                state.advanceToNextObjective();
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Chiseled deepslate interaction complete, advancing to KILL_BOSS objective");
+                }
+            }
+        }
+
         // Sprawdź czy to q2 quest
         if (state.getQuestId().startsWith("q2_")) {
 
@@ -393,8 +434,9 @@ public class QuestInteractionListener implements Listener {
         QuestState state = questManager.getActiveQuest(player.getUniqueId());
         if (state == null) return;
 
-        // Only for Q3, Q6, and Q7 quests
-        if (!state.getQuestId().startsWith("q3_") && !state.getQuestId().startsWith("q6_") && !state.getQuestId().startsWith("q7_")) return;
+        // Only for Q3, Q6, Q7, and Q8 quests
+        if (!state.getQuestId().startsWith("q3_") && !state.getQuestId().startsWith("q6_") && 
+            !state.getQuestId().startsWith("q7_") && !state.getQuestId().startsWith("q8_")) return;
 
         // Ensure we're in collection phase
         if (state.getCurrentObjective() != QuestState.QuestObjective.COLLECT_FROM_MOBS) return;
@@ -653,6 +695,55 @@ public class QuestInteractionListener implements Listener {
 
                     if (debuggingFlag == 1) {
                         player.sendMessage(ChatColor.GRAY + "DEBUG: Objective after advancing: " + state.getCurrentObjective());
+                    }
+                }
+            }
+        }
+        // Q8 quest - Stage 1: Collect electrical shards
+        else if (state.getQuestId().startsWith("q8_") && state.getCurrentStage() == 1) {
+            // Only check for electrified_ferocity mobs
+            if (!mobId.contains("electrified_ferocity")) return;
+
+            // Check if already collected max shards
+            if (state.getItemsCollected() >= state.getRequiredItems()) return;
+
+            int dropChance = objective.getDropChance(); // 75% for electrical shards
+            int roll = ThreadLocalRandom.current().nextInt(100);
+
+            if (roll < dropChance) {
+                // Shard collected!
+                state.incrementItemsCollected();
+                int collected = state.getItemsCollected();
+                int required = state.getRequiredItems();
+
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eYou found an " + objective.getDisplayName() +
+                        "! (" + collected + "/" + required + ")");
+
+                // Add electrical effect
+                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BLAZE_HURT, 0.5f, 2.0f);
+
+                String progressBar = createProgressBar(collected, required);
+                player.sendMessage(ChatColor.AQUA + "Progress: " + progressBar);
+
+                // If collected all shards
+                if (collected >= required) {
+                    player.sendTitle(
+                            ChatColor.YELLOW + "All Electrical Shards Collected!",
+                            ChatColor.GREEN + "Now find chiseled deepslate to channel the energy",
+                            10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected all required " +
+                            objective.getDisplayName() + "s!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe electrical energy crackles around you.");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind any chiseled deepslate block to channel this power.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    state.advanceToNextObjective(); // Move to INTERACT_WITH_BLOCKS
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: All electrical shards collected, advancing to INTERACT_WITH_BLOCKS");
                     }
                 }
             }

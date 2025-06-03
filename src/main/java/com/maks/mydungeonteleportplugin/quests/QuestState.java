@@ -142,6 +142,16 @@ public class QuestState {
                             player.sendMessage(org.bukkit.ChatColor.GRAY + "DEBUG: Advancing from COLLECT_FROM_MOBS to INTERACT_WITH_BLOCKS for Q7");
                         }
                     }
+                } else if (questId.startsWith("q8_") && getCurrentStage() == 1) {
+                    // Add this case for Q8
+                    currentObjective = QuestObjective.INTERACT_WITH_BLOCKS;
+
+                    if (debuggingFlag == 1) {
+                        org.bukkit.entity.Player player = org.bukkit.Bukkit.getPlayer(playerId);
+                        if (player != null) {
+                            player.sendMessage(org.bukkit.ChatColor.GRAY + "DEBUG: Advancing from COLLECT_FROM_MOBS to INTERACT_WITH_BLOCKS for Q8");
+                        }
+                    }
                 }
                 break;
             case INTERACT_WITH_BLOCKS:

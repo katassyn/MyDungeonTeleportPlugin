@@ -2,6 +2,7 @@ name: MyDungeonTeleportPlugin
 version: '${project.version}'
 main: com.maks.mydungeonteleportplugin.MyDungeonTeleportPlugin
 api-version: '1.20'
+softdepend: [IngredientPouchPlugin]
 
 commands:
   whodoq:

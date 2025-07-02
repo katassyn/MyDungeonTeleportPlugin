@@ -79,8 +79,22 @@ public class q1PortalListener implements Listener {
             boolean questStarted = false;
             if (selectedMap.equals("q1_m1_inf") && playerLevel >= 50) {
                 requiredIPS = 10;
+
+                // Check if player has enough IPS before starting quest
+                if (!DungeonUtils.hasEnoughNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "You need at least " + requiredIPS + " Fragments of Infernal Passage to enter this location.");
+                    return;
+                }
+
                 questStarted = this.questManager.startQuest(player, "q1_inf");
                 if (!questStarted) {
+                    return;
+                }
+
+                // Remove IPS from player
+                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
+                    this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }
 
@@ -88,8 +102,22 @@ public class q1PortalListener implements Listener {
                 this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "mm s resettimers g:q1_inf");
             } else if (selectedMap.equals("q1_m1_hell") && playerLevel >= 65) {
                 requiredIPS = 25;
+
+                // Check if player has enough IPS before starting quest
+                if (!DungeonUtils.hasEnoughNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "You need at least " + requiredIPS + " Fragments of Infernal Passage to enter this location.");
+                    return;
+                }
+
                 questStarted = this.questManager.startQuest(player, "q1_hell");
                 if (!questStarted) {
+                    return;
+                }
+
+                // Remove IPS from player
+                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
+                    this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }
 
@@ -102,16 +130,28 @@ public class q1PortalListener implements Listener {
                 }
 
                 requiredIPS = 50;
+
+                // Check if player has enough IPS before starting quest
+                if (!DungeonUtils.hasEnoughNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "You need at least " + requiredIPS + " Fragments of Infernal Passage to enter this location.");
+                    return;
+                }
+
                 questStarted = this.questManager.startQuest(player, "q1_blood");
                 if (!questStarted) {
+                    return;
+                }
+
+                // Remove IPS from player
+                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
+                    this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }
 
                 this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "warp q1_m1_blood " + player.getName());
                 this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), "mm s resettimers g:q1_blood");
             }
-
-            this.plugin.removeWool(player, requiredIPS);
 
             // Track dungeon entry in statistics
             if (playerStatsDAO != null) {

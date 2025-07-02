@@ -90,8 +90,9 @@ public class q2PortalListener implements Listener {
                 requiredIPS = 10;
 
                 // Check if player has enough IPS before starting quest
-                if (!DungeonUtils.hasEnoughNuggets(player, requiredIPS)) {
-                    player.sendMessage(ChatColor.RED + "You need at least " + requiredIPS + " Fragments of Infernal Passage to enter this location.");
+                if (!DungeonUtils.consumeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to consume IPS items!");
+                    this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }
 
@@ -101,7 +102,7 @@ public class q2PortalListener implements Listener {
                 }
 
                 // Remove IPS from player
-                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
+                if (!DungeonUtils.consumeNuggets(player, requiredIPS)) {
                     player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
                     this.questManager.cancelQuest(player.getUniqueId());
                     return;
@@ -127,7 +128,7 @@ public class q2PortalListener implements Listener {
                 }
 
                 // Remove IPS from player
-                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
+                if (!DungeonUtils.consumeNuggets(player, requiredIPS)) {
                     player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
                     this.questManager.cancelQuest(player.getUniqueId());
                     return;
@@ -158,9 +159,8 @@ public class q2PortalListener implements Listener {
                 }
 
                 // Remove IPS from player
-                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
-                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
-                    this.questManager.cancelQuest(player.getUniqueId());
+                if (!DungeonUtils.hasEnoughNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "You need at least " + requiredIPS + " Fragments of Infernal Passage to enter this location.");
                     return;
                 }
 

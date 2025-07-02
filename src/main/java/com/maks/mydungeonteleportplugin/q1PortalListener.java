@@ -92,8 +92,8 @@ public class q1PortalListener implements Listener {
                 }
 
                 // Remove IPS from player
-                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
-                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
+                if (!DungeonUtils.consumeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to consume IPS items!");
                     this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }
@@ -115,8 +115,8 @@ public class q1PortalListener implements Listener {
                 }
 
                 // Remove IPS from player
-                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
-                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
+                if (!DungeonUtils.consumeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to consume IPS items!");
                     this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }
@@ -143,8 +143,8 @@ public class q1PortalListener implements Listener {
                 }
 
                 // Remove IPS from player
-                if (!DungeonUtils.removeNuggets(player, requiredIPS)) {
-                    player.sendMessage(ChatColor.RED + "Failed to remove Fragments of Infernal Passage!");
+                if (!DungeonUtils.consumeNuggets(player, requiredIPS)) {
+                    player.sendMessage(ChatColor.RED + "Failed to consume IPS items!");
                     this.questManager.cancelQuest(player.getUniqueId());
                     return;
                 }

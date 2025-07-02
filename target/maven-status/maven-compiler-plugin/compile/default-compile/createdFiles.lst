@@ -7,6 +7,7 @@ com\maks\mydungeonteleportplugin\database\DungeonKeyUtils.class
 com\maks\mydungeonteleportplugin\quests\QuestData$DungeonQuest.class
 com\maks\mydungeonteleportplugin\quests\QuestData$KillObjective.class
 com\maks\mydungeonteleportplugin\database\ItemSerializer.class
+com\maks\mydungeonteleportplugin\DungeonPouchHelper.class
 com\maks\mydungeonteleportplugin\ListenerQ4.class
 com\maks\mydungeonteleportplugin\database\DungeonDropDAO.class
 com\maks\mydungeonteleportplugin\q7GUIMenuCommand.class

@@ -1,18 +1,27 @@
 package com.maks.mydungeonteleportplugin;
 
+import com.maks.mydungeonteleportplugin.database.DungeonDropDAO;
+import com.maks.mydungeonteleportplugin.database.DungeonKeyUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 
 public class ListenerQ1 implements Listener {
 
     private final MyDungeonTeleportPlugin plugin;
+    private DungeonDropDAO dungeonDropDAO;
 
     public ListenerQ1(MyDungeonTeleportPlugin plugin) {
         this.plugin = plugin;
+        // dungeonDropDAO will be set by the main plugin class
+    }
+
+    public void setDungeonDropDAO(DungeonDropDAO dungeonDropDAO) {
+        this.dungeonDropDAO = dungeonDropDAO;
     }
 
     @EventHandler
@@ -39,6 +48,7 @@ public class ListenerQ1 implements Listener {
                 String selectedMap = "";
                 String mapName = "";
                 int requiredIPS = 0;
+                String dungeonKey = "";
 
                 // Choose map based on clicked block and check player level
                 if (clickedMaterial == Material.NETHER_BRICKS) {
@@ -46,18 +56,29 @@ public class ListenerQ1 implements Listener {
                     selectedMap = "q1_m1_inf";
                     mapName = "Q1 Infernal";
                     requiredIPS = 10;
+                    dungeonKey = "q1_inf";
                 } else if (clickedMaterial == Material.OBSIDIAN) {
                     requiredLevel = 65;
                     selectedMap = "q1_m1_hell";
                     mapName = "Q1 Hell";
                     requiredIPS = 25;
+                    dungeonKey = "q1_hell";
                 } else if (clickedMaterial == Material.RED_NETHER_BRICKS) {
                     requiredLevel = 80;
                     selectedMap = "q1_m1_blood";
                     mapName = "Q1 Bloodshed";
                     requiredIPS = 50;
+                    dungeonKey = "q1_blood";
                 }
 
+                // Check if right-click (show drops) or left-click (select map)
+                if (event.isRightClick() && dungeonDropDAO != null) {
+                    // Show drop preview GUI using the new method
+                    dungeonDropDAO.openDropPreview(player, dungeonKey);
+                    return;
+                }
+
+                // Left-click - select map
                 // Check player level
                 if (player.getLevel() < requiredLevel) {
                     player.sendMessage(ChatColor.RED + "You need to be at least level " + requiredLevel + " to enter this location.");

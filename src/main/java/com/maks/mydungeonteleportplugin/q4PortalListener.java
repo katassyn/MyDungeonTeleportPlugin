@@ -5,6 +5,8 @@
 
 package com.maks.mydungeonteleportplugin;
 
+import com.maks.mydungeonteleportplugin.database.DungeonKeyUtils;
+import com.maks.mydungeonteleportplugin.database.PlayerStatsDAO;
 import com.maks.mydungeonteleportplugin.quests.QuestManager;
 import java.util.HashMap;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class q4PortalListener implements Listener {
     private final MyDungeonTeleportPlugin plugin;
     private final HashMap<UUID, Long> lastMessageTime = new HashMap();
     private final QuestManager questManager;
+    private PlayerStatsDAO playerStatsDAO;
     private int debuggingFlag = 1;
     private final int x1 = -1026;
     private final int x2 = -1015;
@@ -32,6 +35,11 @@ public class q4PortalListener implements Listener {
     public q4PortalListener(MyDungeonTeleportPlugin plugin) {
         this.plugin = plugin;
         this.questManager = plugin.getQuestManager();
+        // playerStatsDAO will be set by the main plugin class
+    }
+
+    public void setPlayerStatsDAO(PlayerStatsDAO playerStatsDAO) {
+        this.playerStatsDAO = playerStatsDAO;
     }
 
     @EventHandler
@@ -122,6 +130,14 @@ public class q4PortalListener implements Listener {
             }
 
             this.plugin.removeWool(player, requiredIPS);
+
+            // Track dungeon entry in statistics
+            if (playerStatsDAO != null) {
+                String dungeonKey = DungeonKeyUtils.getDungeonKeyFromSelectedMap(selectedMap);
+                if (dungeonKey != null) {
+                    playerStatsDAO.incrementEntries(player.getUniqueId(), dungeonKey);
+                }
+            }
         }
 
     }

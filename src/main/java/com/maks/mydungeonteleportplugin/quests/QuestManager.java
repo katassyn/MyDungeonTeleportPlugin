@@ -1,6 +1,8 @@
 package com.maks.mydungeonteleportplugin.quests;
 
 import com.maks.mydungeonteleportplugin.MyDungeonTeleportPlugin;
+import com.maks.mydungeonteleportplugin.database.DungeonKeyUtils;
+import com.maks.mydungeonteleportplugin.database.PlayerStatsDAO;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,12 +18,18 @@ public class QuestManager {
     private final MyDungeonTeleportPlugin plugin;
     private final Map<UUID, QuestState> activeQuests = new HashMap<>();
     private final Map<UUID, BukkitTask> questTimers = new HashMap<>();
+    private final Map<UUID, Long> questStartTimes = new HashMap<>();
+    private PlayerStatsDAO playerStatsDAO;
 
     // Debug flag
     private int debuggingFlag = 0; // Set to 0 when everything is working
 
     public QuestManager(MyDungeonTeleportPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void setPlayerStatsDAO(PlayerStatsDAO playerStatsDAO) {
+        this.playerStatsDAO = playerStatsDAO;
     }
 
     /**
@@ -58,6 +66,9 @@ public class QuestManager {
         // Create new quest state
         QuestState questState = new QuestState(playerId, questId);
         activeQuests.put(playerId, questState);
+
+        // Record quest start time for tracking completion time
+        questStartTimes.put(playerId, System.currentTimeMillis());
         if (questId.startsWith("q2_")) {
             questState.setLocationFound(true);
             // Losujemy ilość czerwonych i brązowych grzybów (suma = 5)
@@ -162,6 +173,9 @@ public class QuestManager {
 
         questTimers.put(playerId, timeoutTask);
 
+        // Record quest start time for completion time tracking
+        questStartTimes.put(playerId, System.currentTimeMillis());
+
         // Skip showing quest start message for q7_m2 as we've already shown objectives
         if (!(questId.startsWith("q7_") && player.getWorld().getName().contains("m2"))) {
             // Show quest start message for other quests
@@ -188,6 +202,9 @@ public class QuestManager {
             if (task != null) {
                 task.cancel();
             }
+
+            // Remove quest start time
+            questStartTimes.remove(playerId);
 
             // Release quest occupation
             plugin.releaseQuestForPlayer(playerId);
@@ -251,6 +268,29 @@ public class QuestManager {
 
         if (debuggingFlag == 1) {
             player.sendMessage(ChatColor.GRAY + "DEBUG: Quest " + state.getQuestId() + " completed.");
+        }
+
+        // Track quest completion in statistics
+        if (playerStatsDAO != null) {
+            String questId = state.getQuestId();
+            String dungeonKey = questId; // Most quest IDs are already in the correct format (e.g., "q1_inf")
+
+            // Increment completion count
+            playerStatsDAO.incrementCompletions(playerId, dungeonKey);
+
+            // Calculate completion time and update fastest time if applicable
+            Long startTime = questStartTimes.remove(playerId);
+            if (startTime != null) {
+                long completionTimeMillis = System.currentTimeMillis() - startTime;
+                int completionTimeSeconds = (int) (completionTimeMillis / 1000);
+
+                // Update fastest time
+                playerStatsDAO.updateFastestTime(playerId, dungeonKey, completionTimeSeconds);
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Quest completed in " + completionTimeSeconds + " seconds.");
+                }
+            }
         }
 
         // Schedule player return after 15 seconds with countdown

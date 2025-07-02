@@ -1,0 +1,7 @@
+# Database configuration
+database:
+  host: "node19.icehost.pl"
+  port: "5891"
+  name: "s61121_minecraft"
+  user: "u61121_T1tlCaXDAv"
+  password: "PlwA+z7DQ=cS0R7.ixxCxbhD"

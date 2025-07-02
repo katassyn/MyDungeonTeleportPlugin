@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MyDungeonTeleportPlugin.iml" filepath="$PROJECT_DIR$/MyDungeonTeleportPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MyDungeonTeleportPlugin.iml" filepath="$PROJECT_DIR$/.idea/MyDungeonTeleportPlugin.iml" />
     </modules>
   </component>
 </project>

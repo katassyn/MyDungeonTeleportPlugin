@@ -76,7 +76,16 @@ commands:
     permission: mydungeonplugin.use
     permission-message: "You do not have permission to use this command."
 
+  setdungeondrops:
+    description: "Sets up drop preview GUI for a dungeon"
+    usage: "/setdungeondrops <dungeon_key>"
+    permission: mydungeonplugin.admin
+    permission-message: "You do not have permission to use this command."
+
 permissions:
   mydungeonplugin.use:
     description: "Allows the use of all dungeon commands."
+    default: op
+  mydungeonplugin.admin:
+    description: "Allows the use of administrative commands."
     default: op

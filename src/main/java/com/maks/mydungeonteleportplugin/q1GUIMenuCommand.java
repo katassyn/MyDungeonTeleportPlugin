@@ -32,9 +32,26 @@ public class q1GUIMenuCommand implements CommandExecutor {
     public void openq1Menu(Player player) {
         Inventory gui = Bukkit.createInventory(null, 27, ChatColor.RED + "Q1 Menu");
 
-        gui.setItem(10, createGuiItem(Material.NETHER_BRICKS, ChatColor.BLUE + "Infernal", "Required level: 50", "Cost: 10x Fragment of Infernal Passage "));
-        gui.setItem(13, createGuiItem(Material.OBSIDIAN, ChatColor.DARK_BLUE + "Hell", "Required level: 65", "Cost: 25x Fragment of Infernal Passage "));
-        gui.setItem(16, createGuiItem(Material.RED_NETHER_BRICKS, ChatColor.GOLD + "Bloodshed", "Required level: 80", "Cost: 50x Fragment of Infernal Passage "));
+        gui.setItem(10, createGuiItem(Material.NETHER_BRICKS, ChatColor.BLUE + "Infernal", 
+            "Required level: 50", 
+            "Cost: 10x Fragment of Infernal Passage",
+            "",
+            ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Select dungeon",
+            ChatColor.YELLOW + "Right-Click: " + ChatColor.WHITE + "View possible drops"));
+
+        gui.setItem(13, createGuiItem(Material.OBSIDIAN, ChatColor.DARK_BLUE + "Hell", 
+            "Required level: 65", 
+            "Cost: 25x Fragment of Infernal Passage",
+            "",
+            ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Select dungeon",
+            ChatColor.YELLOW + "Right-Click: " + ChatColor.WHITE + "View possible drops"));
+
+        gui.setItem(16, createGuiItem(Material.RED_NETHER_BRICKS, ChatColor.GOLD + "Bloodshed", 
+            "Required level: 80", 
+            "Cost: 50x Fragment of Infernal Passage",
+            "",
+            ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Select dungeon",
+            ChatColor.YELLOW + "Right-Click: " + ChatColor.WHITE + "View possible drops"));
 
         // Wypełnienie pustych miejsc szybami
         for (int i = 0; i < gui.getSize(); i++) {

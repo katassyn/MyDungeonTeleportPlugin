@@ -32,9 +32,26 @@ public class q6GUIMenuCommand implements CommandExecutor {
     public void openq6Menu(Player player) {
         Inventory gui = Bukkit.createInventory(null, 27, ChatColor.RED + "Q6 Menu");
 
-        gui.setItem(10, createGuiItem(Material.BONE_BLOCK, ChatColor.BLUE + "Infernal", "Required level: 50", "Cost: 10x Fragment of Infernal Passage (IPS)"));
-        gui.setItem(13, createGuiItem(Material.BASALT, ChatColor.DARK_BLUE + "Hell", "Required level: 65", "Cost: 25x Fragment of Infernal Passage (IPS)"));
-        gui.setItem(16, createGuiItem(Material.BLACK_CONCRETE, ChatColor.GOLD + "Bloodshed", "Required level: 80", "Cost: 50x Fragment of Infernal Passage (IPS)"));
+        gui.setItem(10, createGuiItem(Material.BONE_BLOCK, ChatColor.BLUE + "Infernal", 
+            "Required level: 50", 
+            "Cost: 10x Fragment of Infernal Passage (IPS)",
+            "",
+            ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Select dungeon",
+            ChatColor.YELLOW + "Right-Click: " + ChatColor.WHITE + "View possible drops"));
+
+        gui.setItem(13, createGuiItem(Material.BASALT, ChatColor.DARK_BLUE + "Hell", 
+            "Required level: 65", 
+            "Cost: 25x Fragment of Infernal Passage (IPS)",
+            "",
+            ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Select dungeon",
+            ChatColor.YELLOW + "Right-Click: " + ChatColor.WHITE + "View possible drops"));
+
+        gui.setItem(16, createGuiItem(Material.BLACK_CONCRETE, ChatColor.GOLD + "Bloodshed", 
+            "Required level: 80", 
+            "Cost: 50x Fragment of Infernal Passage (IPS)",
+            "",
+            ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Select dungeon",
+            ChatColor.YELLOW + "Right-Click: " + ChatColor.WHITE + "View possible drops"));
 
         // Wypełnienie pustych miejsc szybami
         for (int i = 0; i < gui.getSize(); i++) {

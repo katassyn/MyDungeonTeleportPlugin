@@ -18,6 +18,7 @@ public class QuestData {
         initializeQ6();
         initializeQ7();
         initializeQ8();
+        initializeQ9();
     }
 
     private static void initializeQ1() {
@@ -642,6 +643,102 @@ public class QuestData {
         questData.put("q8_blood", q8Blood);
     }
 
+    private static void initializeQ9() {
+        // Q9 Infernal
+        DungeonQuest q9Inf = new DungeonQuest("q9_inf", "Q9 Infernal", 50, 0.5, "Qinf", 10);
+        q9Inf.setLocationMessage("Find and collect statue fragments");
+
+        // Stage 1 - Collect statue fragments (4 random from 8 possible locations)
+        q9Inf.addStatueLocations(1, new int[][] {
+                {-3889, -60, -560}, {-3833, -60, -583}, {-3888, -60, -635}, {-3848, -60, -700},
+                {-3895, -60, -721}, {-3965, -60, -684}, {-3939, -60, -651}, {-3963, -60, -602}
+        });
+        q9Inf.setRequiredStatues(1, 4); // Collect 4 fragments
+        q9Inf.setStageMessage(1, "Find and interact with 4 ancient statues to collect their fragments");
+
+        // Stage 1 - Kill mini-boss
+        q9Inf.setBossObjective(1, "asterion_inf", "Mini-Boss: Asterion");
+        q9Inf.addPortalObjective(1, "world", -4015, -61, -645, -4016, -59, -646);
+        q9Inf.setStageEndCommand(1, "warp q9_m2_inf");
+
+        // Stage 2 - Activate 5 metronomes
+        q9Inf.setStageMessage(2, "Find and activate 5 ancient metronomes");
+        q9Inf.setRequiredAltars(2, 5);
+
+        // Stage 2 - Kill mini-boss
+        q9Inf.setBossObjective(2, "ebicarus_inf", "Mini-Boss: Ebicarus");
+        q9Inf.addPortalObjective(2, "world", -3948, -61, -1007, -3947, -59, -1006);
+        q9Inf.setStageEndCommand(2, "warp q9_m3_inf");
+
+        // Stage 3 - Kill final boss
+        q9Inf.setBossObjective(3, "medusa_inf", "Final Boss: Medusa");
+
+        questData.put("q9_inf", q9Inf);
+
+        // Q9 Hell
+        DungeonQuest q9Hell = new DungeonQuest("q9_hell", "Q9 Hell", 65, 1.0, "QHell", 25);
+        q9Hell.setLocationMessage("Find and collect statue fragments");
+
+        // Stage 1 - Collect statue fragments
+        q9Hell.addStatueLocations(1, new int[][] {
+                {-4032, -60, -1325}, {-3986, -60, -1348}, {-4031, -60, -1400}, {-3991, -60, -1465},
+                {-4038, -60, -1486}, {-4082, -60, -1416}, {-4108, -60, -1449}, {-4106, -60, -1367},
+                {-3976, -60, -1348}
+        });
+        q9Hell.setRequiredStatues(1, 4);
+        q9Hell.setStageMessage(1, "Find and interact with 4 ancient statues to collect their fragments");
+
+        // Stage 1 - Kill mini-boss
+        q9Hell.setBossObjective(1, "asterion_hell", "Mini-Boss: Asterion");
+        q9Hell.addPortalObjective(1, "world", -4158, -61, -1410, -4159, -59, -1411);
+        q9Hell.setStageEndCommand(1, "warp q9_m2_hell");
+
+        // Stage 2 - Activate 5 metronomes
+        q9Hell.setStageMessage(2, "Find and activate 5 ancient metronomes");
+        q9Hell.setRequiredAltars(2, 5);
+
+        // Stage 2 - Kill mini-boss
+        q9Hell.setBossObjective(2, "ebicarus_hell", "Mini-Boss: Ebicarus");
+        q9Hell.addPortalObjective(2, "world", -4046, -61, -1830, -4045, -59, -1829);
+        q9Hell.setStageEndCommand(2, "warp q9_m3_hell");
+
+        // Stage 3 - Kill final boss
+        q9Hell.setBossObjective(3, "medusa_hell", "Final Boss: Medusa");
+
+        questData.put("q9_hell", q9Hell);
+
+        // Q9 Blood
+        DungeonQuest q9Blood = new DungeonQuest("q9_blood", "Q9 Bloodshed", 80, 1.5, "QBlood", 50);
+        q9Blood.setLocationMessage("Find and collect statue fragments");
+
+        // Stage 1 - Collect statue fragments
+        q9Blood.addStatueLocations(1, new int[][] {
+                {-4080, -60, -2170}, {-4024, -60, -2193}, {-4079, -60, -2245}, {-4039, -60, -2310},
+                {-4086, -60, -2331}, {-4130, -60, -2261}, {-4156, -60, -2294}, {-4154, -60, -2212}
+        });
+        q9Blood.setRequiredStatues(1, 4);
+        q9Blood.setStageMessage(1, "Find and interact with 4 ancient statues to collect their fragments");
+
+        // Stage 1 - Kill mini-boss
+        q9Blood.setBossObjective(1, "asterion_blood", "Mini-Boss: Asterion");
+        q9Blood.addPortalObjective(1, "world", -4206, -61, -2255, -4207, -59, -2256);
+        q9Blood.setStageEndCommand(1, "warp q9_m2_blood");
+
+        // Stage 2 - Activate 5 metronomes
+        q9Blood.setStageMessage(2, "Find and activate 5 ancient metronomes");
+        q9Blood.setRequiredAltars(2, 5);
+
+        // Stage 2 - Kill mini-boss
+        q9Blood.setBossObjective(2, "ebicarus_blood", "Mini-Boss: Ebicarus");
+        q9Blood.addPortalObjective(2, "world", -4094, -61, -2675, -4093, -59, -2674);
+        q9Blood.setStageEndCommand(2, "warp q9_m3_blood");
+
+        // Stage 3 - Kill final boss
+        q9Blood.setBossObjective(3, "medusa_blood", "Final Boss: Medusa");
+
+        questData.put("q9_blood", q9Blood);
+    }
+
     public static DungeonQuest getQuestData(String questId) {
         return questData.get(questId);
     }
@@ -663,6 +760,9 @@ public class QuestData {
         private final Map<Integer, Map<String, CollectObjective>> collectObjectives = new HashMap<>();
         private final Map<Integer, InteractObjective> interactObjectives = new HashMap<>();
         private final Map<Integer, String> stageMessages = new HashMap<>();
+        private final Map<Integer, int[][]> statueLocations = new HashMap<>();
+        private final Map<Integer, Integer> requiredStatues = new HashMap<>();
+        private final Map<Integer, Integer> requiredAltars = new HashMap<>();
 
         public DungeonQuest(String id, String name, int requiredLevel, double expReward, String itemReward, int requiredIPS) {
             this.id = id;
@@ -678,6 +778,40 @@ public class QuestData {
                 collectObjectives.put(i, new HashMap<>());
             }
         }
+
+        // Q9 specific methods
+        public void addStatueLocations(int stage, int[][] locations) {
+            statueLocations.put(stage, locations);
+        }
+
+        public int[][] getStatueLocations(int stage) {
+            return statueLocations.get(stage);
+        }
+
+        public void setRequiredStatues(int stage, int count) {
+            requiredStatues.put(stage, count);
+        }
+
+        public int getRequiredStatues(int stage) {
+            return requiredStatues.getOrDefault(stage, 0);
+        }
+
+        public void setRequiredAltars(int stage, int count) {
+            requiredAltars.put(stage, count);
+        }
+
+        public int getRequiredAltars(int stage) {
+            return requiredAltars.getOrDefault(stage, 0);
+        }
+
+        public boolean hasStatueObjective(int stage) {
+            return statueLocations.containsKey(stage);
+        }
+
+        public boolean hasAltarObjective(int stage) {
+            return requiredAltars.containsKey(stage);
+        }
+
         public void addCollectObjective(int stage, String mobId, int count, int dropChance, String displayName) {
             collectObjectives.get(stage).put(mobId, new CollectObjective(mobId, count, dropChance, displayName, false));
         }
@@ -903,8 +1037,8 @@ public class QuestData {
                 int centerZ = (z1 + z2) / 2;
 
                 double distanceSquared = Math.pow(loc.getBlockX() - centerX, 2) +
-                                         Math.pow(loc.getBlockY() - centerY, 2) +
-                                         Math.pow(loc.getBlockZ() - centerZ, 2);
+                        Math.pow(loc.getBlockY() - centerY, 2) +
+                        Math.pow(loc.getBlockZ() - centerZ, 2);
 
                 return distanceSquared <= Math.pow(radius, 2);
             }

@@ -25,6 +25,8 @@ public class QuestInteractionListener implements Listener {
     private final Map<UUID, Long> lastPoisonWarningTime = new HashMap<>();
     private final Map<UUID, Integer> poisonTimers = new HashMap<>();
     private final Map<UUID, Map<String, Long>> lastMushroomInteractions = new HashMap<>();
+    private final Map<UUID, Map<String, Long>> lastStatueInteractions = new HashMap<>();
+    private final Map<UUID, Map<String, Long>> lastMetronomeInteractions = new HashMap<>();
 
     // Debug flag
     private int debuggingFlag = 0; // Debug disabled
@@ -304,6 +306,210 @@ public class QuestInteractionListener implements Listener {
 
                 if (debuggingFlag == 1) {
                     player.sendMessage(ChatColor.GRAY + "DEBUG: Grindstone interaction complete, advancing to KILL_BOSS objective");
+                }
+            }
+        }
+        // Q9 quest interactions
+        else if (state.getQuestId().startsWith("q9_")) {
+            Material blockType = clickedBlock.getType();
+
+            // Stage 1 - Statue fragment collection
+            if (state.getCurrentStage() == 1 && 
+                state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS &&
+                blockType == Material.GRANITE_WALL) {
+
+                // Get statue locations from quest data
+                QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
+                if (questData == null) return;
+
+                int[][] statueLocations = questData.getStatueLocations(1);
+                if (statueLocations == null) return;
+
+                // Find which statue this is (if any)
+                int statueIndex = -1;
+                for (int i = 0; i < statueLocations.length; i++) {
+                    if (clickedBlock.getX() == statueLocations[i][0] &&
+                        clickedBlock.getY() == statueLocations[i][1] &&
+                        clickedBlock.getZ() == statueLocations[i][2]) {
+                        statueIndex = i;
+                        break;
+                    }
+                }
+
+                if (statueIndex == -1) {
+                    return; // Not a statue location
+                }
+
+                String statueId = "statue_" + statueIndex + "_" + 
+                                 clickedBlock.getX() + "_" + 
+                                 clickedBlock.getY() + "_" + 
+                                 clickedBlock.getZ();
+
+                // Get map of interactions for this player or create new one
+                Map<String, Long> playerInteractions = lastStatueInteractions
+                        .computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+
+                // Check time of last interaction with this statue
+                long currentTime = System.currentTimeMillis();
+                long lastInteractionTime = playerInteractions.getOrDefault(statueId, 0L);
+
+                // If less than 2 seconds since last interaction, ignore
+                if (currentTime - lastInteractionTime < 2000) {
+                    return;
+                }
+
+                // Save time of this interaction
+                playerInteractions.put(statueId, currentTime);
+
+                // Check if already collected this statue
+                if (state.hasCollectedStatue(statueId)) {
+                    player.sendMessage(ChatColor.RED + "You've already collected this statue fragment!");
+                    return;
+                }
+
+                // Check if this is one of the selected statues
+                if (!state.isStatueSelected(statueIndex)) {
+                    player.sendMessage(ChatColor.RED + "§l» §r§cFailed to obtain the statue fragment!");
+                    player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_STONE_BREAK, 1.0f, 0.5f);
+                    return;
+                }
+
+                // Collect the statue fragment
+                state.collectStatue(statueId);
+                int collected = state.getStatueFragmentsCollected();
+
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected a statue fragment! (" + 
+                                 collected + "/4)");
+
+                // Play collection sound
+                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+
+                // Close inventory
+                player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                // Check if all fragments collected
+                if (state.hasCollectedAllStatues()) {
+                    player.sendTitle(
+                        ChatColor.GREEN + "All Fragments Collected!",
+                        ChatColor.YELLOW + "Now find and defeat Asterion",
+                        10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected all statue fragments!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe ancient power flows through you.");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat Asterion now.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    // Move to boss phase
+                    state.advanceToNextObjective();
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: All statue fragments collected, advancing to KILL_BOSS");
+                    }
+                }
+            }
+            // Stage 2 - Metronome activation
+            else if (state.getCurrentStage() == 2 && 
+                     state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS &&
+                     blockType == Material.END_STONE_BRICK_WALL) {
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Attempting to activate metronome at " + 
+                                      clickedBlock.getX() + "," + clickedBlock.getY() + "," + clickedBlock.getZ());
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Block type: " + blockType);
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Current stage: " + state.getCurrentStage());
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Current objective: " + state.getCurrentObjective());
+                }
+
+                // Create altar ID based on location
+                String altarId = "altar_" + clickedBlock.getX() + "_" + 
+                                clickedBlock.getY() + "_" + clickedBlock.getZ();
+
+                // Get map of interactions for this player or create new one
+                Map<String, Long> playerInteractions = lastMetronomeInteractions
+                        .computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+
+                // Check time of last interaction with this metronome
+                long currentTime = System.currentTimeMillis();
+                long lastInteractionTime = playerInteractions.getOrDefault(altarId, 0L);
+
+                // If less than 2 seconds since last interaction, ignore
+                if (currentTime - lastInteractionTime < 2000) {
+                    return;
+                }
+
+                // Save time of this interaction
+                playerInteractions.put(altarId, currentTime);
+
+                // Check if this altar was already activated
+                if (state.hasActivatedAltar(altarId)) {
+                    player.sendMessage(ChatColor.RED + "This metronome has already been activated!");
+                    return;
+                }
+
+                // Check if any metronome within 10 blocks was already activated
+                for (String activatedAltar : state.getActivatedAltars()) {
+                    String[] parts = activatedAltar.split("_");
+                    if (parts.length >= 4) {
+                        try {
+                            int x = Integer.parseInt(parts[1]);
+                            int y = Integer.parseInt(parts[2]);
+                            int z = Integer.parseInt(parts[3]);
+
+                            double distance = Math.sqrt(
+                                Math.pow(clickedBlock.getX() - x, 2) +
+                                Math.pow(clickedBlock.getY() - y, 2) +
+                                Math.pow(clickedBlock.getZ() - z, 2)
+                            );
+
+                            if (distance <= 10) {
+                                player.sendMessage(ChatColor.RED + "This metronome cluster has already been activated!");
+                                return;
+                            }
+                        } catch (NumberFormatException e) {
+                            // Skip malformed metronome IDs
+                        }
+                    }
+                }
+
+                // Activate the metronome
+                state.activateAltar(altarId);
+                int activated = state.getAltarsActivated();
+
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've activated an ancient metronome! (" + 
+                                 activated + "/5)");
+
+                // Play activation sound
+                player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+
+                // Visual effect
+                player.getWorld().spawnParticle(org.bukkit.Particle.END_ROD, 
+                    clickedBlock.getLocation().add(0.5, 1, 0.5), 20, 0.5, 0.5, 0.5, 0.1);
+
+                // Close inventory
+                player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                // Check if all metronomes activated
+                if (state.hasActivatedAllAltars()) {
+                    player.sendTitle(
+                        ChatColor.GREEN + "All Metronomes Activated!",
+                        ChatColor.YELLOW + "Now find and defeat Ebicarus",
+                        10, 70, 20
+                    );
+
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                    player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've activated all ancient metronomes!");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe seals are broken.");
+                    player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat Ebicarus now.");
+                    player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                    // Move to boss phase
+                    state.advanceToNextObjective();
+
+                    if (debuggingFlag == 1) {
+                        player.sendMessage(ChatColor.GRAY + "DEBUG: All metronomes activated, advancing to KILL_BOSS");
+                    }
                 }
             }
         }
@@ -768,6 +974,8 @@ public class QuestInteractionListener implements Listener {
     // Dodaj tę metodę publiczną
     public void clearPlayerData(UUID playerId) {
         lastMushroomInteractions.remove(playerId);
+        lastStatueInteractions.remove(playerId);
+        lastMetronomeInteractions.remove(playerId);
         lastPoisonWarningTime.remove(playerId);
 
         // Anuluj też timer trucizny, jeśli istnieje
@@ -787,10 +995,22 @@ public class QuestInteractionListener implements Listener {
         // Usuń dane dla graczy bez aktywnego questa
         lastMushroomInteractions.keySet().removeIf(playerId ->
                 !questManager.hasActiveQuest(playerId));
+        lastStatueInteractions.keySet().removeIf(playerId ->
+                !questManager.hasActiveQuest(playerId));
+        lastMetronomeInteractions.keySet().removeIf(playerId ->
+                !questManager.hasActiveQuest(playerId));
 
-        // Usuń starsze wpisy (> 10 minut) dla aktywnych graczy
+        // Usuń starsze wpisy (> 30 minut) dla aktywnych graczy
         long currentTime = System.currentTimeMillis();
         for (Map<String, Long> interactions : lastMushroomInteractions.values()) {
+            interactions.entrySet().removeIf(entry ->
+                    currentTime - entry.getValue() > 1800000); // 30 minut
+        }
+        for (Map<String, Long> interactions : lastStatueInteractions.values()) {
+            interactions.entrySet().removeIf(entry ->
+                    currentTime - entry.getValue() > 1800000); // 30 minut
+        }
+        for (Map<String, Long> interactions : lastMetronomeInteractions.values()) {
             interactions.entrySet().removeIf(entry ->
                     currentTime - entry.getValue() > 1800000); // 30 minut
         }

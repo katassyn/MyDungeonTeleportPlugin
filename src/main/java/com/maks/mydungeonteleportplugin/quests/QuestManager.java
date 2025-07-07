@@ -152,12 +152,23 @@ public class QuestManager {
             // Skip to collection phase - need to set objective explicitly
             questState.setCurrentObjective(QuestState.QuestObjective.COLLECT_FROM_MOBS);
 
-            // Set required items (5 electrical shards)
-            questState.setRequiredItems(5);
+        } else if (questId.startsWith("q9_")) {
+            questState.setLocationFound(true);
+
+            // Skip to statue collection phase
+            questState.setCurrentObjective(QuestState.QuestObjective.INTERACT_WITH_BLOCKS);
+
+            // Randomly select 4 statues out of 8
+            java.util.Set<Integer> selectedStatues = new java.util.HashSet<>();
+            while (selectedStatues.size() < 4) {
+                selectedStatues.add(ThreadLocalRandom.current().nextInt(0, 8));
+            }
+            questState.setSelectedStatues(selectedStatues);
 
             if (debuggingFlag == 1) {
-                player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q8 quest, skipping to collection phase");
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q9 quest, selected statues: " + selectedStatues);
             }
+
         }
         // Mark quest as occupied
         plugin.occupyQuest(questId, playerId);
@@ -166,7 +177,8 @@ public class QuestManager {
         BukkitTask timeoutTask = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline()) {
                 player.sendMessage(ChatColor.RED + "Time's up! You've failed the quest.");
-                player.setHealth(0);
+                // Teleport player to spawn instead of killing them
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + player.getName());
                 cancelQuest(playerId);
             }
         }, 20 * 60 * 30); // 30 minutes in ticks
@@ -302,8 +314,8 @@ public class QuestManager {
                 countdown[0]--;
 
                 if (countdown[0] <= 0) {
-                    // Use player.performCommand instead of console command to execute as player
-                    player.performCommand("suicide");
+                    // Teleport player to spawn instead of killing them
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + player.getName());
                     plugin.getServer().getScheduler().cancelTask(taskId.get());
                 } else if (countdown[0] <= 5) {
                     player.sendTitle(
@@ -710,6 +722,22 @@ public class QuestManager {
                 }
             }
         }
+        // For Q9, Stage 2 should start with INTERACT_WITH_BLOCKS objective for metronomes
+        else if (state.getQuestId().startsWith("q9_") && newStage == 2) {
+            // Ensure we're at the correct objective
+            state.setCurrentObjective(QuestState.QuestObjective.INTERACT_WITH_BLOCKS);
+
+            player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+            player.sendMessage(ChatColor.GREEN + "§l» §r§aStage 1 complete!");
+            player.sendMessage(ChatColor.YELLOW + "§l» §r§eStarting Stage 2");
+            player.sendMessage(ChatColor.AQUA + "§l» §r§bObjectives:");
+            player.sendMessage(ChatColor.AQUA + "§l» §r§bFind and activate 5 ancient metronomes");
+            player.sendMessage(ChatColor.AQUA + "§l» §r§bThen defeat Ebicarus to proceed to the final stage");
+            player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+            // Skip generic messages
+            return;
+        }
         // For Q7, Stage 2 should start with FIND_LOCATION objective for altars
         // Normal handling for non-Q3 quests or other stages
         else if (newStage > 1 && state.getCurrentObjective() == QuestState.QuestObjective.FIND_LOCATION) {
@@ -915,6 +943,10 @@ public class QuestManager {
                 // Display collection objective for Q8
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect 5 Electrical Shards from electrified creatures");
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bThen channel the energy into chiseled deepslate");
+            } else if (state.getQuestId().startsWith("q9_")) {
+                // Display statue collection objective for Q9
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bFind and interact with 4 ancient statues to collect their fragments");
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bThen defeat Asterion to proceed to the next stage");
             }
         }
 

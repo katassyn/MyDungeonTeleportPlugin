@@ -50,6 +50,11 @@ public class QuestState {
     private boolean altar2Activated = false;
     private boolean inQ7SpecialTransition = false;
 
+    // Q9 quest state
+    private final java.util.Set<Integer> selectedStatues = new java.util.HashSet<>(); // Which 4 statues are active
+    private final java.util.Set<String> collectedStatues = new java.util.HashSet<>(); // Statue IDs collected
+    private final java.util.Set<String> activatedAltars = new java.util.HashSet<>(); // Altar locations activated
+
     // Debug flag
     private int debuggingFlag = 0; // Set to 0 when everything is working
 
@@ -200,6 +205,11 @@ public class QuestState {
         usedLevers.clear();
         altar1Activated = false;
         altar2Activated = false;
+
+        // Reset Q9 quest state
+        selectedStatues.clear();
+        collectedStatues.clear();
+        activatedAltars.clear();
     }
 
     // Kill tracking
@@ -408,6 +418,53 @@ public class QuestState {
     public boolean isInQ7SpecialTransition() {
         return inQ7SpecialTransition;
     }
+
+    // Q9 quest methods
+    public boolean isStatueSelected(int index) {
+        return selectedStatues.contains(index);
+    }
+
+    public void setSelectedStatues(java.util.Set<Integer> statues) {
+        selectedStatues.clear();
+        selectedStatues.addAll(statues);
+    }
+
+    public boolean hasCollectedStatue(String statueId) {
+        return collectedStatues.contains(statueId);
+    }
+
+    public void collectStatue(String statueId) {
+        collectedStatues.add(statueId);
+    }
+
+    public int getStatueFragmentsCollected() {
+        return collectedStatues.size();
+    }
+
+    public boolean hasCollectedAllStatues() {
+        return getStatueFragmentsCollected() >= 4;
+    }
+
+    public boolean hasActivatedAltar(String altarId) {
+        return activatedAltars.contains(altarId);
+    }
+
+    public void activateAltar(String altarId) {
+        activatedAltars.add(altarId);
+    }
+
+    public int getAltarsActivated() {
+        return activatedAltars.size();
+    }
+
+    public boolean hasActivatedAllAltars() {
+        return getAltarsActivated() >= 5;
+    }
+
+    public java.util.Set<String> getActivatedAltars() {
+        return activatedAltars;
+    }
+
     public void setCurrentObjective(QuestObjective objective) {
         this.currentObjective = objective;
     }

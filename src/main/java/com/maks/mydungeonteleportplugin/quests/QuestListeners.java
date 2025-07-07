@@ -49,37 +49,81 @@ public class QuestListeners implements Listener {
         QuestState state = questManager.getActiveQuest(player.getUniqueId());
         if (state == null) return;
 
-        // Sprawdź tylko dla questów Q3
-        if (!state.getQuestId().startsWith("q3_")) return;
+        // Get entity name
+        LivingEntity target = (LivingEntity) event.getEntity();
+        String entityName = target.getCustomName();
+        if (entityName == null) return;
 
-        // Sprawdź czy jesteśmy w pierwszym etapie
-        if (state.getCurrentStage() == 1) {
-            QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
-            if (questData == null) return;
+        // Sprawdź dla questów Q3
+        if (state.getQuestId().startsWith("q3_")) {
+            // Sprawdź czy jesteśmy w pierwszym etapie
+            if (state.getCurrentStage() == 1) {
+                QuestData.DungeonQuest questData = QuestData.getQuestData(state.getQuestId());
+                if (questData == null) return;
 
-            // Pobierz nazwę bossa z questu
-            String bossId = questData.getBossObjective(1);
-            if (bossId == null) return;
+                // Pobierz nazwę bossa z questu
+                String bossId = questData.getBossObjective(1);
+                if (bossId == null) return;
 
-            // Sprawdź, czy entity ma odpowiedni display name (uproszczone sprawdzenie)
-            LivingEntity target = (LivingEntity) event.getEntity();
-            String entityName = target.getCustomName();
+                // Sprawdź czy nazwa zawiera kluczowy fragment z ID bossa
+                // (to uproszczone podejście, możliwe do zmiany zależnie od struktury nazw MythicMobs)
+                if (matchesBossName(entityName, bossId) && state.isMiniBossInvulnerable()) {
+                    // Anuluj obrażenia i pokaż wiadomość
+                    event.setCancelled(true);
 
-            // Sprawdź czy nazwa zawiera kluczowy fragment z ID bossa
-            // (to uproszczone podejście, możliwe do zmiany zależnie od struktury nazw MythicMobs)
-            if (entityName != null && matchesBossName(entityName, bossId) && state.isMiniBossInvulnerable()) {
-                // Anuluj obrażenia i pokaż wiadomość
-                event.setCancelled(true);
+                    long now = System.currentTimeMillis();
+                    if (!lastWarningTime.containsKey(player.getUniqueId()) ||
+                            now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
 
-                long now = System.currentTimeMillis();
-                if (!lastWarningTime.containsKey(player.getUniqueId()) ||
-                        now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
+                        player.sendMessage(ChatColor.RED + "§l» §r§cThe Evil Miller is protected by a spell! You need to collect and grind undead bones first!");
+                        lastWarningTime.put(player.getUniqueId(), now);
 
-                    player.sendMessage(ChatColor.RED + "§l» §r§cThe Evil Miller is protected by a spell! You need to collect and grind undead bones first!");
-                    lastWarningTime.put(player.getUniqueId(), now);
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to mini-boss cancelled - still protected");
+                        }
+                    }
+                }
+            }
+        }
+        // Check for Q9 quests
+        else if (state.getQuestId().startsWith("q9_")) {
+            // Stage 1 - Asterion protection
+            if (state.getCurrentStage() == 1 && entityName.toLowerCase().contains("asterion")) {
+                if (!state.hasCollectedAllStatues()) {
+                    event.setCancelled(true);
 
-                    if (debuggingFlag == 1) {
-                        player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to mini-boss cancelled - still protected");
+                    long now = System.currentTimeMillis();
+                    if (!lastWarningTime.containsKey(player.getUniqueId()) ||
+                            now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
+
+                        player.sendMessage(ChatColor.RED + "§l» §r§cAsterion is protected by ancient magic! Collect all statue fragments first!");
+                        player.sendMessage(ChatColor.YELLOW + "§l» §r§eStatue fragments: " + 
+                                         state.getStatueFragmentsCollected() + "/4");
+                        lastWarningTime.put(player.getUniqueId(), now);
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to Asterion cancelled - need statue fragments");
+                        }
+                    }
+                }
+            }
+            // Stage 2 - Ebicarus protection
+            else if (state.getCurrentStage() == 2 && entityName.toLowerCase().contains("ebicarus")) {
+                if (!state.hasActivatedAllAltars()) {
+                    event.setCancelled(true);
+
+                    long now = System.currentTimeMillis();
+                    if (!lastWarningTime.containsKey(player.getUniqueId()) ||
+                            now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
+
+                        player.sendMessage(ChatColor.RED + "§l» §r§cEbicarus is protected by metronome seals! Activate all metronomes first!");
+                        player.sendMessage(ChatColor.YELLOW + "§l» §r§eMetronomes activated: " + 
+                                         state.getAltarsActivated() + "/5");
+                        lastWarningTime.put(player.getUniqueId(), now);
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to Ebicarus cancelled - need metronome activations");
+                        }
                     }
                 }
             }

@@ -152,6 +152,15 @@ public class QuestManager {
             // Skip to collection phase - need to set objective explicitly
             questState.setCurrentObjective(QuestState.QuestObjective.COLLECT_FROM_MOBS);
 
+            // Set the required number of shards for collection objective
+            if (questData != null && questData.hasCollectObjectives(1)) {
+                Map<String, QuestData.CollectObjective> objectives = questData.getCollectObjectives(1);
+                if (!objectives.isEmpty()) {
+                    QuestData.CollectObjective objective = objectives.values().iterator().next();
+                    questState.setRequiredItems(objective.getCount());
+                }
+            }
+
         } else if (questId.startsWith("q9_")) {
             questState.setLocationFound(true);
 

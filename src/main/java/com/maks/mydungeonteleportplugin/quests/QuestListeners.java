@@ -2,6 +2,8 @@ package com.maks.mydungeonteleportplugin.quests;
 
 import com.maks.mydungeonteleportplugin.MyDungeonTeleportPlugin;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +31,7 @@ public class QuestListeners implements Listener {
     private static final String ALTAR1_COMPLETION_KEY = "altar1_completion_message";
     private static final String ALTAR2_COMPLETION_KEY = "altar2_completion_message";
 
-    private int debuggingFlag = 0; // Set to 0 to disable debug messages
+    private int debuggingFlag = 0; // Debug disabled
 
     public QuestListeners(MyDungeonTeleportPlugin plugin, QuestManager questManager,
                           QuestInteractionListener interactionListener) {
@@ -123,6 +125,68 @@ public class QuestListeners implements Listener {
 
                         if (debuggingFlag == 1) {
                             player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to Ebicarus cancelled - need metronome activations");
+                        }
+                    }
+                }
+            }
+        }
+        // Check for Q10 quests
+        else if (state.getQuestId().startsWith("q10_")) {
+            // Get the MythicMob type name if this is a MythicMob
+            String mobTypeName = "";
+            ActiveMob activeMob = MythicBukkit.inst().getMobManager().getActiveMob(event.getEntity().getUniqueId()).orElse(null);
+            if (activeMob != null) {
+                mobTypeName = activeMob.getType().getInternalName().toLowerCase();
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Entity is a MythicMob with type: " + mobTypeName);
+                }
+            } else {
+                // If not a MythicMob, fall back to custom name
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Entity is not a MythicMob, using custom name: " + entityName);
+                }
+            }
+
+            // Stage 1 - Melas protection
+            if (state.getCurrentStage() == 1 && 
+                (mobTypeName.contains("melas_the_swift_footed") || entityName.toLowerCase().contains("melas the swift-footed"))) {
+                if (state.isMiniBossInvulnerable()) {
+                    event.setCancelled(true);
+
+                    long now = System.currentTimeMillis();
+                    if (!lastWarningTime.containsKey(player.getUniqueId()) ||
+                            now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
+
+                        player.sendMessage(ChatColor.RED + "§l» §r§cMelas is protected by ancient magic! Deposit all fragments first!");
+                        player.sendMessage(ChatColor.YELLOW + "§l» §r§eFragments deposited: " + 
+                                         state.getFragmentsDeposited() + "/3");
+                        lastWarningTime.put(player.getUniqueId(), now);
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to Melas cancelled - need fragments");
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: MythicMob type: " + mobTypeName);
+                        }
+                    }
+                }
+            }
+            // Stage 2 - Akheilos protection
+            else if (state.getCurrentStage() == 2 && 
+                    (mobTypeName.contains("akheilos") || entityName.toLowerCase().contains("akheilos"))) {
+                if (state.isMiniBossInvulnerable()) {
+                    event.setCancelled(true);
+
+                    long now = System.currentTimeMillis();
+                    if (!lastWarningTime.containsKey(player.getUniqueId()) ||
+                            now - lastWarningTime.getOrDefault(player.getUniqueId(), 0L) > 5000) {
+
+                        player.sendMessage(ChatColor.RED + "§l» §r§cAkheilos cannot be harmed without the Golden Walrus Statuette!");
+                        player.sendMessage(ChatColor.YELLOW + "§l» §r§eDefeat Armed Khaross enemies to find it.");
+                        lastWarningTime.put(player.getUniqueId(), now);
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Damage to Akheilos cancelled - need statuette");
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: MythicMob type: " + mobTypeName);
                         }
                     }
                 }
@@ -796,7 +860,7 @@ public class QuestListeners implements Listener {
             }
         }
 
-        // Handle item collection for Q3, Q6, Q7, and Q8 quests
+        // Handle item collection for Q3, Q6, Q7, Q8, and Q10 quests
         interactionListener.handlePossibleItemDrop(killer, mobId);
 
         // Special handling for Q7 quest mobs - only count kills if the corresponding altar is activated

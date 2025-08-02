@@ -19,6 +19,7 @@ public class QuestData {
         initializeQ7();
         initializeQ8();
         initializeQ9();
+        initializeQ10();
     }
 
     private static void initializeQ1() {
@@ -739,6 +740,89 @@ public class QuestData {
         questData.put("q9_blood", q9Blood);
     }
 
+    private static void initializeQ10() {
+        // Q10 Infernal
+        DungeonQuest q10Inf = new DungeonQuest("q10_inf", "Q10 Infernal", 50, 0.5, "Qinf", 10);
+        q10Inf.setLocationMessage("Find and collect ancient fragments");
+
+        // Stage 1 - Fragment collection and deposit
+        q10Inf.setStageMessage(1, "Collect 3 ancient fragments from lime shulker boxes and deposit them into lodestones");
+        q10Inf.setRequiredFragments(1, 3); // Need to collect and deposit 3 fragments
+
+        // Stage 1 - Kill mini-boss
+        q10Inf.setBossObjective(1, "melas_the_swift_footed_inf", "Mini-Boss: Melas the Swift-Footed");
+        q10Inf.addPortalObjective(1, "world", -4065, -61, -186, -4064, -59, -185);
+        q10Inf.setStageEndCommand(1, "warp q10_m2_inf");
+
+        // Stage 2 - Collect golden walrus statuette
+        q10Inf.setStageMessage(2, "Find a Golden Walrus Statuette to awaken the guardian");
+        q10Inf.addCollectObjective(2, "armed_khaross_inf", 1, 10, "Golden Walrus Statuette", true, 30);
+
+        // Stage 2 - Kill mini-boss
+        q10Inf.setBossObjective(2, "akheilos_inf", "Mini-Boss: Akheilos");
+        q10Inf.addPortalObjective(2, "world", -4131, -61, 269, -4130, -59, 270);
+        q10Inf.setStageEndCommand(2, "warp q10_m3_inf");
+
+        // Stage 3 - Kill final boss
+        q10Inf.setBossObjective(3, "parallel_world_gorga_inf", "Final Boss: Parallel World Gorga");
+
+        questData.put("q10_inf", q10Inf);
+
+        // Q10 Hell
+        DungeonQuest q10Hell = new DungeonQuest("q10_hell", "Q10 Hell", 65, 1.0, "QHell", 25);
+        q10Hell.setLocationMessage("Find and collect ancient fragments");
+
+        // Stage 1 - Fragment collection and deposit
+        q10Hell.setStageMessage(1, "Collect 3 ancient fragments from lime shulker boxes and deposit them into lodestones");
+        q10Hell.setRequiredFragments(1, 3);
+
+        // Stage 1 - Kill mini-boss
+        q10Hell.setBossObjective(1, "melas_the_swift_footed_hell", "Mini-Boss: Melas the Swift-Footed");
+        q10Hell.addPortalObjective(1, "world", -4114, -61, 781, -4113, -59, 782);
+        q10Hell.setStageEndCommand(1, "warp q10_m2_hell");
+
+        // Stage 2 - Collect golden walrus statuette
+        q10Hell.setStageMessage(2, "Find a Golden Walrus Statuette to awaken the guardian");
+        q10Hell.addCollectObjective(2, "armed_khaross_hell", 1, 10, "Golden Walrus Statuette", true, 30);
+
+        // Stage 2 - Kill mini-boss
+        q10Hell.setBossObjective(2, "akheilos_hell", "Mini-Boss: Akheilos");
+        q10Hell.addPortalObjective(2, "world", -4180, -61, 1236, -4179, -59, 1237);
+        q10Hell.setStageEndCommand(2, "warp q10_m3_hell");
+
+        // Stage 3 - Kill final boss
+        q10Hell.setBossObjective(3, "parallel_world_gorga_hell", "Final Boss: Parallel World Gorga");
+
+        questData.put("q10_hell", q10Hell);
+
+        // Q10 Blood
+        DungeonQuest q10Blood = new DungeonQuest("q10_blood", "Q10 Bloodshed", 80, 1.5, "QBlood", 50);
+        q10Blood.setLocationMessage("Find and collect ancient fragments");
+
+        // Stage 1 - Fragment collection and deposit
+        q10Blood.setStageMessage(1, "Collect 3 ancient fragments from lime shulker boxes and deposit them into lodestones");
+        q10Blood.setRequiredFragments(1, 3);
+
+        // Stage 1 - Kill mini-boss
+        q10Blood.setBossObjective(1, "melas_the_swift_footed_blood", "Mini-Boss: Melas the Swift-Footed");
+        q10Blood.addPortalObjective(1, "world", -4163, -61, 1753, -4162, -59, 1754);
+        q10Blood.setStageEndCommand(1, "warp q10_m2_blood");
+
+        // Stage 2 - Collect golden walrus statuette
+        q10Blood.setStageMessage(2, "Find a Golden Walrus Statuette to awaken the guardian");
+        q10Blood.addCollectObjective(2, "armed_khaross_blood", 1, 10, "Golden Walrus Statuette", true, 30);
+
+        // Stage 2 - Kill mini-boss
+        q10Blood.setBossObjective(2, "akheilos_blood", "Mini-Boss: Akheilos");
+        q10Blood.addPortalObjective(2, "world", -4229, -61, 2208, -4228, -59, 2209);
+        q10Blood.setStageEndCommand(2, "warp q10_m3_blood");
+
+        // Stage 3 - Kill final boss
+        q10Blood.setBossObjective(3, "parallel_world_gorga_blood", "Final Boss: Parallel World Gorga");
+
+        questData.put("q10_blood", q10Blood);
+    }
+
     public static DungeonQuest getQuestData(String questId) {
         return questData.get(questId);
     }
@@ -763,6 +847,7 @@ public class QuestData {
         private final Map<Integer, int[][]> statueLocations = new HashMap<>();
         private final Map<Integer, Integer> requiredStatues = new HashMap<>();
         private final Map<Integer, Integer> requiredAltars = new HashMap<>();
+        private final Map<Integer, Integer> requiredFragments = new HashMap<>();
 
         public DungeonQuest(String id, String name, int requiredLevel, double expReward, String itemReward, int requiredIPS) {
             this.id = id;
@@ -810,6 +895,19 @@ public class QuestData {
 
         public boolean hasAltarObjective(int stage) {
             return requiredAltars.containsKey(stage);
+        }
+
+        // Q10 specific methods
+        public void setRequiredFragments(int stage, int count) {
+            requiredFragments.put(stage, count);
+        }
+
+        public int getRequiredFragments(int stage) {
+            return requiredFragments.getOrDefault(stage, 0);
+        }
+
+        public boolean hasFragmentObjective(int stage) {
+            return requiredFragments.containsKey(stage);
         }
 
         public void addCollectObjective(int stage, String mobId, int count, int dropChance, String displayName) {

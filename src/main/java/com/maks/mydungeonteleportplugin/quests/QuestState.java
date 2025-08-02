@@ -55,6 +55,14 @@ public class QuestState {
     private final java.util.Set<String> collectedStatues = new java.util.HashSet<>(); // Statue IDs collected
     private final java.util.Set<String> activatedAltars = new java.util.HashSet<>(); // Altar locations activated
 
+    // Q10 quest state
+    private int fragmentsCollected = 0;
+    private int fragmentsDeposited = 0;
+    private boolean hasStatuette = false;
+    private final java.util.Set<String> usedShulkerBoxes = new java.util.HashSet<>();
+    private final java.util.Set<String> usedLodestones = new java.util.HashSet<>();
+    private boolean hasFragmentInInventory = false; // Track if player has an undeposited fragment
+
     // Debug flag
     private int debuggingFlag = 0; // Set to 0 when everything is working
 
@@ -115,6 +123,16 @@ public class QuestState {
             currentObjective = QuestObjective.KILL_BOSS;
             setLocationFound(true); // Pomijamy etap znajdowania lokacji
         }
+        // For Q10, stage 2 should start with COLLECT_FROM_MOBS objective
+        else if (questId.startsWith("q10_") && currentStage == 2) {
+            currentObjective = QuestObjective.COLLECT_FROM_MOBS;
+            setLocationFound(true);
+        }
+        // For Q10, stage 3 should start with KILL_BOSS objective
+        else if (questId.startsWith("q10_") && currentStage == 3) {
+            currentObjective = QuestObjective.KILL_BOSS;
+            setLocationFound(true);
+        }
         else {
             currentObjective = QuestObjective.FIND_LOCATION;
         }
@@ -157,10 +175,25 @@ public class QuestState {
                             player.sendMessage(org.bukkit.ChatColor.GRAY + "DEBUG: Advancing from COLLECT_FROM_MOBS to INTERACT_WITH_BLOCKS for Q8");
                         }
                     }
+                } else if (questId.startsWith("q10_") && getCurrentStage() == 2) {
+                    // For Q10 stage 2, advance from collect to boss
+                    currentObjective = QuestObjective.KILL_BOSS;
+                    setMiniBossInvulnerable(false); // Make Akheilos vulnerable after collecting statuette
+
+                    if (debuggingFlag == 1) {
+                        org.bukkit.entity.Player player = org.bukkit.Bukkit.getPlayer(playerId);
+                        if (player != null) {
+                            player.sendMessage(org.bukkit.ChatColor.GRAY + "DEBUG: Advancing from COLLECT_FROM_MOBS to KILL_BOSS for Q10");
+                        }
+                    }
                 }
                 break;
             case INTERACT_WITH_BLOCKS:
                 if (questId.startsWith("q3_")) {
+                    currentObjective = QuestObjective.KILL_BOSS;
+                    setMiniBossInvulnerable(false);
+                } else if (questId.startsWith("q10_") && getCurrentStage() == 1) {
+                    // For Q10 stage 1, make Melas vulnerable after depositing all fragments
                     currentObjective = QuestObjective.KILL_BOSS;
                     setMiniBossInvulnerable(false);
                 } else {
@@ -210,6 +243,14 @@ public class QuestState {
         selectedStatues.clear();
         collectedStatues.clear();
         activatedAltars.clear();
+
+        // Reset Q10 quest state
+        fragmentsCollected = 0;
+        fragmentsDeposited = 0;
+        hasStatuette = false;
+        usedShulkerBoxes.clear();
+        usedLodestones.clear();
+        hasFragmentInInventory = false;
     }
 
     // Kill tracking
@@ -463,6 +504,55 @@ public class QuestState {
 
     public java.util.Set<String> getActivatedAltars() {
         return activatedAltars;
+    }
+
+    // Q10 quest methods
+    public int getFragmentsCollected() {
+        return fragmentsCollected;
+    }
+
+    public int getFragmentsDeposited() {
+        return fragmentsDeposited;
+    }
+
+    public boolean hasFragmentInInventory() {
+        return hasFragmentInInventory;
+    }
+
+    public void collectFragment(String shulkerBoxId) {
+        if (!hasFragmentInInventory) {
+            usedShulkerBoxes.add(shulkerBoxId);
+            fragmentsCollected++;
+            hasFragmentInInventory = true;
+        }
+    }
+
+    public void depositFragment(String lodestoneId) {
+        if (hasFragmentInInventory) {
+            usedLodestones.add(lodestoneId);
+            fragmentsDeposited++;
+            hasFragmentInInventory = false;
+        }
+    }
+
+    public boolean hasUsedShulkerBox(String shulkerBoxId) {
+        return usedShulkerBoxes.contains(shulkerBoxId);
+    }
+
+    public boolean hasUsedLodestone(String lodestoneId) {
+        return usedLodestones.contains(lodestoneId);
+    }
+
+    public boolean hasAllFragmentsDeposited() {
+        return fragmentsDeposited >= 3;
+    }
+
+    public boolean hasStatuette() {
+        return hasStatuette;
+    }
+
+    public void setHasStatuette(boolean hasStatuette) {
+        this.hasStatuette = hasStatuette;
     }
 
     public void setCurrentObjective(QuestObjective objective) {

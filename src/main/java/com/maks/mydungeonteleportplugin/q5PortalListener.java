@@ -24,7 +24,7 @@ public class q5PortalListener implements Listener {
     private final HashMap<UUID, Long> lastMessageTime = new HashMap();
     private final QuestManager questManager;
     private PlayerStatsDAO playerStatsDAO;
-    private int debuggingFlag = 1;
+    private int debuggingFlag = 0;
     private final int x1 = -945;
     private final int x2 = -934;
     private final int y1 = -60;

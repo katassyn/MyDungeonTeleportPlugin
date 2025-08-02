@@ -169,6 +169,15 @@ public class QuestManager {
                 player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q9 quest, selected statues: " + selectedStatues);
             }
 
+        } else if (questId.startsWith("q10_")) {
+            questState.setLocationFound(true);
+
+            // Skip to fragment collection phase
+            questState.setCurrentObjective(QuestState.QuestObjective.INTERACT_WITH_BLOCKS);
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Started Q10 quest, skipping to fragment collection phase");
+            }
         }
         // Mark quest as occupied
         plugin.occupyQuest(questId, playerId);
@@ -947,6 +956,12 @@ public class QuestManager {
                 // Display statue collection objective for Q9
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bFind and interact with 4 ancient statues to collect their fragments");
                 player.sendMessage(ChatColor.AQUA + "§l» §r§bThen defeat Asterion to proceed to the next stage");
+            } else if (state.getQuestId().startsWith("q10_")) {
+                // Display fragment collection objective for Q10
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bCollect ancient fragments from lime shulker boxes");
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bDeposit each fragment into a lodestone before collecting the next");
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bYou need to collect and deposit 3 fragments total");
+                player.sendMessage(ChatColor.AQUA + "§l» §r§bThen defeat Melas the Swift-Footed");
             }
         }
 

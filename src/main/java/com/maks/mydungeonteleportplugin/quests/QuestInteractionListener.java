@@ -27,6 +27,8 @@ public class QuestInteractionListener implements Listener {
     private final Map<UUID, Map<String, Long>> lastMushroomInteractions = new HashMap<>();
     private final Map<UUID, Map<String, Long>> lastStatueInteractions = new HashMap<>();
     private final Map<UUID, Map<String, Long>> lastMetronomeInteractions = new HashMap<>();
+    private final Map<UUID, Map<String, Long>> lastShulkerInteractions = new HashMap<>();
+    private final Map<UUID, Map<String, Long>> lastLodestoneInteractions = new HashMap<>();
 
     // Debug flag
     private int debuggingFlag = 0; // Debug disabled
@@ -513,6 +515,169 @@ public class QuestInteractionListener implements Listener {
                 }
             }
         }
+        // Q10 quest interactions
+        else if (state.getQuestId().startsWith("q10_")) {
+            Material blockType = clickedBlock.getType();
+
+            // Stage 1 - Fragment collection and deposit
+            if (state.getCurrentStage() == 1 && 
+                state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
+
+                // Handle lime shulker box interaction (collect fragment)
+                if (blockType == Material.LIME_SHULKER_BOX) {
+                    // Check if player already has a fragment
+                    if (state.hasFragmentInInventory()) {
+                        // Close inventory immediately
+                        player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                        // Add a small delay before showing the message
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                            player.sendMessage(ChatColor.RED + "§l» §r§cYou must deposit your current fragment before collecting another!");
+                        }, 5); // 5 tick delay (1/4 second)
+                        return;
+                    }
+
+                    // Generate unique ID for this shulker box
+                    String shulkerBoxId = "shulker_" + clickedBlock.getX() + "_" + 
+                                          clickedBlock.getY() + "_" + clickedBlock.getZ();
+
+                    // Get map of interactions for this player or create new one
+                    Map<String, Long> playerInteractions = lastShulkerInteractions
+                            .computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+
+                    // Check time of last interaction with this shulker box
+                    long currentTime = System.currentTimeMillis();
+                    long lastInteractionTime = playerInteractions.getOrDefault(shulkerBoxId, 0L);
+
+                    // If less than 2 seconds since last interaction, ignore
+                    if (currentTime - lastInteractionTime < 2000) {
+                        return;
+                    }
+
+                    // Save time of this interaction
+                    playerInteractions.put(shulkerBoxId, currentTime);
+
+                    // Check if this shulker box was already used
+                    if (state.hasUsedShulkerBox(shulkerBoxId)) {
+                        // Close inventory immediately
+                        player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                        // Add a small delay before showing the message
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                            player.sendMessage(ChatColor.RED + "§l» §r§cYou've already collected a fragment from this shulker box!");
+                        }, 5); // 5 tick delay (1/4 second)
+                        return;
+                    }
+
+                    // Collect the fragment
+                    state.collectFragment(shulkerBoxId);
+
+                    // Close inventory immediately
+                    player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                    // Add a small delay before showing messages and effects
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                        player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've collected an ancient fragment! (" + 
+                                         state.getFragmentsCollected() + "/3 collected)");
+                        player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow deposit it into a lodestone.");
+
+                        // Play collection sound
+                        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Fragment collected from " + shulkerBoxId);
+                        }
+                    }, 5); // 5 tick delay (1/4 second)
+                }
+                // Handle lodestone interaction (deposit fragment)
+                else if (blockType == Material.LODESTONE) {
+                    // Generate unique ID for this lodestone
+                    String lodestoneId = "lodestone_" + clickedBlock.getX() + "_" + 
+                                        clickedBlock.getY() + "_" + clickedBlock.getZ();
+
+                    // Get map of interactions for this player or create new one
+                    Map<String, Long> playerInteractions = lastLodestoneInteractions
+                            .computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+
+                    // Check time of last interaction with this lodestone
+                    long currentTime = System.currentTimeMillis();
+                    long lastInteractionTime = playerInteractions.getOrDefault(lodestoneId, 0L);
+
+                    // If less than 2 seconds since last interaction, ignore
+                    if (currentTime - lastInteractionTime < 2000) {
+                        return;
+                    }
+
+                    // Save time of this interaction
+                    playerInteractions.put(lodestoneId, currentTime);
+
+                    // Close inventory immediately in all cases
+                    player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN);
+
+                    // Check if this lodestone was already used
+                    if (state.hasUsedLodestone(lodestoneId)) {
+                        // Add a small delay before showing the message
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                            player.sendMessage(ChatColor.RED + "§l» §r§cYou've already deposited a fragment into this lodestone!");
+                        }, 5); // 5 tick delay (1/4 second)
+                        return;
+                    }
+
+                    // Check if player has a fragment to deposit
+                    if (!state.hasFragmentInInventory()) {
+                        // Add a small delay before showing the message
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                            player.sendMessage(ChatColor.RED + "§l» §r§cYou need to collect a fragment from a lime shulker box first!");
+                        }, 5); // 5 tick delay (1/4 second)
+                        return;
+                    }
+
+                    // Deposit the fragment only if player has a fragment and lodestone hasn't been used
+                    state.depositFragment(lodestoneId);
+
+                    // Add a small delay before showing messages and effects
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                        player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've deposited the ancient fragment! (" + 
+                                         state.getFragmentsDeposited() + "/3 deposited)");
+
+                        // Play deposit sound
+                        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+
+                        // Visual effect
+                        player.getWorld().spawnParticle(org.bukkit.Particle.END_ROD, 
+                            clickedBlock.getLocation().add(0.5, 1, 0.5), 20, 0.5, 0.5, 0.5, 0.1);
+
+                        // Check if all fragments deposited
+                        if (state.hasAllFragmentsDeposited()) {
+                            player.sendTitle(
+                                ChatColor.GREEN + "All Fragments Deposited!",
+                                ChatColor.YELLOW + "Now find and defeat Melas the Swift-Footed",
+                                10, 70, 20
+                            );
+
+                            player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                            player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've deposited all ancient fragments!");
+                            player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe ancient seal is broken.");
+                            player.sendMessage(ChatColor.YELLOW + "§l» §r§eFind and defeat Melas the Swift-Footed now.");
+                            player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                            // Move to boss phase
+                            state.advanceToNextObjective();
+
+                            if (debuggingFlag == 1) {
+                                player.sendMessage(ChatColor.GRAY + "DEBUG: All fragments deposited, advancing to KILL_BOSS");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "§l» §r§eCollect another fragment from a different lime shulker box.");
+                        }
+
+                        if (debuggingFlag == 1) {
+                            player.sendMessage(ChatColor.GRAY + "DEBUG: Fragment deposited to " + lodestoneId);
+                        }
+                    }, 5); // 5 tick delay (1/4 second)
+                }
+            }
+        }
         // Dla wszystkich innych typów questów lub interakcji w przyszłości
         else {
             // Możemy tutaj dodać zamykanie inventory dla przyszłych interakcji
@@ -640,9 +805,10 @@ public class QuestInteractionListener implements Listener {
         QuestState state = questManager.getActiveQuest(player.getUniqueId());
         if (state == null) return;
 
-        // Only for Q3, Q6, Q7, and Q8 quests
+        // Only for Q3, Q6, Q7, Q8, and Q10 quests
         if (!state.getQuestId().startsWith("q3_") && !state.getQuestId().startsWith("q6_") && 
-            !state.getQuestId().startsWith("q7_") && !state.getQuestId().startsWith("q8_")) return;
+            !state.getQuestId().startsWith("q7_") && !state.getQuestId().startsWith("q8_") &&
+            !state.getQuestId().startsWith("q10_")) return;
 
         // Ensure we're in collection phase
         if (state.getCurrentObjective() != QuestState.QuestObjective.COLLECT_FROM_MOBS) return;
@@ -954,6 +1120,65 @@ public class QuestInteractionListener implements Listener {
                 }
             }
         }
+        // Q10 quest - Stage 2: Collect golden walrus statuette
+        else if (state.getQuestId().startsWith("q10_") && state.getCurrentStage() == 2) {
+            // Only check for armed_khaross mobs
+            if (!mobId.contains("armed_khaross")) return;
+
+            // Check if already has statuette
+            if (state.hasStatuette()) return;
+
+            // Get kill count for this mob type
+            int killCount = state.incrementKillCount(mobId);
+
+            // Progressive drop chance similar to Q3
+            int dropChance;
+            if (killCount <= 10) {
+                dropChance = 10 + (killCount - 1) * 3; // 10%, 13%, 16%, ... up to 37% at 10 kills
+            } else if (killCount <= 20) {
+                dropChance = 40 + (killCount - 10) * 2; // 40%, 42%, 44%, ... up to 60% at 20 kills
+            } else if (killCount < 30) {
+                dropChance = 60 + (killCount - 20) * 4; // 64%, 68%, 72%, ... up to 96% at 29 kills
+            } else {
+                dropChance = 100; // Guaranteed at 30 kills
+            }
+
+            if (debuggingFlag == 1) {
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Kill count for " + mobId + ": " + killCount +
+                        ", drop chance: " + dropChance + "%");
+            }
+
+            // Check for statuette drop
+            int roll = ThreadLocalRandom.current().nextInt(100);
+            if (roll < dropChance) {
+                // Statuette found!
+                state.setHasStatuette(true);
+
+                player.sendTitle(
+                        ChatColor.GREEN + "Golden Walrus Statuette Found!",
+                        ChatColor.YELLOW + "Now find and defeat Akheilos",
+                        10, 70, 20
+                );
+
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+                player.sendMessage(ChatColor.GREEN + "§l» §r§aYou've found the Golden Walrus Statuette!");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eThe guardian has been awakened.");
+                player.sendMessage(ChatColor.YELLOW + "§l» §r§eNow defeat Akheilos to proceed.");
+                player.sendMessage(ChatColor.GOLD + "§l✦ ════════════════════════ ✦");
+
+                // Move to boss phase
+                state.advanceToNextObjective();
+
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Statuette found! Advancing to KILL_BOSS objective");
+                }
+            } else {
+                if (debuggingFlag == 1) {
+                    player.sendMessage(ChatColor.GRAY + "DEBUG: Statuette didn't drop (roll: " + roll +
+                            " vs chance: " + dropChance + "%)");
+                }
+            }
+        }
     }    private String createProgressBar(int current, int max) {
         StringBuilder bar = new StringBuilder();
         int totalBars = 20;
@@ -976,6 +1201,8 @@ public class QuestInteractionListener implements Listener {
         lastMushroomInteractions.remove(playerId);
         lastStatueInteractions.remove(playerId);
         lastMetronomeInteractions.remove(playerId);
+        lastShulkerInteractions.remove(playerId);
+        lastLodestoneInteractions.remove(playerId);
         lastPoisonWarningTime.remove(playerId);
 
         // Anuluj też timer trucizny, jeśli istnieje
@@ -999,6 +1226,10 @@ public class QuestInteractionListener implements Listener {
                 !questManager.hasActiveQuest(playerId));
         lastMetronomeInteractions.keySet().removeIf(playerId ->
                 !questManager.hasActiveQuest(playerId));
+        lastShulkerInteractions.keySet().removeIf(playerId ->
+                !questManager.hasActiveQuest(playerId));
+        lastLodestoneInteractions.keySet().removeIf(playerId ->
+                !questManager.hasActiveQuest(playerId));
 
         // Usuń starsze wpisy (> 30 minut) dla aktywnych graczy
         long currentTime = System.currentTimeMillis();
@@ -1011,6 +1242,14 @@ public class QuestInteractionListener implements Listener {
                     currentTime - entry.getValue() > 1800000); // 30 minut
         }
         for (Map<String, Long> interactions : lastMetronomeInteractions.values()) {
+            interactions.entrySet().removeIf(entry ->
+                    currentTime - entry.getValue() > 1800000); // 30 minut
+        }
+        for (Map<String, Long> interactions : lastShulkerInteractions.values()) {
+            interactions.entrySet().removeIf(entry ->
+                    currentTime - entry.getValue() > 1800000); // 30 minut
+        }
+        for (Map<String, Long> interactions : lastLodestoneInteractions.values()) {
             interactions.entrySet().removeIf(entry ->
                     currentTime - entry.getValue() > 1800000); // 30 minut
         }

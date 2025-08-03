@@ -46,7 +46,7 @@ public class QuestData {
         questData.put("q1_inf", q1Inf);
 
         // Q1 Hell
-        DungeonQuest q1Hell = new DungeonQuest("q1_hell", "Q1 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q1Hell = new DungeonQuest("q1_hell", "Q1 Hell", 65, 1.0, "Qhell", 25);
         q1Hell.setLocationMessage("Find the Forgotten Circle and investigate");
 
         // Stage 1
@@ -68,7 +68,7 @@ public class QuestData {
         questData.put("q1_hell", q1Hell);
 
         // Q1 Blood
-        DungeonQuest q1Blood = new DungeonQuest("q1_blood", "Q1 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q1Blood = new DungeonQuest("q1_blood", "Q1 Bloodshed", 80, 1.5, "Qblood", 50);
         q1Blood.setLocationMessage("Find the Forgotten Circle and investigate");
 
         // Stage 1
@@ -112,7 +112,7 @@ public class QuestData {
         questData.put("q2_inf", q2Inf);
 
         // Q2 Hell
-        DungeonQuest q2Hell = new DungeonQuest("q2_hell", "Q2 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q2Hell = new DungeonQuest("q2_hell", "Q2 Hell", 65, 1.0, "Qhell", 25);
 
         // Poison area
         q2Hell.setPoisonArea("world", -1487, -60, -1588, -1416, -46, -1678);
@@ -133,7 +133,7 @@ public class QuestData {
         questData.put("q2_hell", q2Hell);
 
         // Q2 Blood
-        DungeonQuest q2Blood = new DungeonQuest("q2_blood", "Q2 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q2Blood = new DungeonQuest("q2_blood", "Q2 Bloodshed", 80, 1.5, "Qblood", 50);
         // Poison area
         q2Blood.setPoisonArea("world", -1487, -60, -2143, -1416, -46, -2233);
 
@@ -187,7 +187,7 @@ public class QuestData {
         questData.put("q3_inf", q3Inf);
 
         // Q3 Hell
-        DungeonQuest q3Hell = new DungeonQuest("q3_hell", "Q3 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q3Hell = new DungeonQuest("q3_hell", "Q3 Hell", 65, 1.0, "Qhell", 25);
         q3Hell.setLocationMessage("Find the evil miller's area and collect undead bones");
 
         // Stage 1 - Collect bones from undead mobs
@@ -220,7 +220,7 @@ public class QuestData {
         questData.put("q3_hell", q3Hell);
 
         // Q3 Blood
-        DungeonQuest q3Blood = new DungeonQuest("q3_blood", "Q3 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q3Blood = new DungeonQuest("q3_blood", "Q3 Bloodshed", 80, 1.5, "Qblood", 50);
         q3Blood.setLocationMessage("Find the evil miller's area and collect undead bones");
 
         // Stage 1 - Collect bones from undead mobs
@@ -276,7 +276,7 @@ public class QuestData {
         questData.put("q4_inf", q4Inf);
 
         // Q4 Hell
-        DungeonQuest q4Hell = new DungeonQuest("q4_hell", "Q4 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q4Hell = new DungeonQuest("q4_hell", "Q4 Hell", 65, 1.0, "Qhell", 25);
 
         // Stage 1 - Start directly with kill objectives
         q4Hell.addKillObjective(1, "sanguine_clan_raging_snooper_hell", 5, "Sanguine Clan Snooper");
@@ -298,7 +298,7 @@ public class QuestData {
         questData.put("q4_hell", q4Hell);
 
         // Q4 Blood
-        DungeonQuest q4Blood = new DungeonQuest("q4_blood", "Q4 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q4Blood = new DungeonQuest("q4_blood", "Q4 Bloodshed", 80, 1.5, "Qblood", 50);
 
         // Stage 1 - Start directly with kill objectives
         q4Blood.addKillObjective(1, "sanguine_clan_raging_snooper_blood", 5, "Sanguine Clan Snooper");
@@ -342,7 +342,7 @@ public class QuestData {
         questData.put("q5_inf", q5Inf);
 
         // Q5 Hell
-        DungeonQuest q5Hell = new DungeonQuest("q5_hell", "Q5 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q5Hell = new DungeonQuest("q5_hell", "Q5 Hell", 65, 1.0, "Qhell", 25);
         q5Hell.setLocationMessage("Find the cursed area and investigate");
 
         // Stage 1
@@ -363,7 +363,7 @@ public class QuestData {
         questData.put("q5_hell", q5Hell);
 
         // Q5 Blood
-        DungeonQuest q5Blood = new DungeonQuest("q5_blood", "Q5 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q5Blood = new DungeonQuest("q5_blood", "Q5 Bloodshed", 80, 1.5, "Qblood", 50);
         q5Blood.setLocationMessage("Find the cursed area and investigate");
 
         // Stage 1
@@ -411,7 +411,7 @@ public class QuestData {
         questData.put("q6_inf", q6Inf);
 
         // Q6 Hell
-        DungeonQuest q6Hell = new DungeonQuest("q6_hell", "Q6 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q6Hell = new DungeonQuest("q6_hell", "Q6 Hell", 65, 1.0, "Qhell", 25);
         q6Hell.setLocationMessage("Find the fallen warriors' stronghold");
 
         // Stage 1 - Kill mobs
@@ -437,7 +437,7 @@ public class QuestData {
         questData.put("q6_hell", q6Hell);
 
         // Q6 Blood
-        DungeonQuest q6Blood = new DungeonQuest("q6_blood", "Q6 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q6Blood = new DungeonQuest("q6_blood", "Q6 Bloodshed", 80, 1.5, "Qblood", 50);
         q6Blood.setLocationMessage("Find the fallen warriors' stronghold");
 
         // Stage 1 - Kill mobs
@@ -498,7 +498,7 @@ public class QuestData {
         questData.put("q7_inf", q7Inf);
 
         // Q7 Hell
-        DungeonQuest q7Hell = new DungeonQuest("q7_hell", "Q7 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q7Hell = new DungeonQuest("q7_hell", "Q7 Hell", 65, 1.0, "Qhell", 25);
         q7Hell.setLocationMessage("Find the ancient fortress and collect catapult ammunition");
 
         // Stage 1 - Collect catapult balls
@@ -531,7 +531,7 @@ public class QuestData {
         questData.put("q7_hell", q7Hell);
 
         // Q7 Blood
-        DungeonQuest q7Blood = new DungeonQuest("q7_blood", "Q7 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q7Blood = new DungeonQuest("q7_blood", "Q7 Bloodshed", 80, 1.5, "Qblood", 50);
         q7Blood.setLocationMessage("Find the ancient fortress and collect catapult ammunition");
 
         // Stage 1 - Collect catapult balls
@@ -592,7 +592,7 @@ public class QuestData {
         questData.put("q8_inf", q8Inf);
 
         // Q8 Hell
-        DungeonQuest q8Hell = new DungeonQuest("q8_hell", "Q8 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q8Hell = new DungeonQuest("q8_hell", "Q8 Hell", 65, 1.0, "Qhell", 25);
         q8Hell.setLocationMessage("Find the electrified area and collect electrical shards");
 
         // Stage 1 - Collect electrical shards
@@ -618,7 +618,7 @@ public class QuestData {
         questData.put("q8_hell", q8Hell);
 
         // Q8 Bloodshed
-        DungeonQuest q8Blood = new DungeonQuest("q8_blood", "Q8 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q8Blood = new DungeonQuest("q8_blood", "Q8 Bloodshed", 80, 1.5, "Qblood", 50);
         q8Blood.setLocationMessage("Find the electrified area and collect electrical shards");
 
         // Stage 1 - Collect electrical shards
@@ -677,7 +677,7 @@ public class QuestData {
         questData.put("q9_inf", q9Inf);
 
         // Q9 Hell
-        DungeonQuest q9Hell = new DungeonQuest("q9_hell", "Q9 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q9Hell = new DungeonQuest("q9_hell", "Q9 Hell", 65, 1.0, "Qhell", 25);
         q9Hell.setLocationMessage("Find and collect statue fragments");
 
         // Stage 1 - Collect statue fragments
@@ -709,7 +709,7 @@ public class QuestData {
         questData.put("q9_hell", q9Hell);
 
         // Q9 Blood
-        DungeonQuest q9Blood = new DungeonQuest("q9_blood", "Q9 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q9Blood = new DungeonQuest("q9_blood", "Q9 Bloodshed", 80, 1.5, "Qblood", 50);
         q9Blood.setLocationMessage("Find and collect statue fragments");
 
         // Stage 1 - Collect statue fragments
@@ -769,7 +769,7 @@ public class QuestData {
         questData.put("q10_inf", q10Inf);
 
         // Q10 Hell
-        DungeonQuest q10Hell = new DungeonQuest("q10_hell", "Q10 Hell", 65, 1.0, "QHell", 25);
+        DungeonQuest q10Hell = new DungeonQuest("q10_hell", "Q10 Hell", 65, 1.0, "Qhell", 25);
         q10Hell.setLocationMessage("Find and collect ancient fragments");
 
         // Stage 1 - Fragment collection and deposit
@@ -796,7 +796,7 @@ public class QuestData {
         questData.put("q10_hell", q10Hell);
 
         // Q10 Blood
-        DungeonQuest q10Blood = new DungeonQuest("q10_blood", "Q10 Bloodshed", 80, 1.5, "QBlood", 50);
+        DungeonQuest q10Blood = new DungeonQuest("q10_blood", "Q10 Bloodshed", 80, 1.5, "Qblood", 50);
         q10Blood.setLocationMessage("Find and collect ancient fragments");
 
         // Stage 1 - Fragment collection and deposit
@@ -1040,9 +1040,9 @@ public class QuestData {
 
             if (itemReward.equals("Qinf")) {
                 return "Infernal Item Chest";
-            } else if (itemReward.equals("QHell")) {
+            } else if (itemReward.equals("Qhell")) {
                 return "Hell Item Chest";
-            } else if (itemReward.equals("QBlood")) {
+            } else if (itemReward.equals("Qblood")) {
                 return "Blood Item Chest";
             } else {
                 return itemReward;

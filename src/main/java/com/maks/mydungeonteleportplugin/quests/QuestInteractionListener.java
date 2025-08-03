@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -680,12 +682,29 @@ public class QuestInteractionListener implements Listener {
         }
         // Dla wszystkich innych typów questów lub interakcji w przyszłości
         else {
-            // Możemy tutaj dodać zamykanie inventory dla przyszłych interakcji
-            // Jeśli nastąpiła interakcja z blokiem, który otwiera GUI, zamknij je
-            if (clickedBlock.getType().isInteractable()) {
-                // Dodajemy małe opóźnienie, aby najpierw otworzyło się GUI, a potem je zamknęło
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN), 1L);
+            // Zamykanie GUI tylko wtedy, gdy aktualny cel obejmuje interakcje z blokami
+            // i gracz klika w blok powiązany z mechaniką questa
+            if (state.getCurrentObjective() == QuestState.QuestObjective.INTERACT_WITH_BLOCKS) {
+                Material type = clickedBlock.getType();
+
+                // Determine if the clicked block is a lime shulker box
+                boolean isLimeShulker = false;
+                if (clickedBlock.getState() instanceof ShulkerBox) {
+                    ShulkerBox shulker = (ShulkerBox) clickedBlock.getState();
+                    isLimeShulker = shulker.getColor() == DyeColor.LIME;
+                }
+
+                // Lista bloków, dla których chcemy wymusić zamknięcie ekwipunku
+                if (isLimeShulker ||
+                    type == Material.LODESTONE ||
+                    type == Material.CAULDRON ||
+                    type == Material.WATER_CAULDRON ||
+                    type == Material.LEVER ||
+                    type == Material.CHISELED_DEEPSLATE) {
+                    // Dodajemy małe opóźnienie, aby najpierw otworzyło się GUI, a potem je zamknęło
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                            player.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLUGIN), 1L);
+                }
             }
         }
     }

@@ -504,6 +504,16 @@ public class QuestListeners implements Listener {
         return Math.sqrt(dx*dx + dz*dz);
     }
 
+    private String getBossSpawnLocation(String difficulty) {
+        if (difficulty.equals("inf")) {
+            return "-3759,-60,-872";
+        } else if (difficulty.equals("hell")) {
+            return "-3781,-60,-1642";
+        } else { // blood
+            return "-3803,-60,-2410";
+        }
+    }
+
     private boolean areAltar1KillsComplete(QuestState state, String difficulty) {
         // Pobierz gracza i dodaj flagę czasową, aby ograniczyć wywołania
         Player player = org.bukkit.Bukkit.getPlayer(state.getPlayerId());
@@ -597,11 +607,11 @@ public class QuestListeners implements Listener {
         int totalAllKills = wildKills + flamescaleKills + fireclawKills;
 
         // For altar 2, we need to count kills after altar 1 was completed
-        // We know altar 1 needed 12 kills, so we subtract those from the total
-        int altar2Kills = Math.max(0, totalAllKills - 15); // Subtract the 15 kills from altar 1
+        // We subtract 12 kills (the threshold for altar 1) from the total
+        int altar2Kills = Math.max(0, totalAllKills - 12); // Subtract the 12 kills required for altar 1
 
-        // Require 80% of altar 2 mobs (24 out of 30)
-        boolean complete = altar2Kills >= 24;
+        // Require 18 more kills (80% of 30 altar 2 mobs minus already counted)
+        boolean complete = altar2Kills >= 18;
 
         // Zapisz wynik sprawdzenia
         if (player != null) {
@@ -610,9 +620,9 @@ public class QuestListeners implements Listener {
 
         // Always log for debugging
         if (debuggingFlag == 1 && player != null) {
-            player.sendMessage(ChatColor.GRAY + "DEBUG: areAltar2KillsComplete check - " + 
-                altar2Kills + "/30 altar 2 kills (total: " + totalAllKills + " kills, " +
-                wildKills + " wild, " + flamescaleKills + " flamescale, " + 
+            player.sendMessage(ChatColor.GRAY + "DEBUG: areAltar2KillsComplete check - " +
+                altar2Kills + "/18 additional altar 2 kills needed (total: " + totalAllKills + " kills, " +
+                wildKills + " wild, " + flamescaleKills + " flamescale, " +
                 fireclawKills + " fireclaw) - Complete: " + complete);
         }
 
@@ -650,9 +660,9 @@ public class QuestListeners implements Listener {
         } else {
             // For altar 2, we need to count kills after altar 1 was completed
             int totalAllKills = wildKills + flamescaleKills + fireclawKills;
-            totalKills = Math.max(0, totalAllKills - 15); // Subtract the 15 kills from altar 1
-            requiredKills = 24; // 80% of 30 total mobs
-            maxKills = 30;
+            totalKills = Math.max(0, totalAllKills - 12); // Subtract the 12 kills from altar 1
+            requiredKills = 18; // Additional kills needed for altar 2
+            maxKills = 18; // Maximum additional kills for altar 2
         }
 
         // Calculate actual percentage (max 100%)
@@ -699,10 +709,10 @@ public class QuestListeners implements Listener {
             player.setMetadata(metadataKey, new FixedMetadataValue(plugin, true));
 
             if (debuggingFlag == 1) {
-                player.sendMessage(ChatColor.GRAY + "DEBUG: Actual progress: " + 
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Actual progress: " +
                     (int)Math.round(actualPercent) + "%, showing 100% to player");
-                player.sendMessage(ChatColor.GRAY + "DEBUG: Altar " + altarNum + " kills: " + totalKills + 
-                    "/" + maxKills + " (" + (altarNum == 2 ? "Including kills after altar 1: " : "") +
+                player.sendMessage(ChatColor.GRAY + "DEBUG: Altar " + altarNum + " kills: " + totalKills +
+                    "/" + maxKills + " (" + (altarNum == 2 ? "Additional kills after altar 1: " : "Total kills: ") +
                     wildKills + " wild, " + flamescaleKills + " flamescale, " + fireclawKills + " fireclaw)");
             }
         }
@@ -940,15 +950,24 @@ public class QuestListeners implements Listener {
                     }
                 }
 
-                // Check if altar 2 is now complete
+                // Check if altar 2 is now complete - use quest state flag to prevent multiple triggers
                 if (state.isAltar2Activated() && areAltar2KillsComplete(state, difficulty) &&
-                        !killer.hasMetadata("altar2_complete_boss_spawned")) {
+                        !state.isBossKilled() && !state.hasMiniBossSpawned()) {
 
-                    killer.setMetadata("altar2_complete_boss_spawned", new FixedMetadataValue(plugin, true));
+                    // Mark that mini-boss has been spawned to prevent double spawning
+                    state.setMiniBossSpawned(true);
 
-                    // Reset mob timers to spawn mini-boss
-                    String resetCommand = "mm s resettimers g:q7_" + difficulty + "_m2_mini";
-                    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), resetCommand);
+                    // Spawn Commander Embersword directly at specific location
+                    String world = killer.getWorld().getName();
+                    String bossId = "commander_embersword_" + difficulty;
+                    String spawnLocation = getBossSpawnLocation(difficulty);
+                    String spawnCommand = "mm m spawn " + bossId + " 1 " + world + "," + spawnLocation;
+
+                    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), spawnCommand);
+
+                    if (debuggingFlag == 1) {
+                        killer.sendMessage(ChatColor.GRAY + "DEBUG: Executed mini-boss spawn command: " + spawnCommand);
+                    }
 
                     // Change objective to kill boss
                     state.setCurrentObjective(QuestState.QuestObjective.KILL_BOSS);
@@ -975,7 +994,7 @@ public class QuestListeners implements Listener {
 
                         if (debuggingFlag == 1) {
                             killer.sendMessage(ChatColor.GRAY + "DEBUG: Altar 2 kill threshold reached, spawning mini-boss");
-                            killer.sendMessage(ChatColor.GRAY + "DEBUG: Executed command: " + resetCommand);
+                            killer.sendMessage(ChatColor.GRAY + "DEBUG: Boss spawn location: " + spawnLocation);
                         }
                     }
                 }

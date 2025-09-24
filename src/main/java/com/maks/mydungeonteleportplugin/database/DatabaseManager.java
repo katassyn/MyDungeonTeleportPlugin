@@ -32,8 +32,8 @@ public class DatabaseManager {
         hikariConfig.setPassword(config.getString("database.password"));
         
         // Connection pool settings
-        hikariConfig.setMaximumPoolSize(10);
-        hikariConfig.setMinimumIdle(5);
+        hikariConfig.setMaximumPoolSize(22); // Increased for 30+ players - dungeon teleport operations
+        hikariConfig.setMinimumIdle(10); // Medium priority plugin - stable connections
         hikariConfig.setIdleTimeout(300000); // 5 minutes
         hikariConfig.setMaxLifetime(600000); // 10 minutes
         hikariConfig.setConnectionTimeout(10000); // 10 seconds

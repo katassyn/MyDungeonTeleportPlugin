@@ -18,6 +18,7 @@ com\maks\mydungeonteleportplugin\quests\QuestManager.class
 com\maks\mydungeonteleportplugin\ListenerQ2.class
 com\maks\mydungeonteleportplugin\gui\DropPreviewGUIListener.class
 com\maks\mydungeonteleportplugin\quests\QuestData$LocationInfo.class
+com\maks\mydungeonteleportplugin\DungeonDamageListener.class
 com\maks\mydungeonteleportplugin\q10GUIMenuCommand.class
 com\maks\mydungeonteleportplugin\gui\DropPreviewGUI.class
 com\maks\mydungeonteleportplugin\ListenerQ9.class

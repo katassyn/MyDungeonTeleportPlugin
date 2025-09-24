@@ -49,6 +49,7 @@ public class QuestState {
     private boolean altar1Activated = false;
     private boolean altar2Activated = false;
     private boolean inQ7SpecialTransition = false;
+    private boolean miniBossSpawned = false;
 
     // Q9 quest state
     private final java.util.Set<Integer> selectedStatues = new java.util.HashSet<>(); // Which 4 statues are active
@@ -557,6 +558,15 @@ public class QuestState {
 
     public void setCurrentObjective(QuestObjective objective) {
         this.currentObjective = objective;
+    }
+
+    // Mini-boss spawning control methods
+    public boolean hasMiniBossSpawned() {
+        return miniBossSpawned;
+    }
+
+    public void setMiniBossSpawned(boolean spawned) {
+        this.miniBossSpawned = spawned;
     }
     // Check if current objective is complete
     public boolean isCurrentObjectiveComplete(QuestData.DungeonQuest questData) {

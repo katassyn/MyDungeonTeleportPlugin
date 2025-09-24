@@ -81,6 +81,9 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
         // Register global listener for drop preview GUIs
         getServer().getPluginManager().registerEvents(new DropPreviewGUIListener(), this);
 
+        // Register pet damage bonus listener
+        getServer().getPluginManager().registerEvents(new DungeonDamageListener(this), this);
+
         // Register menu and portal listeners for each quest
         registerQuestHandlers();
 

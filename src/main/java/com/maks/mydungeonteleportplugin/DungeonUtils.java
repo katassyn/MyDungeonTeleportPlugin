@@ -1,7 +1,10 @@
 package com.maks.mydungeonteleportplugin;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 public class DungeonUtils {
 
@@ -23,7 +26,32 @@ public class DungeonUtils {
      * @return True if successful, false if not enough items
      */
     public static boolean consumeNuggets(Player player, int requiredAmount) {
+        // Check ENDERMAN pet free teleport chance
+        double freeTpChance = getPetFreeTeleportChance(player);
+        if (freeTpChance > 0 && Math.random() * 100 < freeTpChance) {
+            // Free teleport activated!
+            player.sendMessage(ChatColor.LIGHT_PURPLE + "✦ ENDERMAN PET EFFECT: Free dungeon teleport!");
+            player.sendMessage(ChatColor.GREEN + "You didn't pay any IPS for this teleport!");
+            return true; // Skip IPS consumption
+        }
+
         return DungeonPouchHelper.consumeIPS(player, requiredAmount);
+    }
+
+    /**
+     * Get ENDERMAN pet free teleport chance percentage
+     */
+    private static double getPetFreeTeleportChance(Player player) {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            return 0.0;
+        }
+
+        String placeholder = PlaceholderAPI.setPlaceholders(player, "%petplugin_dungeon_free_tp_chance%");
+        try {
+            return Double.parseDouble(placeholder);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 
     /**

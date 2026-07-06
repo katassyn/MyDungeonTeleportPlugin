@@ -8,6 +8,12 @@ import me.clip.placeholderapi.PlaceholderAPI;
 
 public class DungeonUtils {
 
+    private static PetPluginBridge petBridge;
+
+    public static void setPetBridge(PetPluginBridge bridge) {
+        petBridge = bridge;
+    }
+
     /**
      * Check if a player has enough Fragment of Infernal Passage (IPS)
      * Now checks both inventory AND pouch using the DungeonPouchHelper
@@ -26,13 +32,19 @@ public class DungeonUtils {
      * @return True if successful, false if not enough items
      */
     public static boolean consumeNuggets(Player player, int requiredAmount) {
-        // Check ENDERMAN pet free teleport chance
-        double freeTpChance = getPetFreeTeleportChance(player);
-        if (freeTpChance > 0 && Math.random() * 100 < freeTpChance) {
-            // Free teleport activated!
-            player.sendMessage(ChatColor.LIGHT_PURPLE + "✦ ENDERMAN PET EFFECT: Free dungeon teleport!");
-            player.sendMessage(ChatColor.GREEN + "You didn't pay any IPS for this teleport!");
-            return true; // Skip IPS consumption
+        if (petBridge != null && petBridge.isAvailable()) {
+            if (petBridge.shouldGrantFreeTeleport(player)) {
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "[PET] Enderman effect: free dungeon teleport!");
+                player.sendMessage(ChatColor.GREEN + "You didn't pay any IPS for this teleport!");
+                return true;
+            }
+        } else {
+            double freeTpChance = getPetFreeTeleportChance(player);
+            if (freeTpChance > 0 && Math.random() * 100 < freeTpChance) {
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "[PET] Enderman effect: free dungeon teleport!");
+                player.sendMessage(ChatColor.GREEN + "You didn't pay any IPS for this teleport!");
+                return true;
+            }
         }
 
         return DungeonPouchHelper.consumeIPS(player, requiredAmount);
@@ -42,6 +54,9 @@ public class DungeonUtils {
      * Get ENDERMAN pet free teleport chance percentage
      */
     private static double getPetFreeTeleportChance(Player player) {
+        if (petBridge != null && petBridge.isAvailable()) {
+            return petBridge.getFreeTeleportChance(player);
+        }
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
             return 0.0;
         }
@@ -71,3 +86,4 @@ public class DungeonUtils {
                 && loc.getBlockZ() >= Math.min(z1, z2) && loc.getBlockZ() <= Math.max(z1, z2);
     }
 }
+

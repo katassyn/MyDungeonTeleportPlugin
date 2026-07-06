@@ -15,9 +15,11 @@ import me.clip.placeholderapi.PlaceholderAPI;
 public class DungeonDamageListener implements Listener {
 
     private final MyDungeonTeleportPlugin plugin;
+    private final PetPluginBridge petBridge;
 
     public DungeonDamageListener(MyDungeonTeleportPlugin plugin) {
         this.plugin = plugin;
+        this.petBridge = plugin.getPetBridge();
     }
 
     @EventHandler
@@ -98,6 +100,13 @@ public class DungeonDamageListener implements Listener {
      * @return Damage bonus percentage
      */
     private double getDungeonDamageBonus(Player player, String quest) {
+        if (petBridge != null && petBridge.isAvailable()) {
+            double apiValue = petBridge.getDungeonDamageBonus(player, quest);
+            if (apiValue > 0) {
+                return apiValue;
+            }
+        }
+
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
             return 0.0;
         }
@@ -111,7 +120,6 @@ public class DungeonDamageListener implements Listener {
             return 0.0;
         }
     }
-
     /**
      * Check if player can execute bosses (has level 75 dungeon pet for this quest)
      * @param player The player
@@ -119,8 +127,11 @@ public class DungeonDamageListener implements Listener {
      * @return True if boss execution is available
      */
     private boolean canExecuteBoss(Player player, String quest) {
-        // Check if the damage bonus is high enough to indicate level 75 pet
-        // At level 75, damage should be around 24% (3% base * 8 level multiplier)
+        if (petBridge != null && petBridge.isAvailable()) {
+            return petBridge.hasDungeonExecuteEffect(player, quest);
+        }
+
+        // Fallback heuristic based on damage bonus multiplier
         double damageBonus = getDungeonDamageBonus(player, quest);
         return damageBonus >= 20.0; // Threshold to ensure level 75 pet
     }

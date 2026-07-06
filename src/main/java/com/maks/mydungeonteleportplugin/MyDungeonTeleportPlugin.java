@@ -31,6 +31,7 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
     private DatabaseManager databaseManager;
     private PlayerStatsDAO playerStatsDAO;
     private DungeonDropDAO dungeonDropDAO;
+    private PetPluginBridge petBridge;
 
     // Listeners that need DAOs
     private ListenerQ1 listenerQ1;
@@ -65,6 +66,10 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
 
         questManager = new QuestManager(this);
         questManager.setPlayerStatsDAO(playerStatsDAO);
+
+        petBridge = new PetPluginBridge(this);
+        petBridge.initialize();
+        DungeonUtils.setPetBridge(petBridge);
 
         // Register commands
         getCommand("whodoq").setExecutor(new ListOccupiedQuestsCommand(this));
@@ -273,6 +278,7 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        DungeonUtils.setPetBridge(null);
         questOccupied.clear();
         selectedMap.clear();
 
@@ -372,4 +378,9 @@ public class MyDungeonTeleportPlugin extends JavaPlugin {
     public DungeonDropDAO getDungeonDropDAO() {
         return dungeonDropDAO;
     }
+
+    public PetPluginBridge getPetBridge() {
+        return petBridge;
+    }
 }
+

@@ -31,17 +31,17 @@ public class QuestData {
         q1Inf.addLocationObjective(1, "world", -1219, -61, 19, -1219, -58, 40);
         q1Inf.addKillObjective(1, "flamecult_servant_inf", 25, "Flamecult Servants");
         q1Inf.addKillObjective(1, "flamecult_archer_inf", 25, "Flamecult Archers");
-        q1Inf.setBossObjective(1, "raazghul_the_corruptor_inf", "Mini-Boss: Raazghul the Corruptor");
+        q1Inf.setBossObjective(1, "raazghul_the_corruptor_inf", "Mini-Boss: Raazgor the Corrupter");
         q1Inf.addPortalObjective(1, "world", -1095, -61, 318, -1096, -59, 318);
         q1Inf.setStageEndCommand(1, "warp q1_m2_inf");
 
         // Stage 2
-        q1Inf.setBossObjective(2, "perral_world_dragonknight_inf", "Mini-Boss: Perral World Dragonknight");
+        q1Inf.setBossObjective(2, "perral_world_dragonknight_inf", "Mini-Boss: Parallel Realm Dragonknight");
         q1Inf.addPortalObjective(2, "world", -1858, -61, -378, -1857, -59, -378);
         q1Inf.setStageEndCommand(2, "warp q1_m3_inf");
 
         // Stage 3
-        q1Inf.setBossObjective(3, "grimmag_inf", "Final Boss: Grimmag");
+        q1Inf.setBossObjective(3, "grimmag_inf", "Final Boss: Grimmor the Risen");
 
         questData.put("q1_inf", q1Inf);
 
@@ -53,17 +53,17 @@ public class QuestData {
         q1Hell.addLocationObjective(1, "world", -1221, -60, 686, -1221, -58, 707);
         q1Hell.addKillObjective(1, "flamecult_servant_hell", 25, "Flamecult Servants");
         q1Hell.addKillObjective(1, "flamecult_archer_hell", 25, "Flamecult Archers");
-        q1Hell.setBossObjective(1, "raazghul_the_corruptor_hell", "Mini-Boss: Raazghul the Corruptor");
+        q1Hell.setBossObjective(1, "raazghul_the_corruptor_hell", "Mini-Boss: Raazgor the Corrupter");
         q1Hell.addPortalObjective(1, "world", -1096, -61, 985, -1097, -59, 985);
         q1Hell.setStageEndCommand(1, "warp q1_m2_hell");
 
         // Stage 2
-        q1Hell.setBossObjective(2, "perral_world_dragonknight_hell", "Mini-Boss: Perral World Dragonknight");
+        q1Hell.setBossObjective(2, "perral_world_dragonknight_hell", "Mini-Boss: Parallel Realm Dragonknight");
         q1Hell.addPortalObjective(2, "world", -1872, -61, 317, -1871, -59, 317);
         q1Hell.setStageEndCommand(2, "warp q1_m3_hell");
 
         // Stage 3
-        q1Hell.setBossObjective(3, "grimmag_hell", "Final Boss: Grimmag");
+        q1Hell.setBossObjective(3, "grimmag_hell", "Final Boss: Grimmor the Risen");
 
         questData.put("q1_hell", q1Hell);
 
@@ -75,17 +75,17 @@ public class QuestData {
         q1Blood.addLocationObjective(1, "world", -1221, -60, 1347, -1221, -58, 1369);
         q1Blood.addKillObjective(1, "flamecult_servant_blood", 25, "Flamecult Servants");
         q1Blood.addKillObjective(1, "flamecult_archer_blood", 25, "Flamecult Archers");
-        q1Blood.setBossObjective(1, "raazghul_the_corruptor_blood", "Mini-Boss: Raazghul the Corruptor");
+        q1Blood.setBossObjective(1, "raazghul_the_corruptor_blood", "Mini-Boss: Raazgor the Corrupter");
         q1Blood.addPortalObjective(1, "world", -1096, -61, 1647, -1097, -59, 1647);
         q1Blood.setStageEndCommand(1, "warp q1_m2_blood");
 
         // Stage 2
-        q1Blood.setBossObjective(2, "perral_world_dragonknight_blood", "Mini-Boss: Perral World Dragonknight");
+        q1Blood.setBossObjective(2, "perral_world_dragonknight_blood", "Mini-Boss: Parallel Realm Dragonknight");
         q1Blood.addPortalObjective(2, "world", -1881, -61, 997, -1880, -59, 997);
         q1Blood.setStageEndCommand(2, "warp q1_m3_blood");
 
         // Stage 3
-        q1Blood.setBossObjective(3, "grimmag_blood", "Final Boss: Grimmag");
+        q1Blood.setBossObjective(3, "grimmag_blood", "Final Boss: Grimmor the Risen");
 
         questData.put("q1_blood", q1Blood);
     }
@@ -97,17 +97,17 @@ public class QuestData {
         q2Inf.setPoisonArea("world", -1378, -60, -975, -1306, -37, -1064);
 
         // Boss and portal for Stage 1
-        q2Inf.setBossObjective(1, "xerib_the_hunchback_inf", "Mini-Boss: Xerib the Hunchback");
+        q2Inf.setBossObjective(1, "xerib_the_hunchback_inf", "Mini-Boss: Xerath the Hunchback");
         q2Inf.addPortalObjective(1, "world", -1317, -61, -1065, -1316, -59, -1066);
         q2Inf.setStageEndCommand(1, "warp q2_m2_inf");
 
         // Stage 2
-        q2Inf.setBossObjective(2, "archus_the_mad_inf", "Mini-Boss: Archus the Mad");
+        q2Inf.setBossObjective(2, "archus_the_mad_inf", "Mini-Boss: Archaz the Madcap");
         q2Inf.addPortalObjective(2, "world", -1145, -61, -852, -1146, -59, -851);
         q2Inf.setStageEndCommand(2, "warp q2_m3_inf");
 
         // Stage 3
-        q2Inf.setBossObjective(3, "arachna_scourge_of_duria_inf", "Final Boss: Arachna, Scourge of Duria");
+        q2Inf.setBossObjective(3, "arachna_scourge_of_duria_inf", "Final Boss: Araksha, Bane of Durion");
 
         questData.put("q2_inf", q2Inf);
 
@@ -118,17 +118,17 @@ public class QuestData {
         q2Hell.setPoisonArea("world", -1487, -60, -1588, -1416, -46, -1678);
 
         // Boss and portal for Stage 1
-        q2Hell.setBossObjective(1, "xerib_the_hunchback_hell", "Mini-Boss: Xerib the Hunchback");
+        q2Hell.setBossObjective(1, "xerib_the_hunchback_hell", "Mini-Boss: Xerath the Hunchback");
         q2Hell.addPortalObjective(1, "world", -1426, -61, -1678, -1425, -59, -1679);
         q2Hell.setStageEndCommand(1, "warp q2_m2_hell");
 
         // Stage 2
-        q2Hell.setBossObjective(2, "archus_the_mad_hell", "Mini-Boss: Archus the Mad");
+        q2Hell.setBossObjective(2, "archus_the_mad_hell", "Mini-Boss: Archaz the Madcap");
         q2Hell.addPortalObjective(2, "world", -1153, -61, -1508, -1154, -59, -1507);
         q2Hell.setStageEndCommand(2, "warp q2_m3_hell");
 
         // Stage 3
-        q2Hell.setBossObjective(3, "arachna_scourge_of_duria_hell", "Final Boss: Arachna, Scourge of Duria");
+        q2Hell.setBossObjective(3, "arachna_scourge_of_duria_hell", "Final Boss: Araksha, Bane of Durion");
 
         questData.put("q2_hell", q2Hell);
 
@@ -138,17 +138,17 @@ public class QuestData {
         q2Blood.setPoisonArea("world", -1487, -60, -2143, -1416, -46, -2233);
 
         // Boss and portal for Stage 1
-        q2Blood.setBossObjective(1, "xerib_the_hunchback_blood", "Mini-Boss: Xerib the Hunchback");
+        q2Blood.setBossObjective(1, "xerib_the_hunchback_blood", "Mini-Boss: Xerath the Hunchback");
         q2Blood.addPortalObjective(1, "world", -1426, -61, -2233, -1425, -59, -2234);
         q2Blood.setStageEndCommand(1, "warp q2_m2_blood");
 
         // Stage 2
-        q2Blood.setBossObjective(2, "archus_the_mad_blood", "Mini-Boss: Archus the Mad");
+        q2Blood.setBossObjective(2, "archus_the_mad_blood", "Mini-Boss: Archaz the Madcap");
         q2Blood.addPortalObjective(2, "world", -1155, -61, -2131, -1156, -59, -2130);
         q2Blood.setStageEndCommand(2, "warp q2_m3_blood");
 
         // Stage 3
-        q2Blood.setBossObjective(3, "arachna_scourge_of_duria_blood", "Final Boss: Arachna, Scourge of Duria");
+        q2Blood.setBossObjective(3, "arachna_scourge_of_duria_blood", "Final Boss: Araksha, Bane of Durion");
 
         questData.put("q2_blood", q2Blood);
     }
@@ -167,7 +167,7 @@ public class QuestData {
         q3Inf.addInteractObjective(1, Material.GRINDSTONE, "Grind the bones in the mill");
 
         // Stage 1 - Kill mini-boss
-        q3Inf.setBossObjective(1, "parallel_world_evil_miller_inf", "Mini-Boss: Evil Miller");
+        q3Inf.setBossObjective(1, "parallel_world_evil_miller_inf", "Mini-Boss: Parallel Realm Dire Miller");
         q3Inf.addPortalObjective(1, "world", -2451, -58, -275, -2452, -56, -274);
         q3Inf.setStageEndCommand(1, "warp q3_m2_inf");
 
@@ -176,13 +176,13 @@ public class QuestData {
         q3Inf.setStageMessage(2, "Find the Emerald Rune fragments. Defeating assassins will grant you fragments.");
 
         // Stage 2 - Kill mini-boss
-        q3Inf.setBossObjective(2, "the_bloody_arrow_inf", "Mini-Boss: The Bloody Arrow");
+        q3Inf.setBossObjective(2, "the_bloody_arrow_inf", "Mini-Boss: The Crimson Arrow");
         q3Inf.setStageMessage(2, "The Bloody Arrow holds the second fragment of the Emerald Rune!");
         q3Inf.addPortalObjective(2, "world", -2411, -51, 45, -2410, -49, 46);
         q3Inf.setStageEndCommand(2, "warp q3_m3_inf");
 
         // Stage 3 - Kill final boss
-        q3Inf.setBossObjective(3, "undead_parallel_world_king_heredur_inf", "Final Boss: Undead King Heredur");
+        q3Inf.setBossObjective(3, "undead_parallel_world_king_heredur_inf", "Final Boss: Undead King Heredorn");
 
         questData.put("q3_inf", q3Inf);
 
@@ -200,7 +200,7 @@ public class QuestData {
         q3Hell.addInteractObjective(1, Material.GRINDSTONE, "Grind the bones in the mill");
 
         // Stage 1 - Kill mini-boss
-        q3Hell.setBossObjective(1, "parallel_world_evil_miller_hell", "Mini-Boss: Evil Miller");
+        q3Hell.setBossObjective(1, "parallel_world_evil_miller_hell", "Mini-Boss: Parallel Realm Dire Miller");
         q3Hell.addPortalObjective(1, "world", -2831, -58, -274, -2832, -56, -273);
         q3Hell.setStageEndCommand(1, "warp q3_m2_hell");
 
@@ -209,13 +209,13 @@ public class QuestData {
         q3Hell.setStageMessage(2, "Find the Emerald Rune fragments. Defeating assassins will grant you fragments.");
 
         // Stage 2 - Kill mini-boss
-        q3Hell.setBossObjective(2, "the_bloody_arrow_hell", "Mini-Boss: The Bloody Arrow");
+        q3Hell.setBossObjective(2, "the_bloody_arrow_hell", "Mini-Boss: The Crimson Arrow");
         q3Hell.setStageMessage(2, "The Bloody Arrow holds the second fragment of the Emerald Rune!");
         q3Hell.addPortalObjective(2, "world", -2782, -51, 45, -2781, -49, 46);
         q3Hell.setStageEndCommand(2, "warp q3_m3_hell");
 
         // Stage 3 - Kill final boss
-        q3Hell.setBossObjective(3, "undead_parallel_world_king_heredur_hell", "Final Boss: Undead King Heredur");
+        q3Hell.setBossObjective(3, "undead_parallel_world_king_heredur_hell", "Final Boss: Undead King Heredorn");
 
         questData.put("q3_hell", q3Hell);
 
@@ -233,7 +233,7 @@ public class QuestData {
         q3Blood.addInteractObjective(1, Material.GRINDSTONE, "Grind the bones in the mill");
 
         // Stage 1 - Kill mini-boss
-        q3Blood.setBossObjective(1, "parallel_world_evil_miller_blood", "Mini-Boss: Evil Miller");
+        q3Blood.setBossObjective(1, "parallel_world_evil_miller_blood", "Mini-Boss: Parallel Realm Dire Miller");
         q3Blood.addPortalObjective(1, "world", -3222, -58, -268, -3223, -56, -267);
         q3Blood.setStageEndCommand(1, "warp q3_m2_blood");
 
@@ -242,13 +242,13 @@ public class QuestData {
         q3Blood.setStageMessage(2, "Find the Emerald Rune fragments. Defeating assassins will grant you fragments.");
 
         // Stage 2 - Kill mini-boss
-        q3Blood.setBossObjective(2, "the_bloody_arrow_blood", "Mini-Boss: The Bloody Arrow");
+        q3Blood.setBossObjective(2, "the_bloody_arrow_blood", "Mini-Boss: The Crimson Arrow");
         q3Blood.setStageMessage(2, "The Bloody Arrow holds the second fragment of the Emerald Rune!");
         q3Blood.addPortalObjective(2, "world", -3173, -51, 51, -3172, -49, 52);
         q3Blood.setStageEndCommand(2, "warp q3_m3_blood");
 
         // Stage 3 - Kill final boss
-        q3Blood.setBossObjective(3, "undead_parallel_world_king_heredur_blood", "Final Boss: Undead King Heredur");
+        q3Blood.setBossObjective(3, "undead_parallel_world_king_heredur_blood", "Final Boss: Undead King Heredorn");
 
         questData.put("q3_blood", q3Blood);
     }
@@ -257,21 +257,21 @@ public class QuestData {
         DungeonQuest q4Inf = new DungeonQuest("q4_inf", "Q4 Infernal", 50, 0.5, "Qinf", 10);
 
         // Stage 1 - Start directly with kill objectives
-        q4Inf.addKillObjective(1, "sanguine_clan_raging_snooper_inf", 5, "Sanguine Clan Snooper");
-        q4Inf.addKillObjective(1, "sanguine_clan_raging_hunter_inf", 5, "Sanguine Clan Hunter");
-        q4Inf.setBossObjective(1, "parallel_world_ancient_stag_inf", "Mini-Boss: Ancient Stag");
+        q4Inf.addKillObjective(1, "sanguine_clan_raging_snooper_inf", 5, "Sun Clan Snooper");
+        q4Inf.addKillObjective(1, "sanguine_clan_raging_hunter_inf", 5, "Sun Clan Hunter");
+        q4Inf.setBossObjective(1, "parallel_world_ancient_stag_inf", "Mini-Boss: Ancient Hunter ");
         q4Inf.addPortalObjective(1, "world", -3143, -61, -732, -3142, -59, -722);
         q4Inf.setStageEndCommand(1, "warp q4_m2_inf");
 
         // Stage 2
         q4Inf.addKillObjective(2, "eternal_root_creature_inf", 5, "Eternal Root Creature");
         q4Inf.addKillObjective(2, "eternal_hunter_inf", 5, "Eternal Hunter");
-        q4Inf.setBossObjective(2, "ulgar_the_master_butcher_phase3_inf", "Mini-Boss: Ulgar the Master Butcher");
+        q4Inf.setBossObjective(2, "ulgar_the_master_butcher_phase3_inf", "Mini-Boss: Ulgrom the Master Butcher");
         q4Inf.addPortalObjective(2, "world", -3426, -61, -819, -3427, -59, -820);
         q4Inf.setStageEndCommand(2, "warp q4_m3_inf");
 
         // Stage 3
-        q4Inf.setBossObjective(3, "bearach_champion_of_wilds_inf", "Final Boss: Bearach, Champion of Wilds");
+        q4Inf.setBossObjective(3, "bearach_champion_of_wilds_inf", "Final Boss: Bearok, Guardian of the Wilds");
 
         questData.put("q4_inf", q4Inf);
 
@@ -279,21 +279,21 @@ public class QuestData {
         DungeonQuest q4Hell = new DungeonQuest("q4_hell", "Q4 Hell", 65, 1.0, "Qhell", 25);
 
         // Stage 1 - Start directly with kill objectives
-        q4Hell.addKillObjective(1, "sanguine_clan_raging_snooper_hell", 5, "Sanguine Clan Snooper");
-        q4Hell.addKillObjective(1, "sanguine_clan_raging_hunter_hell", 5, "Sanguine Clan Hunter");
-        q4Hell.setBossObjective(1, "parallel_world_ancient_stag_hell", "Mini-Boss: Ancient Stag");
+        q4Hell.addKillObjective(1, "sanguine_clan_raging_snooper_hell", 5, "Sun Clan Snooper");
+        q4Hell.addKillObjective(1, "sanguine_clan_raging_hunter_hell", 5, "Sun Clan Hunter");
+        q4Hell.setBossObjective(1, "parallel_world_ancient_stag_hell", "Mini-Boss: Ancient Hunter");
         q4Hell.addPortalObjective(1, "world", -2721, -61, -730, -2720, -59, -729);
         q4Hell.setStageEndCommand(1, "warp q4_m2_hell");
 
         // Stage 2
         q4Hell.addKillObjective(2, "eternal_root_creature_hell", 5, "Eternal Root Creature");
         q4Hell.addKillObjective(2, "eternal_hunter_hell", 5, "Eternal Hunter");
-        q4Hell.setBossObjective(2, "ulgar_the_master_butcher_phase3_hell", "Mini-Boss: Ulgar the Master Butcher");
+        q4Hell.setBossObjective(2, "ulgar_the_master_butcher_phase3_hell", "Mini-Boss: Ulgrom the Master Butcher");
         q4Hell.addPortalObjective(2, "world", -3004, -61, -826, -3005, -59, -827);
         q4Hell.setStageEndCommand(2, "warp q4_m3_hell");
 
         // Stage 3
-        q4Hell.setBossObjective(3, "bearach_champion_of_wilds_hell", "Final Boss: Bearach, Champion of Wilds");
+        q4Hell.setBossObjective(3, "bearach_champion_of_wilds_hell", "Final Boss: Bearok, Guardian of the Wilds");
 
         questData.put("q4_hell", q4Hell);
 
@@ -301,21 +301,21 @@ public class QuestData {
         DungeonQuest q4Blood = new DungeonQuest("q4_blood", "Q4 Bloodshed", 80, 1.5, "Qblood", 50);
 
         // Stage 1 - Start directly with kill objectives
-        q4Blood.addKillObjective(1, "sanguine_clan_raging_snooper_blood", 5, "Sanguine Clan Snooper");
-        q4Blood.addKillObjective(1, "sanguine_clan_raging_hunter_blood", 5, "Sanguine Clan Hunter");
-        q4Blood.setBossObjective(1, "parallel_world_ancient_stag_blood", "Mini-Boss: Ancient Stag");
+        q4Blood.addKillObjective(1, "sanguine_clan_raging_snooper_blood", 5, "Sun Clan Snooper");
+        q4Blood.addKillObjective(1, "sanguine_clan_raging_hunter_blood", 5, "Sun Clan Hunter");
+        q4Blood.setBossObjective(1, "parallel_world_ancient_stag_blood", "Mini-Boss: Ancient Hunter");
         q4Blood.addPortalObjective(1, "world", -2324, -61, -731, -2323, -59, -730);
         q4Blood.setStageEndCommand(1, "warp q4_m2_blood");
 
         // Stage 2
         q4Blood.addKillObjective(2, "eternal_root_creature_blood", 5, "Eternal Root Creature");
         q4Blood.addKillObjective(2, "eternal_hunter_blood", 5, "Eternal Hunter");
-        q4Blood.setBossObjective(2, "ulgar_the_master_butcher_phase3_blood", "Mini-Boss: Ulgar the Master Butcher");
+        q4Blood.setBossObjective(2, "ulgar_the_master_butcher_phase3_blood", "Mini-Boss: Ulgrom the Master Butcher");
         q4Blood.addPortalObjective(2, "world", -2607, -61, -827, -2608, -59, -828);
         q4Blood.setStageEndCommand(2, "warp q4_m3_blood");
 
         // Stage 3
-        q4Blood.setBossObjective(3, "bearach_champion_of_wilds_blood", "Final Boss: Bearach, Champion of Wilds");
+        q4Blood.setBossObjective(3, "bearach_champion_of_wilds_blood", "Final Boss: Bearok, Guardian of the Wilds");
 
         questData.put("q4_blood", q4Blood);
     }
@@ -327,7 +327,7 @@ public class QuestData {
         // Stage 1
         q5Inf.addLocationObjective(1, "world", -3490, -61, -100, -3480, -58, -90); // Approximate starting area
         q5Inf.addKillObjective(1, "furious_andermagic_inf", 1, "Furious Andermagic");
-        q5Inf.setBossObjective(1, "parallel_world_old_jabbax_shaman_inf", "Mini-Boss: Old Jabbax Shaman");
+        q5Inf.setBossObjective(1, "parallel_world_old_jabbax_shaman_inf", "Mini-Boss: Parallel World Old Shaman");
         q5Inf.addPortalObjective(1, "world", -3491, -61, -73, -3492, -59, -72);
         q5Inf.setStageEndCommand(1, "warp q5_m2_inf");
 
@@ -337,7 +337,7 @@ public class QuestData {
         q5Inf.setStageEndCommand(2, "warp q5_m3_inf");
 
         // Stage 3
-        q5Inf.setBossObjective(3, "khalys_leader_of_cultists_inf", "Final Boss: Khalys, Leader of Cultists");
+        q5Inf.setBossObjective(3, "khalys_leader_of_cultists_inf", "Final Boss: Kalith, Matriarch of the Cult");
 
         questData.put("q5_inf", q5Inf);
 
@@ -348,7 +348,7 @@ public class QuestData {
         // Stage 1
         q5Hell.addLocationObjective(1, "world", -3485, -61, 850, -3475, -58, 860); // Approximate starting area
         q5Hell.addKillObjective(1, "furious_andermagic_hell", 1, "Furious Andermagic");
-        q5Hell.setBossObjective(1, "parallel_world_old_jabbax_shaman_hell", "Mini-Boss: Old Jabbax Shaman");
+        q5Hell.setBossObjective(1, "parallel_world_old_jabbax_shaman_hell", "Mini-Boss: Parallel World Old Shaman");
         q5Hell.addPortalObjective(1, "world", -3487, -61, 874, -3488, -59, 875);
         q5Hell.setStageEndCommand(1, "warp q5_m2_hell");
 
@@ -358,7 +358,7 @@ public class QuestData {
         q5Hell.setStageEndCommand(2, "warp q5_m3_hell");
 
         // Stage 3
-        q5Hell.setBossObjective(3, "khalys_leader_of_cultists_hell", "Final Boss: Khalys, Leader of Cultists");
+        q5Hell.setBossObjective(3, "khalys_leader_of_cultists_hell", "Final Boss: Kalith, Matriarch of the Cult");
 
         questData.put("q5_hell", q5Hell);
 
@@ -369,7 +369,7 @@ public class QuestData {
         // Stage 1
         q5Blood.addLocationObjective(1, "world", -3460, -61, 1780, -3450, -58, 1790); // Approximate starting area
         q5Blood.addKillObjective(1, "furious_andermagic_blood", 1, "Furious Andermagic");
-        q5Blood.setBossObjective(1, "parallel_world_old_jabbax_shaman_blood", "Mini-Boss: Old Jabbax Shaman");
+        q5Blood.setBossObjective(1, "parallel_world_old_jabbax_shaman_blood", "Mini-Boss: Parallel World Old Shaman");
         q5Blood.addPortalObjective(1, "world", -3462, -61, 1791, -3463, -59, 1792);
         q5Blood.setStageEndCommand(1, "warp q5_m2_blood");
 
@@ -379,7 +379,7 @@ public class QuestData {
         q5Blood.setStageEndCommand(2, "warp q5_m3_blood");
 
         // Stage 3
-        q5Blood.setBossObjective(3, "khalys_leader_of_cultists_blood", "Final Boss: Khalys, Leader of Cultists");
+        q5Blood.setBossObjective(3, "khalys_leader_of_cultists_blood", "Final Boss: Kalith, Matriarch of the Cult");
 
         questData.put("q5_blood", q5Blood);
     }
@@ -392,7 +392,7 @@ public class QuestData {
         q6Inf.addKillObjective(1, "fallen_warrior_inf", 10, "Fallen Warriors");
         q6Inf.addKillObjective(1, "fallen_archer_inf", 10, "Fallen Archers");
         q6Inf.addKillObjective(1, "death_knight_inf", 3, "Death Knights");
-        q6Inf.setBossObjective(1, "mortis_death_knight_inf", "Mini-Boss: Mortis Death Knight");
+        q6Inf.setBossObjective(1, "mortis_death_knight_inf", "Mini-Boss: Mortrix Death Knight");
         q6Inf.addPortalObjective(1, "world", -4490, -61, -857, -4491, -59, -858);
         q6Inf.setStageEndCommand(1, "warp q6_m2_inf");
 
@@ -401,12 +401,12 @@ public class QuestData {
         q6Inf.addCollectObjective(2, "elite_skeleton_archer_inf", 1, 30, "First Part of Sacrificial Dagger", false, 20);
         q6Inf.addCollectObjective(2, "elite_skeleton_warrior_inf", 1, 30, "Second Part of Sacrificial Dagger", false, 20);
         q6Inf.addCollectObjective(2, "death_archer_inf", 1, 30, "Third Part of Sacrificial Dagger", true);
-        q6Inf.setBossObjective(2, "murot_high_priest_inf", "Mini-Boss: Murot High Priest");
+        q6Inf.setBossObjective(2, "murot_high_priest_inf", "Mini-Boss: Murond, High Priest of Mortrix");
         q6Inf.addPortalObjective(2, "world", -4598, -61, -1169, -4599, -59, -1170);
         q6Inf.setStageEndCommand(2, "warp q6_m3_inf");
 
         // Stage 3 - Kill final boss
-        q6Inf.setBossObjective(3, "mortis_phase3_inf", "Final Boss: Mortis, Unchained God of Death");
+        q6Inf.setBossObjective(3, "mortis_phase3_inf", "Final Boss: Mortrix, Unbound God of Death");
 
         questData.put("q6_inf", q6Inf);
 
@@ -418,7 +418,7 @@ public class QuestData {
         q6Hell.addKillObjective(1, "fallen_warrior_hell", 10, "Fallen Warriors");
         q6Hell.addKillObjective(1, "fallen_archer_hell", 10, "Fallen Archers");
         q6Hell.addKillObjective(1, "death_knight_hell", 3, "Death Knights");
-        q6Hell.setBossObjective(1, "mortis_death_knight_hell", "Mini-Boss: Mortis Death Knight");
+        q6Hell.setBossObjective(1, "mortis_death_knight_hell", "Mini-Boss: Mortrix Death Knight");
         q6Hell.addPortalObjective(1, "world", -4783, -61, -1866, -4784, -59, -1867);
         q6Hell.setStageEndCommand(1, "warp q6_m2_hell");
 
@@ -427,12 +427,12 @@ public class QuestData {
         q6Hell.addCollectObjective(2, "elite_skeleton_archer_hell", 1, 30, "First Part of Sacrificial Dagger", false, 20);
         q6Hell.addCollectObjective(2, "elite_skeleton_warrior_hell", 1, 30, "Second Part of Sacrificial Dagger", false, 20);
         q6Hell.addCollectObjective(2, "death_archer_hell", 1, 30, "Third Part of Sacrificial Dagger", true);
-        q6Hell.setBossObjective(2, "murot_high_priest_hell", "Mini-Boss: Murot High Priest");
+        q6Hell.setBossObjective(2, "murot_high_priest_hell", "Mini-Boss: Murond, High Priest of Mortrix");
         q6Hell.addPortalObjective(2, "world", -4891, -61, -2178, -4892, -59, -2179);
         q6Hell.setStageEndCommand(2, "warp q6_m3_hell");
 
         // Stage 3 - Kill final boss
-        q6Hell.setBossObjective(3, "mortis_phase3_hell", "Final Boss: Mortis, Unchained God of Death");
+        q6Hell.setBossObjective(3, "mortis_phase3_hell", "Final Boss: Mortrix, Unbound God of Death");
 
         questData.put("q6_hell", q6Hell);
 
@@ -444,7 +444,7 @@ public class QuestData {
         q6Blood.addKillObjective(1, "fallen_warrior_blood", 10, "Fallen Warriors");
         q6Blood.addKillObjective(1, "fallen_archer_blood", 10, "Fallen Archers");
         q6Blood.addKillObjective(1, "death_knight_blood", 3, "Death Knights");
-        q6Blood.setBossObjective(1, "mortis_death_knight_blood", "Mini-Boss: Mortis Death Knight");
+        q6Blood.setBossObjective(1, "mortis_death_knight_blood", "Mini-Boss: Mortrix Death Knight");
         q6Blood.addPortalObjective(1, "world", -5076, -61, -2875, -5077, -59, -2876);
         q6Blood.setStageEndCommand(1, "warp q6_m2_blood");
 
@@ -453,12 +453,12 @@ public class QuestData {
         q6Blood.addCollectObjective(2, "elite_skeleton_archer_blood", 1, 30, "First Part of Sacrificial Dagger", false, 20);
         q6Blood.addCollectObjective(2, "elite_skeleton_warrior_blood", 1, 30, "Second Part of Sacrificial Dagger", false, 20);
         q6Blood.addCollectObjective(2, "death_archer_blood", 1, 30, "Third Part of Sacrificial Dagger", true);
-        q6Blood.setBossObjective(2, "murot_high_priest_blood", "Mini-Boss: Murot High Priest");
+        q6Blood.setBossObjective(2, "murot_high_priest_blood", "Mini-Boss: Murond, High Priest of Mortrix");
         q6Blood.addPortalObjective(2, "world", -5184, -61, -3187, -5185, -59, -3188);
         q6Blood.setStageEndCommand(2, "warp q6_m3_blood");
 
         // Stage 3 - Kill final boss
-        q6Blood.setBossObjective(3, "mortis_phase3_blood", "Final Boss: Mortis, Unchained God of Death");
+        q6Blood.setBossObjective(3, "mortis_phase3_blood", "Final Boss: Mortrix, Unbound God of Death");
 
         questData.put("q6_blood", q6Blood);
     }
@@ -476,7 +476,7 @@ public class QuestData {
         q7Inf.addInteractObjective(1, Material.LEVER, "Fire the catapults (use TWO different levers)");
 
         // Stage 1 - Kill mini-boss
-        q7Inf.setBossObjective(1, "iron_creeper_gate_guard_inf", "Mini-Boss: Iron Creeper Gate Guard");
+        q7Inf.setBossObjective(1, "iron_creeper_gate_guard_inf", "Mini-Boss: Iron Gate Guard");
         q7Inf.addPortalObjective(1, "world", -3765, -54, -2262, -3766, -52, -2263);
         q7Inf.setStageEndCommand(1, "warp q7_m2_inf");
 
@@ -488,12 +488,12 @@ public class QuestData {
         q7Inf.addLocationObjective(2, "world", -3759, -61, -881, -3759, -61, -881, 10); // 10 block radius
 
         // Stage 2 - Mini-boss and portal
-        q7Inf.setBossObjective(2, "commander_embersword_inf", "Mini-Boss: Commander Embersword");
+        q7Inf.setBossObjective(2, "commander_embersword_inf", "Mini-Boss: Commander Emberblade");
         q7Inf.addPortalObjective(2, "world", -3751, -61, -864, -3752, -59, -863);
         q7Inf.setStageEndCommand(2, "warp q7_m3_inf");
 
         // Stage 3 - Kill final boss
-        q7Inf.setBossObjective(3, "herald_of_anderworld_inf", "Final Boss: Herald of Anderworld");
+        q7Inf.setBossObjective(3, "herald_of_anderworld_inf", "Final Boss: Harbinger of the Anderrealm");
 
         questData.put("q7_inf", q7Inf);
 
@@ -509,7 +509,7 @@ public class QuestData {
         q7Hell.addInteractObjective(1, Material.LEVER, "Fire the catapults (use TWO different levers)");
 
         // Stage 1 - Kill mini-boss
-        q7Hell.setBossObjective(1, "iron_creeper_gate_guard_hell", "Mini-Boss: Iron Creeper Gate Guard");
+        q7Hell.setBossObjective(1, "iron_creeper_gate_guard_hell", "Mini-Boss: Iron Gate Guard");
         q7Hell.addPortalObjective(1, "world", -3743, -54, -1494, -3744, -52, -1495);
         q7Hell.setStageEndCommand(1, "warp q7_m2_hell");
 
@@ -521,12 +521,12 @@ public class QuestData {
         q7Hell.addLocationObjective(2, "world", -3782, -61, -1652, -3782, -61, -1652, 10); // 10 block radius
 
         // Stage 2 - Mini-boss and portal
-        q7Hell.setBossObjective(2, "commander_embersword_hell", "Mini-Boss: Commander Embersword");
+        q7Hell.setBossObjective(2, "commander_embersword_hell", "Mini-Boss: Commander Emberblade");
         q7Hell.addPortalObjective(2, "world", -3774, -61, -1635, -3775, -59, -1634);
         q7Hell.setStageEndCommand(2, "warp q7_m3_hell");
 
         // Stage 3 - Kill final boss
-        q7Hell.setBossObjective(3, "herald_of_anderworld_hell", "Final Boss: Herald of Anderworld");
+        q7Hell.setBossObjective(3, "herald_of_anderworld_hell", "Final Boss: Harbinger of the Anderrealm");
 
         questData.put("q7_hell", q7Hell);
 
@@ -542,7 +542,7 @@ public class QuestData {
         q7Blood.addInteractObjective(1, Material.LEVER, "Fire the catapults (use TWO different levers)");
 
         // Stage 1 - Kill mini-boss
-        q7Blood.setBossObjective(1, "iron_creeper_gate_guard_blood", "Mini-Boss: Iron Creeper Gate Guard");
+        q7Blood.setBossObjective(1, "iron_creeper_gate_guard_blood", "Mini-Boss: Iron Gate Guard");
         q7Blood.addPortalObjective(1, "world", -3720, -54, -723, -3721, -52, -724);
         q7Blood.setStageEndCommand(1, "warp q7_m2_blood");
 
@@ -554,12 +554,12 @@ public class QuestData {
         q7Blood.addLocationObjective(2, "world", -3804, -61, -2418, -3804, -61, -2418, 10); // 10 block radius
 
         // Stage 2 - Mini-boss and portal
-        q7Blood.setBossObjective(2, "commander_embersword_blood", "Mini-Boss: Commander Embersword");
+        q7Blood.setBossObjective(2, "commander_embersword_blood", "Mini-Boss: Commander Emberblade");
         q7Blood.addPortalObjective(2, "world", -3796, -61, -2403, -3797, -59, -2402);
         q7Blood.setStageEndCommand(2, "warp q7_m3_blood");
 
         // Stage 3 - Kill final boss
-        q7Blood.setBossObjective(3, "herald_of_anderworld_blood", "Final Boss: Herald of Anderworld");
+        q7Blood.setBossObjective(3, "herald_of_anderworld_blood", "Final Boss: Harbinger of the Anderrealm");
 
         questData.put("q7_blood", q7Blood);
     }
@@ -587,7 +587,7 @@ public class QuestData {
         q8Inf.setStageEndCommand(2, "warp q8_m3_inf");
 
         // Stage 3 - Kill final boss
-        q8Inf.setBossObjective(3, "sigrismarr_priest_of_fjalnir_inf", "Final Boss: Sigrismarr, Priest of Fjalnir");
+        q8Inf.setBossObjective(3, "sigrismarr_priest_of_fjalnir_inf", "Final Boss: Sigrosmar, Twisted Priest of Fjolnar");
 
         questData.put("q8_inf", q8Inf);
 
@@ -613,7 +613,7 @@ public class QuestData {
         q8Hell.setStageEndCommand(2, "warp q8_m3_hell");
 
         // Stage 3 - Kill final boss
-        q8Hell.setBossObjective(3, "sigrismarr_priest_of_fjalnir_hell", "Final Boss: Sigrismarr, Priest of Fjalnir");
+        q8Hell.setBossObjective(3, "sigrismarr_priest_of_fjalnir_hell", "Final Boss: Sigrosmar, Twisted Priest of Fjolnar");
 
         questData.put("q8_hell", q8Hell);
 
@@ -639,7 +639,7 @@ public class QuestData {
         q8Blood.setStageEndCommand(2, "warp q8_m3_blood");
 
         // Stage 3 - Kill final boss
-        q8Blood.setBossObjective(3, "sigrismarr_priest_of_fjalnir_blood", "Final Boss: Sigrismarr, Priest of Fjalnir");
+        q8Blood.setBossObjective(3, "sigrismarr_priest_of_fjalnir_blood", "Final Boss: Sigrosmar, Twisted Priest of Fjolnar");
 
         questData.put("q8_blood", q8Blood);
     }
@@ -658,7 +658,7 @@ public class QuestData {
         q9Inf.setStageMessage(1, "Find and interact with 4 ancient statues to collect their fragments");
 
         // Stage 1 - Kill mini-boss
-        q9Inf.setBossObjective(1, "asterion_inf", "Mini-Boss: Asterion");
+        q9Inf.setBossObjective(1, "asterion_inf", "Mini-Boss: Asteron");
         q9Inf.addPortalObjective(1, "world", -4015, -61, -645, -4016, -59, -646);
         q9Inf.setStageEndCommand(1, "warp q9_m2_inf");
 
@@ -667,12 +667,12 @@ public class QuestData {
         q9Inf.setRequiredAltars(2, 5);
 
         // Stage 2 - Kill mini-boss
-        q9Inf.setBossObjective(2, "ebicarus_inf", "Mini-Boss: Ebicarus");
+        q9Inf.setBossObjective(2, "ebicarus_inf", "Mini-Boss: Ebidarus");
         q9Inf.addPortalObjective(2, "world", -3948, -61, -1007, -3947, -59, -1006);
         q9Inf.setStageEndCommand(2, "warp q9_m3_inf");
 
         // Stage 3 - Kill final boss
-        q9Inf.setBossObjective(3, "medusa_inf", "Final Boss: Medusa");
+        q9Inf.setBossObjective(3, "medusa_inf", "Final Boss: M`Edara");
 
         questData.put("q9_inf", q9Inf);
 
@@ -690,7 +690,7 @@ public class QuestData {
         q9Hell.setStageMessage(1, "Find and interact with 4 ancient statues to collect their fragments");
 
         // Stage 1 - Kill mini-boss
-        q9Hell.setBossObjective(1, "asterion_hell", "Mini-Boss: Asterion");
+        q9Hell.setBossObjective(1, "asterion_hell", "Mini-Boss: Asteron");
         q9Hell.addPortalObjective(1, "world", -4158, -61, -1410, -4159, -59, -1411);
         q9Hell.setStageEndCommand(1, "warp q9_m2_hell");
 
@@ -699,12 +699,12 @@ public class QuestData {
         q9Hell.setRequiredAltars(2, 5);
 
         // Stage 2 - Kill mini-boss
-        q9Hell.setBossObjective(2, "ebicarus_hell", "Mini-Boss: Ebicarus");
+        q9Hell.setBossObjective(2, "ebicarus_hell", "Mini-Boss: Ebidarus");
         q9Hell.addPortalObjective(2, "world", -4046, -61, -1830, -4045, -59, -1829);
         q9Hell.setStageEndCommand(2, "warp q9_m3_hell");
 
         // Stage 3 - Kill final boss
-        q9Hell.setBossObjective(3, "medusa_hell", "Final Boss: Medusa");
+        q9Hell.setBossObjective(3, "medusa_hell", "Final Boss: M`Edara");
 
         questData.put("q9_hell", q9Hell);
 
@@ -721,7 +721,7 @@ public class QuestData {
         q9Blood.setStageMessage(1, "Find and interact with 4 ancient statues to collect their fragments");
 
         // Stage 1 - Kill mini-boss
-        q9Blood.setBossObjective(1, "asterion_blood", "Mini-Boss: Asterion");
+        q9Blood.setBossObjective(1, "asterion_blood", "Mini-Boss: Asteron");
         q9Blood.addPortalObjective(1, "world", -4206, -61, -2255, -4207, -59, -2256);
         q9Blood.setStageEndCommand(1, "warp q9_m2_blood");
 
@@ -730,12 +730,12 @@ public class QuestData {
         q9Blood.setRequiredAltars(2, 5);
 
         // Stage 2 - Kill mini-boss
-        q9Blood.setBossObjective(2, "ebicarus_blood", "Mini-Boss: Ebicarus");
+        q9Blood.setBossObjective(2, "ebicarus_blood", "Mini-Boss: Ebidarus");
         q9Blood.addPortalObjective(2, "world", -4094, -61, -2675, -4093, -59, -2674);
         q9Blood.setStageEndCommand(2, "warp q9_m3_blood");
 
         // Stage 3 - Kill final boss
-        q9Blood.setBossObjective(3, "medusa_blood", "Final Boss: Medusa");
+        q9Blood.setBossObjective(3, "medusa_blood", "Final Boss: M`Edara");
 
         questData.put("q9_blood", q9Blood);
     }
@@ -750,7 +750,7 @@ public class QuestData {
         q10Inf.setRequiredFragments(1, 3); // Need to collect and deposit 3 fragments
 
         // Stage 1 - Kill mini-boss
-        q10Inf.setBossObjective(1, "melas_the_swift_footed_inf", "Mini-Boss: Melas the Swift-Footed");
+        q10Inf.setBossObjective(1, "melas_the_swift_footed_inf", "Mini-Boss: Melan the Swiftstride");
         q10Inf.addPortalObjective(1, "world", -4065, -61, -186, -4064, -59, -185);
         q10Inf.setStageEndCommand(1, "warp q10_m2_inf");
 
@@ -759,12 +759,12 @@ public class QuestData {
         q10Inf.addCollectObjective(2, "armed_khaross_inf", 1, 10, "Golden Walrus Statuette", true, 30);
 
         // Stage 2 - Kill mini-boss
-        q10Inf.setBossObjective(2, "akheilos_inf", "Mini-Boss: Akheilos");
+        q10Inf.setBossObjective(2, "akheilos_inf", "Mini-Boss: Akhelion");
         q10Inf.addPortalObjective(2, "world", -4131, -61, 269, -4130, -59, 270);
         q10Inf.setStageEndCommand(2, "warp q10_m3_inf");
 
         // Stage 3 - Kill final boss
-        q10Inf.setBossObjective(3, "parallel_world_gorga_inf", "Final Boss: Parallel World Gorga");
+        q10Inf.setBossObjective(3, "parallel_world_gorga_inf", "Final Boss: Gorgra");
 
         questData.put("q10_inf", q10Inf);
 
@@ -777,7 +777,7 @@ public class QuestData {
         q10Hell.setRequiredFragments(1, 3);
 
         // Stage 1 - Kill mini-boss
-        q10Hell.setBossObjective(1, "melas_the_swift_footed_hell", "Mini-Boss: Melas the Swift-Footed");
+        q10Hell.setBossObjective(1, "melas_the_swift_footed_hell", "Mini-Boss: Melan the Swiftstride");
         q10Hell.addPortalObjective(1, "world", -4114, -61, 781, -4113, -59, 782);
         q10Hell.setStageEndCommand(1, "warp q10_m2_hell");
 
@@ -786,12 +786,12 @@ public class QuestData {
         q10Hell.addCollectObjective(2, "armed_khaross_hell", 1, 10, "Golden Walrus Statuette", true, 30);
 
         // Stage 2 - Kill mini-boss
-        q10Hell.setBossObjective(2, "akheilos_hell", "Mini-Boss: Akheilos");
+        q10Hell.setBossObjective(2, "akheilos_hell", "Mini-Boss: Akhelion");
         q10Hell.addPortalObjective(2, "world", -4180, -61, 1236, -4179, -59, 1237);
         q10Hell.setStageEndCommand(2, "warp q10_m3_hell");
 
         // Stage 3 - Kill final boss
-        q10Hell.setBossObjective(3, "parallel_world_gorga_hell", "Final Boss: Parallel World Gorga");
+        q10Hell.setBossObjective(3, "parallel_world_gorga_hell", "Final Boss: Gorgra");
 
         questData.put("q10_hell", q10Hell);
 
@@ -804,7 +804,7 @@ public class QuestData {
         q10Blood.setRequiredFragments(1, 3);
 
         // Stage 1 - Kill mini-boss
-        q10Blood.setBossObjective(1, "melas_the_swift_footed_blood", "Mini-Boss: Melas the Swift-Footed");
+        q10Blood.setBossObjective(1, "melas_the_swift_footed_blood", "Mini-Boss: Melan the Swiftstride");
         q10Blood.addPortalObjective(1, "world", -4163, -61, 1753, -4162, -59, 1754);
         q10Blood.setStageEndCommand(1, "warp q10_m2_blood");
 
@@ -813,12 +813,12 @@ public class QuestData {
         q10Blood.addCollectObjective(2, "armed_khaross_blood", 1, 10, "Golden Walrus Statuette", true, 30);
 
         // Stage 2 - Kill mini-boss
-        q10Blood.setBossObjective(2, "akheilos_blood", "Mini-Boss: Akheilos");
+        q10Blood.setBossObjective(2, "akheilos_blood", "Mini-Boss: Akhelion");
         q10Blood.addPortalObjective(2, "world", -4229, -61, 2208, -4228, -59, 2209);
         q10Blood.setStageEndCommand(2, "warp q10_m3_blood");
 
         // Stage 3 - Kill final boss
-        q10Blood.setBossObjective(3, "parallel_world_gorga_blood", "Final Boss: Parallel World Gorga");
+        q10Blood.setBossObjective(3, "parallel_world_gorga_blood", "Final Boss: Gorgra");
 
         questData.put("q10_blood", q10Blood);
     }
@@ -1203,3 +1203,4 @@ public class QuestData {
         }
     }
 }
+

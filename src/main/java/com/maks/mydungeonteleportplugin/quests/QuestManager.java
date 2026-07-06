@@ -266,10 +266,14 @@ public class QuestManager {
         // Give rewards
         double expReward = questData.getExpReward();
         String itemReward = questData.getItemReward();
+        int playerLevel = player.getLevel();
+        boolean eligibleForExp = playerLevel < 90;
 
         // Give experience reward
-        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                "exp_give_p " + expReward + " " + player.getName());
+        if (eligibleForExp) {
+            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                    "exp_give_p " + expReward + " " + player.getName());
+        }
 
         // Give item reward
         if (itemReward != null && !itemReward.isEmpty()) {
@@ -291,7 +295,11 @@ public class QuestManager {
         player.sendMessage(ChatColor.GOLD + "§l✦ ═══════════════════════════ ✦");
         player.sendMessage(ChatColor.GREEN + "§l» §r§aQuest §l" + questData.getName() + "§r§a completed!");
         player.sendMessage(ChatColor.YELLOW + "§l» §r§eRewards:");
-        player.sendMessage(ChatColor.AQUA + "  • §r§b" + expReward + "% Experience");
+        if (eligibleForExp) {
+            player.sendMessage(ChatColor.AQUA + "  • §r§b" + expReward + "% Experience");
+        } else {
+            player.sendMessage(ChatColor.AQUA + "  • §r§bNo Experience (Level 90+)");
+        }
         player.sendMessage(ChatColor.LIGHT_PURPLE + "  • §r§d" + formattedReward);
         player.sendMessage(ChatColor.RED + "§l» §r§cYou will be returned to the main area in 15 seconds.");
         player.sendMessage(ChatColor.GOLD + "§l✦ ═══════════════════════════ ✦");
@@ -975,10 +983,16 @@ public class QuestManager {
         }
 
         player.sendMessage(ChatColor.YELLOW + "§l» §r§eRewards:");
-        player.sendMessage(ChatColor.AQUA + "  • §r§b" + questData.getExpReward() + "% Experience");
+        if (player.getLevel() < 90) {
+            player.sendMessage(ChatColor.AQUA + "  • §r§b" + questData.getExpReward() + "% Experience");
+        } else {
+            player.sendMessage(ChatColor.AQUA + "  • §r§bNo Experience (Level 90+)");
+        }
         player.sendMessage(ChatColor.LIGHT_PURPLE + "  • §r§d" + questData.getFormattedRewardName());
         player.sendMessage(ChatColor.GOLD + "§l✦ ═══════════════════════════ ✦");
-    }    /**
+    }
+
+    /**
      * Format mob ID into readable name
      */
     private String formatMobName(String mobId) {
